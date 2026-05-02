@@ -1,0 +1,2346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>myenergi — Quick Fix Wizard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,300;0,400;0,700;0,800;1,800&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET & ROOT ─────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#40ff7a;--black:#000;--white:#fff;
+  --grey-light:#cecdcd;--grey-dark:#343434;
+  --font:'Overpass',sans-serif;
+  --radius:16px;--radius-sm:10px;
+  --transition:0.38s cubic-bezier(.4,0,.2,1);
+}
+html{font-size:18px;scroll-behavior:smooth}
+body{
+  background:var(--black);color:var(--white);
+  font-family:var(--font);font-weight:300;
+  min-height:100vh;overflow-x:hidden;
+  line-height:1.65;
+}
+
+/* ─── HEADER ────────────────────────────────────────────────────── */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 32px;border-bottom:1px solid #1a1a1a;
+  position:sticky;top:0;z-index:100;background:rgba(0,0,0,.92);
+  backdrop-filter:blur(12px);
+}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-bolt{width:36px;height:36px}
+.logo-wordmark{height:22px;opacity:.95}
+.header-badge{
+  font-size:.75rem;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--green);
+  border:1px solid rgba(64,255,122,.3);
+  padding:4px 12px;border-radius:20px;
+}
+
+/* ─── PROGRESS BAR ──────────────────────────────────────────────── */
+.progress-bar-wrap{
+  height:3px;background:#111;position:sticky;top:77px;z-index:99;
+}
+.progress-bar{
+  height:100%;background:var(--green);
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 12px rgba(64,255,122,.5);
+}
+
+/* ─── MAIN STAGE ────────────────────────────────────────────────── */
+.stage{
+  max-width:720px;margin:0 auto;
+  padding:40px 24px 100px;
+  min-height:calc(100vh - 80px);
+}
+
+/* ─── STEP CARD ─────────────────────────────────────────────────── */
+.step-card{
+  opacity:0;transform:translateY(28px) scale(.98);
+  transition:opacity var(--transition),transform var(--transition);
+  pointer-events:none;
+}
+.step-card.active{
+  opacity:1;transform:none;pointer-events:all;
+}
+.step-card.exit-left{
+  opacity:0;transform:translateX(-48px) scale(.96);
+  transition:opacity .25s ease,transform .25s ease;
+}
+
+/* ─── STEP LABELS ───────────────────────────────────────────────── */
+.step-eyebrow{
+  font-size:.8rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--green);
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.step-eyebrow::before{
+  content:'';display:inline-block;width:24px;height:2px;
+  background:var(--green);border-radius:2px;
+}
+.step-heading{
+  font-size:2rem;font-weight:800;font-style:italic;
+  line-height:1.2;margin-bottom:10px;color:var(--white);
+}
+.step-sub{
+  font-size:1rem;font-weight:300;color:var(--grey-light);
+  margin-bottom:36px;max-width:560px;line-height:1.7;
+}
+
+/* ─── CHOICE GRID ───────────────────────────────────────────────── */
+.choices{
+  display:flex;flex-direction:column;gap:12px;
+}
+.choice-btn{
+  display:flex;align-items:center;gap:18px;
+  background:var(--grey-dark);border:2px solid transparent;
+  color:var(--white);border-radius:var(--radius);
+  padding:20px 24px;cursor:pointer;
+  font-family:var(--font);font-size:1.05rem;font-weight:700;
+  text-align:left;transition:all .2s ease;
+  position:relative;overflow:hidden;
+}
+.choice-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(64,255,122,.06),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.choice-btn:hover{
+  border-color:var(--green);
+  background:#1e2e22;
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(64,255,122,.15);
+}
+.choice-btn:hover::after{opacity:1}
+.choice-btn:active{transform:translateY(0)}
+.choice-btn.selected{
+  border-color:var(--green);background:#1e2e22;
+  box-shadow:0 0 0 4px rgba(64,255,122,.12);
+}
+.choice-emoji{
+  font-size:1.8rem;width:48px;text-align:center;
+  flex-shrink:0;
+}
+.choice-text{flex:1}
+.choice-label{display:block;font-weight:700;font-size:1.05rem}
+.choice-hint{
+  display:block;font-weight:300;font-size:.88rem;
+  color:var(--grey-light);margin-top:3px;
+}
+.choice-arrow{
+  color:var(--green);font-size:1.4rem;opacity:0;
+  transition:opacity .2s,transform .2s;
+}
+.choice-btn:hover .choice-arrow{opacity:1;transform:translateX(4px)}
+
+/* ─── INFO / RESOLVE CARD ───────────────────────────────────────── */
+.info-box{
+  background:var(--grey-dark);border-radius:var(--radius);
+  padding:28px 32px;margin-bottom:28px;
+  border-left:4px solid var(--green);
+}
+.info-box h3{
+  font-size:1.1rem;font-weight:700;color:var(--green);
+  margin-bottom:10px;
+}
+.info-box p,
+.info-box li{
+  font-size:.97rem;color:var(--grey-light);
+  line-height:1.75;
+}
+.info-box ol,
+.info-box ul{margin-top:10px;padding-left:20px}
+.info-box li{margin-bottom:6px}
+
+.success-box{
+  background:linear-gradient(135deg,#0d2416,#0a1a0f);
+  border:2px solid rgba(64,255,122,.4);
+  border-radius:var(--radius);padding:36px 32px;
+  text-align:center;margin-bottom:28px;
+}
+.success-icon{font-size:3rem;margin-bottom:16px}
+.success-box h2{
+  font-size:1.6rem;font-weight:800;font-style:italic;
+  color:var(--green);margin-bottom:10px;
+}
+.success-box p{
+  color:var(--grey-light);font-size:.97rem;line-height:1.7;
+}
+
+.warning-box{
+  background:#1a1000;border:2px solid #ff9800;
+  border-radius:var(--radius);padding:24px 28px;
+  margin-bottom:24px;
+}
+.warning-box p{color:#ffcc80;font-size:.95rem;line-height:1.7}
+.warning-box strong{color:#ffa726}
+
+/* ─── BUTTONS (pill shape) ──────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:8px;cursor:pointer;font-family:var(--font);
+  font-weight:700;border:none;border-radius:999px;
+  transition:all .2s ease;text-decoration:none;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.btn-primary{
+  background:var(--green);color:var(--black);
+  padding:17px 36px;font-size:1rem;
+  box-shadow:0 4px 20px rgba(64,255,122,.3);
+  min-height:52px;
+}
+.btn-primary:hover{
+  background:#5aff8e;transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(64,255,122,.4);
+}
+.btn-primary:active{transform:translateY(0);box-shadow:none}
+.btn-secondary{
+  background:transparent;color:var(--grey-light);
+  padding:15px 28px;font-size:.9rem;
+  border:2px solid var(--grey-dark);
+  min-height:52px;
+}
+.btn-secondary:hover{
+  border-color:var(--grey-light);color:var(--white);
+}
+.btn-ghost{
+  background:transparent;color:var(--green);
+  padding:12px 20px;font-size:.9rem;
+  border:none;text-decoration:underline;
+  text-underline-offset:3px;min-height:44px;
+}
+.btn-ghost:hover{color:#5aff8e}
+.btn-danger{
+  background:#f91561;color:var(--white);
+  padding:17px 36px;font-size:1rem;min-height:52px;
+}
+.btn-danger:hover{background:#ff2a75;transform:translateY(-2px)}
+.btn-row{
+  display:flex;flex-wrap:wrap;gap:12px;
+  align-items:center;margin-top:28px;
+}
+@media(max-width:600px){
+  .btn-primary,.btn-secondary,.btn-danger{
+    width:100%;justify-content:center;
+  }
+}
+
+/* ─── BACK BUTTON ───────────────────────────────────────────────── */
+.back-btn{
+  display:flex;align-items:center;gap:6px;
+  background:none;border:none;cursor:pointer;
+  color:var(--grey-light);font-family:var(--font);
+  font-size:.9rem;font-weight:700;padding:0;
+  margin-bottom:32px;transition:color .2s;
+}
+.back-btn:hover{color:var(--white)}
+.back-btn svg{width:18px;height:18px;transition:transform .2s}
+.back-btn:hover svg{transform:translateX(-3px)}
+
+/* ─── UPLOAD AREA ───────────────────────────────────────────────── */
+.upload-area{
+  border:2px dashed rgba(64,255,122,.3);
+  border-radius:var(--radius);padding:32px 24px;
+  text-align:center;cursor:pointer;
+  transition:all .2s;background:rgba(64,255,122,.02);
+  margin-bottom:16px;
+}
+.upload-area:hover,.upload-area.drag-over{
+  border-color:var(--green);
+  background:rgba(64,255,122,.06);
+}
+.upload-area input{display:none}
+.upload-icon{font-size:2.5rem;margin-bottom:10px}
+.upload-area h4{font-weight:700;font-size:1rem;margin-bottom:6px}
+.upload-area p{color:var(--grey-light);font-size:.85rem}
+.upload-area .upload-types{
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+  margin-top:10px;
+}
+.upload-types span{
+  font-size:.75rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--green);
+  border:1px solid rgba(64,255,122,.3);
+  padding:3px 10px;border-radius:20px;
+}
+.upload-previews{
+  display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;
+}
+.upload-preview{
+  position:relative;width:80px;height:80px;
+  border-radius:8px;overflow:hidden;
+  border:2px solid var(--grey-dark);
+}
+.upload-preview img{
+  width:100%;height:100%;object-fit:cover;
+}
+.upload-preview .remove-upload{
+  position:absolute;top:3px;right:3px;
+  background:rgba(0,0,0,.8);color:var(--white);
+  border:none;border-radius:50%;width:20px;height:20px;
+  font-size:.7rem;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;
+}
+.upload-doc-item{
+  display:flex;align-items:center;gap:10px;
+  background:var(--grey-dark);border-radius:8px;
+  padding:10px 14px;margin-bottom:8px;font-size:.88rem;
+}
+.upload-doc-item span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.upload-doc-item button{
+  background:none;border:none;cursor:pointer;
+  color:var(--grey-light);font-size:.9rem;
+}
+
+/* ─── FORM FIELDS ───────────────────────────────────────────────── */
+.field-group{margin-bottom:20px}
+.field-label{
+  display:block;font-size:.85rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:var(--green);margin-bottom:8px;
+}
+.field-required{color:#f91561;margin-left:3px}
+.field-input,.field-textarea,.field-select{
+  width:100%;background:#111;border:2px solid var(--grey-dark);
+  color:var(--white);font-family:var(--font);font-size:1rem;
+  font-weight:300;padding:14px 18px;border-radius:var(--radius-sm);
+  transition:border-color .2s;outline:none;
+}
+.field-input:focus,.field-textarea:focus,.field-select:focus{
+  border-color:var(--green);
+}
+.field-input::placeholder,.field-textarea::placeholder{
+  color:#555;
+}
+.field-textarea{resize:vertical;min-height:100px}
+.field-select{cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2340ff7a' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center;
+  padding-right:40px;
+}
+.field-select option{background:#1a1a1a}
+
+/* ─── TICKET SUMMARY ────────────────────────────────────────────── */
+.ticket-summary{
+  background:var(--grey-dark);border-radius:var(--radius);
+  padding:24px;margin-bottom:24px;
+}
+.ticket-summary h4{
+  font-size:.8rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--green);margin-bottom:16px;
+}
+.ticket-row{
+  display:flex;gap:12px;padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:.9rem;
+}
+.ticket-row:last-child{border-bottom:none}
+.ticket-key{
+  color:var(--grey-light);font-weight:700;
+  min-width:120px;flex-shrink:0;
+}
+.ticket-val{color:var(--white);font-weight:300}
+
+/* ─── PATH BREADCRUMB ───────────────────────────────────────────── */
+.path-trail{
+  display:flex;flex-wrap:wrap;gap:6px;
+  margin-bottom:28px;
+}
+.path-crumb{
+  font-size:.78rem;font-weight:700;
+  background:rgba(64,255,122,.08);
+  color:var(--green);padding:4px 12px;
+  border-radius:20px;border:1px solid rgba(64,255,122,.2);
+}
+
+/* ─── SPINNER ───────────────────────────────────────────────────── */
+.spinner-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.85);z-index:200;
+  align-items:center;justify-content:center;
+  flex-direction:column;gap:20px;
+}
+.spinner-overlay.active{display:flex}
+.spinner{
+  width:48px;height:48px;border:4px solid #1a1a1a;
+  border-top-color:var(--green);border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner-text{color:var(--grey-light);font-size:.95rem}
+
+/* ─── DEVICE BADGE ──────────────────────────────────────────────── */
+.device-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(64,255,122,.08);border:1px solid rgba(64,255,122,.2);
+  border-radius:20px;padding:6px 16px;
+  font-size:.85rem;font-weight:700;color:var(--green);
+  margin-bottom:24px;
+}
+
+/* ─── ANIMATED STEP LIST ────────────────────────────────────────── */
+.anim-steps{list-style:none;padding:0;margin:12px 0 0}
+.anim-steps li{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06);
+  opacity:0;transform:translateY(12px);
+  animation:stepIn .4s forwards;
+}
+.anim-steps li:last-child{border-bottom:none}
+.anim-steps li:nth-child(1){animation-delay:.1s}
+.anim-steps li:nth-child(2){animation-delay:.22s}
+.anim-steps li:nth-child(3){animation-delay:.34s}
+.anim-steps li:nth-child(4){animation-delay:.46s}
+.anim-steps li:nth-child(5){animation-delay:.58s}
+.anim-steps li:nth-child(6){animation-delay:.7s}
+@keyframes stepIn{
+  to{opacity:1;transform:translateY(0)}
+}
+.step-num{
+  min-width:32px;height:32px;border-radius:50%;
+  background:var(--green);color:var(--black);
+  font-weight:800;font-size:.85rem;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+}
+.step-text{font-size:.97rem;color:var(--grey-light);line-height:1.6}
+.step-text strong{color:var(--white)}
+
+/* ─── SERIAL STICKER EXAMPLE ────────────────────────────────────── */
+.serial-example-wrap{
+  display:flex;gap:16px;align-items:flex-start;
+  margin-bottom:20px;
+}
+.serial-example-img{
+  flex-shrink:0;width:120px;border-radius:8px;
+  border:2px solid rgba(64,255,122,.2);overflow:hidden;
+  background:#0d0d0d;
+}
+.serial-example-img svg{width:100%;display:block}
+.serial-example-caption{
+  flex:1;font-size:.88rem;color:var(--grey-light);line-height:1.6;
+}
+.serial-example-caption strong{color:var(--white);display:block;margin-bottom:4px}
+
+/* ─── RESPONSIVE — MOBILE FIRST ────────────────────────────────── */
+@media(max-width:600px){
+  .step-heading{font-size:1.5rem}
+  .step-sub{font-size:.95rem}
+  .stage{padding:24px 16px 90px}
+  .header{padding:14px 16px}
+  .info-box{padding:18px 18px}
+  .choice-btn{padding:16px 14px;gap:12px}
+  .choice-emoji{width:32px;font-size:1.4rem}
+  .choice-label{font-size:1rem}
+  .btn-row{flex-direction:column;align-items:stretch}
+  .ticket-key{min-width:90px;font-size:.82rem}
+  .serial-example-wrap{flex-direction:column}
+  .serial-example-img{width:100%;max-width:220px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo-wrap">
+    <img src="data:image/svg+xml;base64,PHN2ZyBpZD0iTG9nb19XaGl0ZSIgZGF0YS1uYW1lPSJMb2dvIFdoaXRlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3NTQuMDIgMjYwLjc5Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmZjt9LmNscy0ye2ZpbGw6IzQwZmY3YTt9PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImxvZ28tMDEiPjxwYXRoIGlkPSJQYXRoXzQ0IiBkYXRhLW5hbWU9IlBhdGggNDQiIGNsYXNzPSJjbHMtMSIgZD0iTTQwMi4xOSwxNDhhMjcuNjEsMjcuNjEsMCwxLDEsMjcuNjEtMjcuNnYzLjg5SDM4OC41NFYxMTYuNWgzMy4xYTE5Ljg0LDE5Ljg0LDAsMSwwLTIuNTQsMTQuMjVsNi42NCw0LjA3QTI3LjQzLDI3LjQzLDAsMCwxLDQwMi4xOSwxNDhaIi8+PHBhdGggaWQ9IlBhdGhfNDUiIGRhdGEtbmFtZT0iUGF0aCA0NSIgY2xhc3M9ImNscy0xIiBkPSJNNTIwLjc3LDE0OGEyNy42MSwyNy42MSwwLDEsMSwyNy42MS0yNy42djMuODlINTA3LjEyVjExNi41aDMzLjA5YTE5LjgxLDE5LjgxLDAsMSwwLTIuNTMsMTQuMjVsNi42Myw0LjA3QTI3LjQsMjcuNCwwLDAsMSw1MjAuNzcsMTQ4WiIvPjxwYXRoIGlkPSJQYXRoXzQ2IiBkYXRhLW5hbWU9IlBhdGggNDYiIGNsYXNzPSJjbHMtMSIgZD0iTTQ4NC4yOSwxNDcuODhINDc2LjVWMTE2LjYzYzAtOC44Ni02Ljc2LTE2LjA2LTE1LjA4LTE2LjA2YTE0LjUzLDE0LjUzLDAsMCwwLTEwLjU5LDQuNjMsMTYuNDQsMTYuNDQsMCwwLDAtNC40OCwxMS40M3YzMS4yNWgtNy43OVYxMTYuNjNhMjQuMjUsMjQuMjUsMCwwLDEsNi42My0xNi43OSwyMi4yLDIyLjIsMCwwLDEsMTYuMjMtN2MxMi42MSwwLDIyLjg2LDEwLjY5LDIyLjg2LDIzLjgzdjMxLjI1WiIvPjxwYXRoIGlkPSJQYXRoXzQ3IiBkYXRhLW5hbWU9IlBhdGggNDciIGNsYXNzPSJjbHMtMSIgZD0iTTM1Ni42Niw5Mi44OXYzMWExNi43OSwxNi43OSwwLDAsMS00LjQ5LDExLjU4LDE0LjQ3LDE0LjQ3LDAsMCwxLTEwLjU5LDQuNjhjLTguMzEsMC0xNS4wOC03LjMtMTUuMDgtMTYuMjZ2LTMxaC03Ljc4djMxYzAsMTEuODYsOC4yMSwyMS43MywxOSwyMy42OHYzMC43OWg3Ljc4VjE0Ny41NGEyMi4zMiwyMi4zMiwwLDAsMCwxMi4zNi02Ljc3LDI0LjU0LDI0LjU0LDAsMCwwLDYuNjEtMTYuOTJ2LTMxWiIvPjxwYXRoIGlkPSJQYXRoXzQ4IiBkYXRhLW5hbWU9IlBhdGggNDgiIGNsYXNzPSJjbHMtMSIgZD0iTTU2NSwxNDcuODhoLTcuNzhWMTE2LjYzYTI0LjIsMjQuMiwwLDAsMSw2LjYyLTE2Ljc5LDIyLjIxLDIyLjIxLDAsMCwxLDE2LjI0LTd2Ny43OGExNC41NSwxNC41NSwwLDAsMC0xMC42LDQuNjNBMTYuNDksMTYuNDksMCwwLDAsNTY1LDExNi42M1oiLz48cmVjdCBpZD0iUmVjdGFuZ2xlXzI0MyIgZGF0YS1uYW1lPSJSZWN0YW5nbGUgMjQzIiBjbGFzcz0iY2xzLTEiIHg9IjY1NC42OCIgeT0iOTIuNyIgd2lkdGg9IjcuNzgiIGhlaWdodD0iNTUuMTciLz48cGF0aCBpZD0iUGF0aF80OSIgZGF0YS1uYW1lPSJQYXRoIDQ5IiBjbGFzcz0iY2xzLTIiIGQ9Ik0xODUuODQsMTI1Ljg2aDBjLS4wNy0uMjItLjE0LS40NC0uMjItLjY2YS43NS43NSwwLDAsMC0uMDUtLjE2Yy0uMDctLjE3LS4xMy0uMzUtLjItLjUycy0uMDctLjE4LS4xMS0uMjdsLS4xOC0uNDEtLjE1LS4zM2MtLjA2LS4xMS0uMTItLjI0LS4xOC0uMzZsLS4xOS0uMzZjLS4wNy0uMTEtLjEyLS4yMS0uMTgtLjMybC0uMjItLjM3LS4xOC0uMjljLS4wOS0uMTMtLjE3LS4yNi0uMjctLjM5bC0uMTctLjI0Yy0uMS0uMTUtLjIxLS4zLS4zMi0uNDRsLS4xMi0uMTYtLjQyLS41MiwwLDBjLS4yNy0uMzEtLjU1LS42Mi0uODQtLjkyYTE2LjE0LDE2LjE0LDAsMCwwLTExLjQ0LTQuODFsLTI5LjY3LS4xMiwxOC4xOS0yMy40M2ExNi4yMywxNi4yMywwLDAsMC0yNS42My0xOS45MUw5NSwxMjAuMTRhMTYuMTcsMTYuMTcsMCwwLDAtMy4yNywxMiwxNi40LDE2LjQsMCwwLDAsMS40NSw0Ljk1LDIuMzksMi4zOSwwLDAsMCwuMTMuMjhsLjEuMmExNi4yNCwxNi4yNCwwLDAsMCwxNC40Myw4Ljk0bDI5LjU1LjEyTDExOS4yMiwxNzBBMTYuMjEsMTYuMjEsMCwwLDAsMTMyLDE5Ni4xMmExNi4zMSwxNi4zMSwwLDAsMCwxMi44Ny02LjI2bDM4LjMtNDkuMzJBMTYuMjIsMTYuMjIsMCwwLDAsMTg1Ljg0LDEyNS44NlptLTE1LjUtNS4yOWExMCwxMCwwLDAsMSw2LjEzLDIuMWgwYTEwLjY0LDEwLjY0LDAsMCwxLDEuMzQsMS4yNmwuMTIuMTRjLjE0LjE2LjI3LjM0LjQuNTFsLjIzLjMxYy4xLjE0LjE5LjI5LjI4LjQ0cy4xNi4yNi4yMy40LjE1LjI5LjIzLjQ0LjE0LjI5LjIuNDQuMTIuMjkuMTcuNDNhNSw1LDAsMCwxLC4xOC41YzAsLjEyLjA3LjI1LjEuMzdzLjEyLjQxLjE2LjYybDAsLjE5YTEwLDEwLDAsMCwxLTgsMTEuNjQsMTAuMjQsMTAuMjQsMCwwLDEtMS44NC4xN2gwTDE1MCwxNDAuNDRsMTIuNDMtMTZhMTAsMTAsMCwwLDEsNy45Mi0zLjg3Wk0xMzguMTUsNzQuNjNhMTAsMTAsMCwwLDEsNi42Ny0zLjc4LDEwLjg2LDEwLjg2LDAsMCwxLDEuMjgtLjA4LDkuODksOS44OSwwLDAsMSw2LjExLDIuMDloMEExMC4wNiwxMC4wNiwwLDAsMSwxNTQsODYuOTJsLTIxLjEzLDI3LjIxLTI0LjkzLS4xaC0uMzZaTTEwMS42MywxMzhhOS44OSw5Ljg5LDAsMCwxLTIuODgtMy42YzAtLjA5LS4wOS0uMTgtLjEzLS4yOGwwLS4wNmExMCwxMCwwLDAsMSw5LjI2LTEzLjgzaDBsMjAuMTUuMDktMTIuMzUsMTUuOTFBMTAsMTAsMCwwLDEsMTAxLjYzLDEzOFptMTguNzQsMi4zMmMuMDctLjEuMTUtLjE5LjIyLS4yOGwxNS4yOS0xOS43LDIxLjc4LjA5LS4xNS4xOS0xNS4zNiwxOS43OFpNMTQwLDE4NmExMCwxMCwwLDAsMS0xNS44Mi0xMi4yOGwyMS4wNS0yNy4xMiwyNSwuMWguMjRaIi8+PHBhdGggaWQ9IlBhdGhfNTAiIGRhdGEtbmFtZT0iUGF0aCA1MCIgY2xhc3M9ImNscy0xIiBkPSJNMjg0Ljc1LDkzYTIyLjQ5LDIyLjQ5LDAsMCwwLTE4Ljg3LDEwLjQ5QTIyLjUyLDIyLjUyLDAsMCwwLDI0Nyw5M2EyMi4xMiwyMi4xMiwwLDAsMC0xNi4xNSw3LDI0LjA4LDI0LjA4LDAsMCwwLTYuNTksMTYuNzF2MzEuMDVIMjMydi0zMWExNi40MSwxNi40MSwwLDAsMSw0LjQ2LTExLjM3QTE0LjQ3LDE0LjQ3LDAsMCwxLDI0NywxMDAuNzJjOC4yNywwLDE1LDcuMTcsMTUsMTZoMHYzMS4wNWg3Ljc1di0zMWgwYzAtOC44MSw2LjczLTE2LDE1LTE2czE1LDcuMTcsMTUsMTZ2MzEuMDVoNy43NXYtMzFDMzA3LjUsMTAzLjYyLDI5Ny4yOSw5MywyODQuNzUsOTNaIi8+PHBhdGggaWQ9IlBhdGhfNTEiIGRhdGEtbmFtZT0iUGF0aCA1MSIgY2xhc3M9ImNscy0xIiBkPSJNNjQxLjYzLDExOS43OWEyNy42NCwyNy42NCwwLDEsMC0xNC4yNSwyNC43NnYtOS41YTE5Ljg0LDE5Ljg0LDAsMSwxLDYuNDgtMTQuNjVjMCwuMTQsMCwuMjgsMCwuNDJ2MTguNzdoMHYxMC41MWEyMC40MywyMC40MywwLDEsMS00MC44NiwwaC03Ljc5YTI4LjIyLDI4LjIyLDAsMCwwLDU2LjQ0LDBoMHYtMzAuM1oiLz48Y2lyY2xlIGlkPSJFbGxpcHNlXzQ5IiBkYXRhLW5hbWU9IkVsbGlwc2UgNDkiIGNsYXNzPSJjbHMtMSIgY3g9IjY1OC41OCIgY3k9IjgwLjMyIiByPSIzLjg5Ii8+PC9nPjwvc3ZnPg=="
+         alt="myenergi" style="height:44px;width:auto;display:block;">
+  </div>
+  <span class="header-badge">Support Wizard</span>
+</header>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-wrap">
+  <div class="progress-bar" id="progressBar" style="width:4%"></div>
+</div>
+
+<!-- MAIN STAGE -->
+<main class="stage" id="stage">
+  <!-- Steps rendered here by JS -->
+</main>
+
+<!-- SPINNER -->
+<div class="spinner-overlay" id="spinnerOverlay">
+  <div class="spinner"></div>
+  <span class="spinner-text">Sending your support request…</span>
+</div>
+
+<script>
+// ─── CONFIGURATION ──────────────────────────────────────────────────────────
+const CONFIG = {
+  zendeskSubdomain: 'myenergi',        // Change to your subdomain
+  zendeskEmail:     'support@myenergi.com',
+  zendeskToken:     'YOUR_API_TOKEN',  // Set via backend proxy in production
+  useZendesk:       false,             // Set true when API credentials ready
+};
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+const state = {
+  history:     [],
+  current:     'welcome',
+  tags:        [],
+  pathLabels:  [],
+  uploads:     [],          // { name, dataUrl, type, isSerial? }
+  customer:    { name:'', email:'', phone:'', region:'' },
+  device:      { type:'', serial:'', extraInfo:'' },
+  issueTitle:  '',
+};
+
+// ─── WIZARD TREE ─────────────────────────────────────────────────────────────
+// Each step: { type, eyebrow?, heading, sub?, options?, content?, fields?, next?, resolve?, escalate? }
+const STEPS = {
+
+  // ══ WELCOME ══════════════════════════════════════════════════════════════
+  welcome: {
+    type:'hero',
+    heading:"Hello! Let's fix this together.",
+    sub:"Answer a few simple questions and we'll either solve your problem right away — or get the right people on the case for you. No technical knowledge needed.",
+    next:'main_issue',
+    nextLabel:'Get started',
+    progress:4,
+  },
+
+  // ══ MAIN ISSUE SELECTOR ═══════════════════════════════════════════════════
+  main_issue: {
+    type:'choice',
+    eyebrow:'Step 1 of 3',
+    heading:"What's going wrong today?",
+    sub:"Pick the option that best describes your problem.",
+    progress:15,
+    options:[
+      { emoji:'🚗', label:'My electric car won\'t charge',        hint:'zappi EV charger',           next:'zappi_screen',        tag:'EV Charging' },
+      { emoji:'🌡️', label:'My hot water isn\'t heating up',       hint:'eddi hot water diverter',     next:'eddi_issue',          tag:'Hot Water' },
+      { emoji:'🔄', label:'My device keeps restarting itself',     hint:'zappi, eddi or harvi',        next:'rebooting_device',    tag:'Rebooting' },
+      { emoji:'📺', label:'The screen or LEDs look wrong',         hint:'blank screen, missing info',  next:'screen_issue',        tag:'Display' },
+      { emoji:'📶', label:'Wi-Fi or pairing isn\'t working',       hint:'can\'t connect or stay paired',next:'connectivity',       tag:'Connectivity' },
+      { emoji:'📊', label:'Readings in the app look wrong',        hint:'power or grid figures incorrect',next:'power_readings',  tag:'Power Readings' },
+      { emoji:'🌡️', label:'The device is getting very hot',        hint:'overheating',                 next:'overheating',         tag:'Overheating' },
+      { emoji:'❓', label:'Something else',                         hint:'other issue',                 next:'which_device_other',  tag:'Other' },
+    ],
+  },
+
+  // ══ ZAPPI FLOWS ═══════════════════════════════════════════════════════════
+
+  zappi_screen: {
+    type:'choice',
+    eyebrow:'zappi — Car won\'t charge',
+    heading:"What is your zappi screen showing right now?",
+    sub:"Look at the display on your zappi unit and pick the option that matches what you see.",
+    progress:30,
+    options:[
+      { emoji:'⚡', label:'"Waiting for surplus"',        hint:'common in Eco/Eco+ mode',         next:'zappi_eco_explain',     tag:'Waiting for Surplus' },
+      { emoji:'🔌', label:'"EV Disconnected"',            hint:'car shows as unplugged',           next:'zappi_ev_disconnected', tag:'EV Disconnected' },
+      { emoji:'⏰', label:'"Charge Delayed"',             hint:'charging is paused',               next:'zappi_charge_delayed',  tag:'Charge Delayed' },
+      { emoji:'✅', label:'"Charge Complete"',            hint:'says done but car isn\'t full',    next:'zappi_charge_complete', tag:'Charge Complete' },
+      { emoji:'⚠️', label:'"Pilot Error" or "Pilot Problem"', hint:'pilot communication fault',   next:'zappi_pilot_error',     tag:'Pilot Error' },
+      { emoji:'🔗', label:'"Unknown Cable"',              hint:'cable not recognised',             next:'zappi_unknown_cable',   tag:'Unknown Cable' },
+      { emoji:'❌', label:'"Output Fault #2417"',         hint:'output error code',                next:'zappi_output_fault',    tag:'Output Fault' },
+      { emoji:'⚡', label:'"Contactor Fault #28"',        hint:'contactor error code',             next:'zappi_contactor_fault', tag:'Contactor Fault' },
+      { emoji:'💀', label:'Screen is blank / no display', hint:'nothing showing at all',           next:'zappi_dead',            tag:'Dead Unit' },
+      { emoji:'🔒', label:'"Lock Fault"',                 hint:'locking mechanism issue',          next:'zappi_lock',            tag:'Lock Fault' },
+      { emoji:'📡', label:'"Comms Fault"',                hint:'communication error',              next:'zappi_comms_fault',     tag:'Comms Fault' },
+      { emoji:'🔋', label:'Normal screen, but still no charge', hint:'no error shown',             next:'zappi_no_error',        tag:'No Charge - No Error' },
+    ],
+  },
+
+  zappi_eco_explain: {
+    type:'info',
+    eyebrow:'zappi — Eco Mode explained',
+    heading:"Your zappi is waiting for free solar energy.",
+    progress:60,
+    resolve:true,
+    content:`
+      <div class="info-box">
+        <h3>What does "Waiting for Surplus" mean?</h3>
+        <p>Your zappi is in <strong>Eco</strong> or <strong>Eco+</strong> mode, which means it's patiently waiting until your solar panels produce more electricity than your home is using — then it uses that free energy to charge your car.</p>
+        <p style="margin-top:12px">This is totally normal and means the system is working correctly!</p>
+      </div>
+      <div class="info-box">
+        <h3>✅ Quick fix — switch to Fast mode</h3>
+        <ol>
+          <li>Press the <strong>middle button</strong> on your zappi until you see <strong>"Fast"</strong> mode.</li>
+          <li>Your car should start charging from the grid straight away.</li>
+          <li>Switch back to Eco mode when you want to use free solar energy again.</li>
+        </ol>
+      </div>
+      <div class="info-box">
+        <h3>⚡ Tip for the future</h3>
+        <p>Use <strong>Fast</strong> mode when you need to charge now. Use <strong>Eco/Eco+</strong> mode overnight or when you have solar panels producing power.</p>
+      </div>`,
+    next:'fixed_check',
+  },
+
+  zappi_ev_disconnected: {
+    type:'choice',
+    eyebrow:'zappi — EV Disconnected',
+    heading:"Is your car definitely plugged in?",
+    sub:"Make sure the cable is fully pushed in at both ends — it should click into place.",
+    progress:45,
+    options:[
+      { emoji:'✅', label:'Yes, it\'s fully plugged in and clicked',  next:'zappi_ev_cable_type',   tag:'EV Disconnected - Plugged In' },
+      { emoji:'🔌', label:'Let me try unplugging and replugging it',  next:'zappi_ev_replugged',    tag:'EV Disconnected - Replugging' },
+    ],
+  },
+
+  zappi_ev_cable_type: {
+    type:'choice',
+    eyebrow:'zappi — EV Disconnected',
+    heading:"What type of cable are you using?",
+    progress:55,
+    options:[
+      { emoji:'🔗', label:'A separate cable I plug in each time (untethered)', next:'zappi_ev_try_cable',       tag:'Untethered' },
+      { emoji:'📎', label:'A cable permanently attached to the zappi (tethered)', next:'zappi_ev_tethered',    tag:'Tethered' },
+      { emoji:'🔌', label:'I\'m using an extension cable',                        next:'zappi_ev_extension',   tag:'Extension Cable' },
+    ],
+  },
+
+  zappi_ev_try_cable: {
+    type:'choice',
+    eyebrow:'zappi — EV Disconnected',
+    heading:"Do you have another charge cable you could try?",
+    sub:"Try a different Type 2 cable if you have one available — this will help us figure out if the cable is faulty.",
+    progress:65,
+    options:[
+      { emoji:'✅', label:'Yes — I tried a different cable and it now works', next:'zappi_ev_cable_faulty',  tag:'Cable Faulty' },
+      { emoji:'❌', label:'Different cable — still showing EV Disconnected',  next:'zappi_escalate_upload', tag:'EV Disconnected - Persists' },
+      { emoji:'🤷', label:'I don\'t have another cable to try',               next:'zappi_escalate_upload', tag:'EV Disconnected - No Spare' },
+    ],
+  },
+
+  zappi_ev_cable_faulty: {
+    type:'info',
+    eyebrow:'zappi — Cable issue',
+    heading:"It looks like your charge cable is faulty.",
+    progress:80,
+    resolve:true,
+    content:`
+      <div class="success-box">
+        <div class="success-icon">🔌</div>
+        <h2>Good news — it's the cable, not the zappi!</h2>
+        <p>The issue is with your charge cable, not your zappi unit. You'll need to replace the charge cable.</p>
+      </div>
+      <div class="info-box">
+        <h3>What to do next</h3>
+        <ol>
+          <li>Contact <strong>myenergi support</strong> to arrange a cable replacement if your unit is under warranty.</li>
+          <li>Or purchase a replacement Type 2 cable from a reputable supplier.</li>
+        </ol>
+      </div>`,
+    next:'fixed_check',
+  },
+
+  zappi_ev_extension: {
+    type:'info',
+    eyebrow:'zappi — Extension Cable',
+    heading:"Extension cables can cause this problem.",
+    progress:75,
+    resolve:true,
+    content:`
+      <div class="warning-box">
+        <p><strong>⚠️ Extension cables are not recommended</strong> with EV chargers and can cause "EV Disconnected" errors.</p>
+      </div>
+      <div class="info-box">
+        <h3>What to try</h3>
+        <ol>
+          <li>Remove the extension cable and plug the charge cable directly into the zappi.</li>
+          <li>Test if your car charges normally.</li>
+          <li>If this fixes it, the extension cable is the issue — do not use it with your zappi.</li>
+        </ol>
+      </div>`,
+    next:'fixed_check',
+  },
+
+  zappi_ev_tethered: {
+    type:'choice',
+    eyebrow:'zappi — Tethered unit',
+    heading:"Did this start happening suddenly, or has it never worked?",
+    progress:60,
+    options:[
+      { emoji:'⚡', label:'It suddenly stopped working',     next:'zappi_escalate_upload', tag:'Tethered - Sudden Fault' },
+      { emoji:'🆕', label:'It has never worked since install', next:'zappi_escalate_upload', tag:'Tethered - Never Worked' },
+    ],
+  },
+
+  zappi_ev_replugged: {
+    type:'choice',
+    eyebrow:'zappi — EV Disconnected',
+    heading:"After replugging, is the car now charging?",
+    progress:55,
+    options:[
+      { emoji:'✅', label:'Yes! It\'s charging now',         next:'fixed_success',        tag:'EV Disconnected - Fixed Replug' },
+      { emoji:'❌', label:'No, still showing EV Disconnected', next:'zappi_ev_cable_type', tag:'EV Disconnected - Still Fault' },
+    ],
+  },
+
+  zappi_charge_delayed: {
+    type:'choice',
+    eyebrow:'zappi — Charge Delayed',
+    heading:"Does your car have a built-in charging timer?",
+    sub:"Some cars have a scheduled charging timer set in the car's own settings or app — this can cause \"Charge Delayed\".",
+    progress:45,
+    options:[
+      { emoji:'✅', label:'Yes, my car has a timer — let me check the car settings', next:'zappi_charge_delayed_timer',  tag:'Charge Delayed - Car Timer' },
+      { emoji:'❌', label:'No timer set in the car',                                   next:'zappi_charge_delayed_unplug', tag:'Charge Delayed - No Timer' },
+      { emoji:'🤷', label:'I\'m not sure',                                             next:'zappi_charge_delayed_timer',  tag:'Charge Delayed - Unsure' },
+    ],
+  },
+
+  zappi_charge_delayed_timer: {
+    type:'info',
+    eyebrow:'zappi — Charge Delayed',
+    heading:"A timer in your car is likely pausing the charge.",
+    progress:70,
+    resolve:true,
+    content:`
+      <div class="info-box">
+        <h3>How to fix this</h3>
+        <ol>
+          <li>Open your <strong>car's own settings</strong> or its companion app.</li>
+          <li>Find the <strong>charging schedule</strong> or <strong>timer</strong> settings.</li>
+          <li>Set the car to charge <strong>immediately / now</strong>, or disable any timers.</li>
+          <li>Unplug and replug the cable to restart the charging session.</li>
+        </ol>
+      </div>
+      <div class="info-box">
+        <h3>💡 Tip</h3>
+        <p>If you want scheduled charging, use the <strong>zappi's boost timer</strong> instead of the car's timer — this avoids conflicts.</p>
+      </div>`,
+    next:'fixed_check',
+  },
+
+  zappi_charge_delayed_unplug: {
+    type:'info',
+    eyebrow:'zappi — Charge Delayed',
+    heading:"Let's try a simple reset.",
+    progress:60,
+    content:`
+      <div class="info-box">
+        <h3>Try these steps in order</h3>
+        <ol>
+          <li>Unplug the cable from your car.</li>
+          <li>Wait 10 seconds.</li>
+          <li>Plug back in firmly.</li>
+          <li>If that doesn't work, try switching zappi to <strong>Fast</strong> mode using the middle button.</li>
+        </ol>
+      </div>`,
+    next:'zappi_charge_delayed_result',
+  },
+
+  zappi_charge_delayed_result: {
+    type:'choice',
+    eyebrow:'zappi — Charge Delayed',
+    heading:"Is it charging now?",
+    progress:75,
+    options:[
+      { emoji:'✅', label:'Yes, it\'s now charging!',   next:'fixed_success',        tag:'Charge Delayed - Fixed' },
+      { emoji:'❌', label:'Still showing Charge Delayed', next:'zappi_escalate_upload', tag:'Charge Delayed - Persists' },
+    ],
+  },
+
+  zappi_charge_complete: {
+    type:'choice',
+    eyebrow:'zappi — Charge Complete',
+    heading:"Has any power actually gone into the car before it says 'Charge Complete'?",
+    progress:40,
+    options:[
+      { emoji:'✅', label:'Yes, it charged a bit then stopped',     next:'zappi_charge_complete_partial', tag:'Charge Complete - Partial' },
+      { emoji:'❌', label:'No, it said Charge Complete immediately', next:'zappi_charge_complete_none',   tag:'Charge Complete - Immediate' },
+    ],
+  },
+
+  zappi_charge_complete_partial: {
+    type:'info',
+    eyebrow:'zappi — Charge Complete',
+    heading:"Your car is likely 'sleeping' during charging.",
+    progress:70,
+    resolve:true,
+    content:`
+      <div class="info-box">
+        <h3>What's happening</h3>
+        <p>Some cars go into a power-saving sleep mode when charging stops briefly (such as when switching from Eco to Fast mode, or when solar drops). This makes the zappi think charging is complete.</p>
+      </div>
+      <div class="info-box">
+        <h3>How to fix it</h3>
+        <ol>
+          <li>Switch the zappi to <strong>Fast mode</strong> (press middle button).</li>
+          <li>Or disable any smart charging in your 3rd-party app (e.g. Ohme, Indra).</li>
+          <li>Unplug and replug the car to wake it up.</li>
+        </ol>
+      </div>`,
+    next:'fixed_check',
+  },
+
+  zappi_charge_complete_none: {
+    type:'info',
+    eyebrow:'zappi — Charge Complete',
+    heading:"Let's try a quick reset.",
+    progress:60,
+    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>Unplug cable from car and replug firmly.</li><li>Switch to <strong>Fast mode</strong>.</li><li>If it still says Charge Complete, try a factory reset from the zappi menu.</li></ol></div>`,
+    next:'zappi_charge_complete_result',
+  },
+
+  zappi_charge_complete_result: {
+    type:'choice',
+    eyebrow:'zappi — Charge Complete',
+    heading:"Is it charging now?",
+    progress:80,
+    options:[
+      { emoji:'✅', label:'Yes, charging fine now!',       next:'fixed_success',        tag:'Charge Complete - Fixed' },
+      { emoji:'❌', label:'Still saying Charge Complete',  next:'zappi_escalate_upload', tag:'Charge Complete - Persists' },
+    ],
+  },
+
+  zappi_pilot_error: {
+    type:'info',
+    eyebrow:'zappi — Pilot Error',
+    heading:"Let's clean the connection and try again.",
+    progress:45,
+    content:`
+      <div class="info-box">
+        <h3>What to try</h3>
+        <ol>
+          <li>Unplug the charge cable from the car.</li>
+          <li>Inspect the pins on the cable plug — gently clean them with a dry cloth or a tiny amount of WD-40.</li>
+          <li>Plug back in firmly.</li>
+          <li>If your zappi has a touch screen, try a <strong>factory reset</strong> from the Settings menu.</li>
+        </ol>
+      </div>`,
+    next:'zappi_pilot_result',
+  },
+
+  zappi_pilot_result: {
+    type:'choice',
+    eyebrow:'zappi — Pilot Error',
+    heading:"Is the Pilot Error gone now?",
+    progress:65,
+    options:[
+      { emoji:'✅', label:'Yes, it\'s resolved!',             next:'fixed_success',        tag:'Pilot Error - Fixed' },
+      { emoji:'❌', label:'Still showing Pilot Error',        next:'zappi_pilot_other_car', tag:'Pilot Error - Persists' },
+    ],
+  },
+
+  zappi_pilot_other_car: {
+    type:'choice',
+    eyebrow:'zappi — Pilot Error',
+    heading:"Do you have access to another electric car or charger to test with?",
+    progress:72,
+    options:[
+      { emoji:'✅', label:'Yes — I tried another car and the error went away',  next:'zappi_pilot_car_issue',  tag:'Pilot Error - Car Fault' },
+      { emoji:'❌', label:'Yes — I tried another car and still get the error',  next:'zappi_escalate_upload',  tag:'Pilot Error - zappi Fault' },
+      { emoji:'🤷', label:'No access to another car',                           next:'zappi_escalate_upload',  tag:'Pilot Error - Unknown' },
+    ],
+  },
+
+  zappi_pilot_car_issue: {
+    type:'info',
+    eyebrow:'zappi — Pilot Error',
+    heading:"The issue appears to be with your car, not the zappi.",
+    progress:85,
+    resolve:true,
+    content:`<div class="info-box"><h3>Recommended action</h3><p>Contact your <strong>car manufacturer</strong> or dealer — the pilot communication system in the vehicle may need attention.</p></div>`,
+    next:'fixed_check',
+  },
+
+  zappi_unknown_cable: {
+    type:'choice',
+    eyebrow:'zappi — Unknown Cable',
+    heading:"Is your zappi a tethered unit (cable permanently attached)?",
+    progress:40,
+    options:[
+      { emoji:'📎', label:'Yes — cable is permanently attached',   next:'zappi_unknown_tethered',   tag:'Unknown Cable - Tethered' },
+      { emoji:'🔗', label:'No — I use a separate cable each time', next:'zappi_unknown_untethered', tag:'Unknown Cable - Untethered' },
+    ],
+  },
+
+  zappi_unknown_tethered: {
+    type:'info',
+    eyebrow:'zappi — Unknown Cable',
+    heading:"Try a factory reset first.",
+    progress:60,
+    content:`<div class="info-box"><h3>Steps</h3><ol><li>Go into the zappi <strong>Settings menu</strong>.</li><li>Select <strong>Factory Reset</strong>.</li><li>Once reset, plug your car in again and check if "Unknown Cable" clears.</li></ol></div>`,
+    next:'zappi_unknown_result',
+  },
+
+  zappi_unknown_untethered: {
+    type:'info',
+    eyebrow:'zappi — Unknown Cable',
+    heading:"Try a different charge cable.",
+    progress:60,
+    content:`<div class="info-box"><h3>Steps</h3><ol><li>Try charging with a <strong>different Type 2 cable</strong>.</li><li>If it works with the other cable, your original cable is faulty.</li><li>If it shows Unknown Cable with all cables, we may need to replace the zappi.</li></ol></div>`,
+    next:'zappi_unknown_result',
+  },
+
+  zappi_unknown_result: {
+    type:'choice',
+    eyebrow:'zappi — Unknown Cable',
+    heading:"Did that fix the Unknown Cable message?",
+    progress:75,
+    options:[
+      { emoji:'✅', label:'Yes, it\'s working now!',           next:'fixed_success',        tag:'Unknown Cable - Fixed' },
+      { emoji:'❌', label:'Still showing Unknown Cable',       next:'zappi_escalate_upload', tag:'Unknown Cable - Persists' },
+    ],
+  },
+
+  zappi_output_fault: {
+    type:'info',
+    eyebrow:'zappi — Output Fault',
+    heading:"Let's try a reboot and firmware check.",
+    progress:45,
+    content:`
+      <div class="info-box">
+        <h3>Steps to try</h3>
+        <ol>
+          <li>Turn your zappi <strong>off and on again</strong> from the consumer unit (the fuse board) — flip the switch off, wait 10 seconds, flip back on.</li>
+          <li>Once rebooted, plug your car back in and check if the warning has cleared.</li>
+          <li>If it returns, check your <strong>firmware version</strong> in the zappi menu (Settings → About) — it should match the latest version shown at myenergi.com.</li>
+        </ol>
+      </div>`,
+    next:'zappi_output_result',
+  },
+
+  zappi_output_result: {
+    type:'choice',
+    eyebrow:'zappi — Output Fault',
+    heading:"Is the Output Fault gone?",
+    progress:65,
+    options:[
+      { emoji:'✅', label:'Yes, it\'s resolved!',             next:'fixed_success',        tag:'Output Fault - Fixed' },
+      { emoji:'❌', label:'Still showing Output Fault',       next:'zappi_escalate_upload', tag:'Output Fault - Persists' },
+    ],
+  },
+
+  zappi_contactor_fault: {
+    type:'choice',
+    eyebrow:'zappi — Contactor Fault #28',
+    heading:"Can you check the voltage readings on your zappi?",
+    sub:"Go into the zappi menu → Readings → Page 2. Look for the maximum and minimum voltage figures.",
+    progress:45,
+    options:[
+      { emoji:'📉', label:'Voltage went below 203V or above 257V',  next:'zappi_contactor_voltage',  tag:'Contactor - Voltage Issue' },
+      { emoji:'✅', label:'Voltage looks normal (within 203–257V)',  next:'zappi_escalate_upload',    tag:'Contactor - Normal Voltage' },
+      { emoji:'🤷', label:'I\'m not sure how to check',             next:'zappi_escalate_upload',    tag:'Contactor - Unsure' },
+    ],
+  },
+
+  zappi_contactor_voltage: {
+    type:'info',
+    eyebrow:'zappi — Voltage Issue',
+    heading:"There may be a supply voltage problem at your property.",
+    progress:70,
+    resolve:true,
+    content:`
+      <div class="warning-box"><p><strong>⚠️ Important:</strong> This is not a fault with the zappi — it's a problem with the electricity supply to your home.</p></div>
+      <div class="info-box"><h3>What to do</h3><ol><li>Contact your <strong>Distribution Network Operator (DNO)</strong> — the company that manages electricity cables in your area.</li><li>Report that you're experiencing over or under-voltage at your property.</li><li>Your energy supplier can tell you who your DNO is.</li></ol></div>`,
+    next:'fixed_check',
+  },
+
+  zappi_dead: {
+    type:'choice',
+    eyebrow:'zappi — No Display',
+    heading:"Is the MCB or RCD switch for your zappi turned on?",
+    sub:"Check your consumer unit (fuse board). There should be a switch specifically for your EV charger — make sure it's flipped up (ON).",
+    progress:40,
+    options:[
+      { emoji:'✅', label:'Yes, the switch is on and stays on',         next:'zappi_dead_stays_on',  tag:'Dead - Switch OK' },
+      { emoji:'⚡', label:'The switch keeps tripping off',              next:'zappi_tripping',       tag:'Dead - Tripping' },
+      { emoji:'❓', label:'I\'m not sure which switch it is',           next:'zappi_dead_unsure',    tag:'Dead - Unsure Switch' },
+    ],
+  },
+
+  zappi_dead_stays_on: {
+    type:'info',
+    eyebrow:'zappi — No Display',
+    heading:"Try turning the switch off and back on.",
+    progress:55,
+    content:`<div class="info-box"><h3>Steps</h3><ol><li>At the fuse board, flip the zappi's switch <strong>off</strong>.</li><li>Wait <strong>30 seconds</strong>.</li><li>Flip it back <strong>on</strong>.</li><li>Check if the zappi screen comes back on.</li></ol></div>`,
+    next:'zappi_dead_result',
+  },
+
+  zappi_dead_result: {
+    type:'choice',
+    eyebrow:'zappi — No Display',
+    heading:"Did the zappi screen come back on?",
+    progress:70,
+    options:[
+      { emoji:'✅', label:'Yes, screen is back!',     next:'fixed_success',        tag:'Dead - Fixed Reboot' },
+      { emoji:'❌', label:'Still no display at all',  next:'zappi_escalate_upload', tag:'Dead - Persists' },
+    ],
+  },
+
+  zappi_dead_unsure: {
+    type:'info',
+    eyebrow:'zappi — No Display',
+    heading:"Finding the right switch.",
+    progress:50,
+    content:`<div class="info-box"><h3>How to find the right switch</h3><ol><li>Open your <strong>consumer unit</strong> (the grey box of switches, usually in a cupboard or garage).</li><li>Look for a switch labelled <strong>"EV Charger"</strong>, <strong>"zappi"</strong>, or similar.</li><li>If unsure, take a photo of the fuse board and we can help identify it.</li></ol></div>`,
+    next:'zappi_dead_result',
+  },
+
+  zappi_tripping: {
+    type:'choice',
+    eyebrow:'zappi — Tripping MCB/RCD',
+    heading:"Is your car plugged into the zappi when it trips?",
+    progress:45,
+    options:[
+      { emoji:'✅', label:'Yes — trips when car is plugged in',   next:'zappi_tripping_unplug',   tag:'Tripping - With Car' },
+      { emoji:'❌', label:'No — trips even without car plugged',  next:'zappi_escalate_upload',   tag:'Tripping - Without Car' },
+    ],
+  },
+
+  zappi_tripping_unplug: {
+    type:'info',
+    eyebrow:'zappi — Tripping MCB/RCD',
+    heading:"Unplug the car and reboot the zappi.",
+    progress:55,
+    content:`<div class="info-box"><h3>Steps to try</h3><ol><li><strong>Unplug</strong> your car from the zappi.</li><li>Turn the MCB/RCD <strong>off at the fuse board</strong>, wait 10 seconds, turn back on.</li><li>Once rebooted (without car), does the switch stay on?</li></ol></div>`,
+    next:'zappi_tripping_result',
+  },
+
+  zappi_tripping_result: {
+    type:'choice',
+    eyebrow:'zappi — Tripping MCB/RCD',
+    heading:"With the car unplugged, does the MCB/RCD stay on?",
+    progress:70,
+    options:[
+      { emoji:'✅', label:'Yes, stays on without car plugged in',   next:'zappi_tripping_car',    tag:'Tripping - Car Issue' },
+      { emoji:'❌', label:'No, still trips without car plugged in', next:'zappi_escalate_upload', tag:'Tripping - zappi Fault' },
+    ],
+  },
+
+  zappi_tripping_car: {
+    type:'info',
+    eyebrow:'zappi — Tripping MCB/RCD',
+    heading:"The issue may be with your car or charge cable.",
+    progress:80,
+    content:`<div class="info-box"><h3>What to do</h3><ol><li>Try reducing the charge rate: go into zappi Settings and lower the <strong>max charge rate to 16 Amps</strong>.</li><li>Try charging with a different cable if available.</li><li>Try charging your car at a different AC charger to test the car itself.</li></ol></div>`,
+    next:'zappi_tripping_result2',
+  },
+
+  zappi_tripping_result2: {
+    type:'choice',
+    eyebrow:'zappi — Tripping MCB/RCD',
+    heading:"Has reducing the charge rate or trying a different charger helped?",
+    progress:85,
+    options:[
+      { emoji:'✅', label:'Yes, that fixed it!',               next:'fixed_success',        tag:'Tripping - Fixed Rate' },
+      { emoji:'❌', label:'Still tripping — car charges elsewhere', next:'zappi_escalate_upload', tag:'Tripping - Car OK, zappi Fault' },
+      { emoji:'🚗', label:'Car won\'t charge anywhere',        next:'tripping_car_issue',   tag:'Tripping - Car Fault' },
+    ],
+  },
+
+  tripping_car_issue: {
+    type:'info',
+    eyebrow:'Tripping — Car Issue',
+    heading:"The problem appears to be with your car.",
+    progress:85,
+    resolve:true,
+    content:`<div class="info-box"><h3>Recommended action</h3><p>Contact your <strong>car manufacturer or dealer</strong> — the issue appears to be with the vehicle's charging system, not the zappi.</p></div>`,
+    next:'fixed_check',
+  },
+
+  zappi_lock: {
+    type:'info',
+    eyebrow:'zappi — Lock Fault',
+    heading:"Let's try fixing the lock issue.",
+    progress:45,
+    content:`
+      <div class="info-box">
+        <h3>Steps to try</h3>
+        <ol>
+          <li>Remove the charge cable completely and reboot the zappi (turn off at fuse board, wait 10 sec, turn on).</li>
+          <li>Check the <strong>top recess of the charge plug</strong> for any debris or dirt — clean if needed.</li>
+          <li>When replugging, push the cable in <strong>firmly and quickly</strong> — plugging in slowly can trigger a lock fault.</li>
+          <li>Repeat this 5 times to confirm.</li>
+        </ol>
+      </div>`,
+    next:'zappi_lock_result',
+  },
+
+  zappi_lock_result: {
+    type:'choice',
+    eyebrow:'zappi — Lock Fault',
+    heading:"Is the lock fault resolved?",
+    progress:65,
+    options:[
+      { emoji:'✅', label:'Yes, working now!',        next:'fixed_success',        tag:'Lock Fault - Fixed' },
+      { emoji:'❌', label:'Still getting lock fault', next:'zappi_escalate_upload', tag:'Lock Fault - Persists' },
+    ],
+  },
+
+  zappi_comms_fault: {
+    type:'info',
+    eyebrow:'zappi — Comms Fault',
+    heading:"Let's start with a simple reboot.",
+    progress:45,
+    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>Reboot your zappi — turn the switch off at the fuse board, wait 15 seconds, turn back on.</li><li>Wait 2 minutes for it to fully restart.</li><li>Check if the Comms Fault message has cleared.</li></ol></div>`,
+    next:'zappi_comms_result',
+  },
+
+  zappi_comms_result: {
+    type:'choice',
+    eyebrow:'zappi — Comms Fault',
+    heading:"Did the reboot clear the Comms Fault?",
+    progress:65,
+    options:[
+      { emoji:'✅', label:'Yes, it\'s cleared!',       next:'fixed_success',        tag:'Comms Fault - Fixed' },
+      { emoji:'❌', label:'Still showing Comms Fault', next:'zappi_escalate_upload', tag:'Comms Fault - Persists' },
+    ],
+  },
+
+  zappi_no_error: {
+    type:'choice',
+    eyebrow:'zappi — Not Charging',
+    heading:"Is your zappi currently in 'Stop' mode?",
+    sub:"Look at the screen — does it say 'Stop' or show a stop icon?",
+    progress:40,
+    options:[
+      { emoji:'🛑', label:'Yes, it says Stop',                  next:'zappi_stop_mode',       tag:'Stop Mode' },
+      { emoji:'❌', label:'No, it\'s not in Stop mode',         next:'zappi_no_error_mode',   tag:'Not Charging - No Stop' },
+    ],
+  },
+
+  zappi_stop_mode: {
+    type:'info',
+    eyebrow:'zappi — Stop Mode',
+    heading:"Your zappi is in Stop mode — that's why it's not charging!",
+    progress:60,
+    resolve:true,
+    content:`<div class="info-box"><h3>How to fix</h3><ol><li>Press the <strong>middle button</strong> on your zappi to cycle through modes.</li><li>Select <strong>Fast</strong>, <strong>Eco</strong>, or <strong>Eco+</strong> mode.</li><li>Your car should start charging immediately.</li></ol></div>`,
+    next:'fixed_check',
+  },
+
+  zappi_no_error_mode: {
+    type:'info',
+    eyebrow:'zappi — Not Charging',
+    heading:"Switch to Fast mode to test.",
+    progress:55,
+    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>Press the middle button to switch to <strong>Fast mode</strong>.</li><li>Unplug and replug the cable from your car.</li><li>Wait 1 minute — does it start charging?</li></ol></div>`,
+    next:'zappi_no_error_result',
+  },
+
+  zappi_no_error_result: {
+    type:'choice',
+    eyebrow:'zappi — Not Charging',
+    heading:"Is it charging in Fast mode now?",
+    progress:70,
+    options:[
+      { emoji:'✅', label:'Yes, charging in Fast mode!',   next:'fixed_success',        tag:'Not Charging - Fixed Fast Mode' },
+      { emoji:'❌', label:'Still not charging',            next:'zappi_escalate_upload', tag:'Not Charging - Persists' },
+    ],
+  },
+
+  // ══ EDDI FLOWS ════════════════════════════════════════════════════════════
+
+  eddi_issue: {
+    type:'choice',
+    eyebrow:'eddi — Hot Water',
+    heading:"What does your eddi screen show?",
+    progress:30,
+    options:[
+      { emoji:'☀️', label:'"Waiting for Surplus"',         hint:'waiting for solar power',     next:'eddi_waiting_solar',     tag:'eddi - Waiting Surplus' },
+      { emoji:'🌡️', label:'"Max Temp Reached"',            hint:'overtemperature message',     next:'eddi_max_temp',          tag:'eddi - Max Temp' },
+      { emoji:'💀', label:'Screen is blank / no display',  hint:'nothing showing at all',      next:'eddi_dead',              tag:'eddi - Dead' },
+      { emoji:'✅', label:'Normal screen, just no heat',   hint:'no error shown',              next:'eddi_no_error',          tag:'eddi - No Heat No Error' },
+    ],
+  },
+
+  eddi_waiting_solar: {
+    type:'choice',
+    eyebrow:'eddi — Waiting for Surplus',
+    heading:"Do you actually have solar panels generating power right now?",
+    sub:"Check your solar inverter display, app, or the myenergi app to see if your panels are producing electricity.",
+    progress:40,
+    options:[
+      { emoji:'☀️', label:'Yes, my solar panels are generating power',  next:'eddi_solar_ct',        tag:'eddi - Solar Active' },
+      { emoji:'🌧️', label:'No, it\'s cloudy / dark / panels not on',    next:'eddi_no_solar',        tag:'eddi - No Solar' },
+      { emoji:'🤷', label:'I\'m not sure',                              next:'eddi_no_solar',        tag:'eddi - Solar Unsure' },
+    ],
+  },
+
+  eddi_no_solar: {
+    type:'info',
+    eyebrow:'eddi — Waiting for Surplus',
+    heading:"The eddi is working correctly — it's just waiting for sunshine!",
+    progress:60,
+    resolve:true,
+    content:`
+      <div class="success-box">
+        <div class="success-icon">☀️</div>
+        <h2>Nothing wrong here!</h2>
+        <p>Your eddi is designed to heat water using <strong>surplus solar energy</strong>. When there's no sun (or not enough solar being generated), it waits. This is exactly how it should work.</p>
+      </div>
+      <div class="info-box">
+        <h3>💡 Tip — Manual boost</h3>
+        <p>If you need hot water now, press the <strong>boost button</strong> on your eddi to manually heat the water from the grid.</p>
+      </div>`,
+    next:'fixed_check',
+  },
+
+  eddi_solar_ct: {
+    type:'choice',
+    eyebrow:'eddi — CT Clamp Check',
+    heading:"Is the eddi set as Priority 1 in your system?",
+    sub:"Open the myenergi app → Devices → eddi → check the priority setting.",
+    progress:55,
+    options:[
+      { emoji:'1️⃣', label:'Yes, it\'s Priority 1',      next:'eddi_ct_check',      tag:'eddi - Priority 1 OK' },
+      { emoji:'❌', label:'No, it\'s a lower priority',  next:'eddi_set_priority',  tag:'eddi - Priority Wrong' },
+      { emoji:'🤷', label:'I\'m not sure',               next:'eddi_ct_check',      tag:'eddi - Priority Unsure' },
+    ],
+  },
+
+  eddi_set_priority: {
+    type:'info',
+    eyebrow:'eddi — Priority Setting',
+    heading:"Set the eddi to Priority 1.",
+    progress:65,
+    content:`<div class="info-box"><h3>How to do this</h3><ol><li>Open the <strong>myenergi app</strong>.</li><li>Go to <strong>Devices → eddi → Priority</strong>.</li><li>Set it to <strong>Priority 1</strong>.</li><li>Wait a few minutes to see if it starts diverting.</li></ol></div>`,
+    next:'eddi_solar_result',
+  },
+
+  eddi_ct_check: {
+    type:'info',
+    eyebrow:'eddi — CT Clamp',
+    heading:"The issue may be with the CT clamp sensor.",
+    progress:65,
+    content:`
+      <div class="info-box">
+        <h3>What is a CT clamp?</h3>
+        <p>A small clip fitted to your electricity cables that measures how much power is being exported. If it's loose or wrongly fitted, the eddi won't know when to divert.</p>
+      </div>
+      <div class="warning-box">
+        <p><strong>⚠️ This requires an electrician.</strong> Do not attempt to access electrical components yourself. Contact your original installer or myenergi support to check the CT clamp.</p>
+      </div>`,
+    next:'zappi_escalate_upload',
+  },
+
+  eddi_solar_result: {
+    type:'choice',
+    eyebrow:'eddi — Diverting Check',
+    heading:"Is the eddi now diverting power and heating the water?",
+    progress:80,
+    options:[
+      { emoji:'✅', label:'Yes, it\'s working now!',          next:'fixed_success',        tag:'eddi - Fixed Priority' },
+      { emoji:'❌', label:'Still not diverting',              next:'zappi_escalate_upload', tag:'eddi - Still Not Diverting' },
+    ],
+  },
+
+  eddi_max_temp: {
+    type:'choice',
+    eyebrow:'eddi — Max Temp Reached',
+    heading:"Is the water in your tank already hot?",
+    sub:"Check if you can get hot water from a tap in your home.",
+    progress:45,
+    options:[
+      { emoji:'🔥', label:'Yes, the water is already very hot',  next:'eddi_max_temp_hot',    tag:'eddi - Water Hot' },
+      { emoji:'❄️', label:'No, the water is cold or lukewarm',   next:'eddi_max_temp_cold',   tag:'eddi - Water Cold Max Temp' },
+    ],
+  },
+
+  eddi_max_temp_hot: {
+    type:'info',
+    eyebrow:'eddi — Max Temp Reached',
+    heading:"The eddi has done its job — the water is fully heated!",
+    progress:70,
+    resolve:true,
+    content:`
+      <div class="success-box">
+        <div class="success-icon">✅</div>
+        <h2>Everything is working correctly!</h2>
+        <p>Your eddi heats water to the maximum temperature and then stops — this prevents overheating. Once the water cools down, it will start diverting again automatically.</p>
+      </div>`,
+    next:'fixed_check',
+  },
+
+  eddi_max_temp_cold: {
+    type:'info',
+    eyebrow:'eddi — Max Temp Reached',
+    heading:"The thermostat may need attention.",
+    progress:65,
+    content:`<div class="info-box"><h3>Likely cause</h3><p>The immersion heater's thermostat may have tripped or failed. This is a plumbing/electrical issue — <strong>your original installer</strong> or a qualified plumber should check the immersion heater and thermostat.</p></div>`,
+    next:'zappi_escalate_upload',
+  },
+
+  eddi_dead: {
+    type:'info',
+    eyebrow:'eddi — No Display',
+    heading:"Let's check the power supply.",
+    progress:40,
+    content:`<div class="info-box"><h3>Check these first</h3><ol><li>Find the switch at your fuse board for the eddi — make sure it's switched ON (up).</li><li>Turn it off, wait 30 seconds, turn back on.</li><li>Check if the eddi screen comes back to life.</li></ol></div>`,
+    next:'eddi_dead_result',
+  },
+
+  eddi_dead_result: {
+    type:'choice',
+    eyebrow:'eddi — No Display',
+    heading:"Did the eddi screen come back on?",
+    progress:60,
+    options:[
+      { emoji:'✅', label:'Yes, screen is back!',   next:'fixed_success',        tag:'eddi - Dead Fixed' },
+      { emoji:'❌', label:'Still no display',       next:'zappi_escalate_upload', tag:'eddi - Dead Persists' },
+    ],
+  },
+
+  eddi_no_error: {
+    type:'info',
+    eyebrow:'eddi — No Heat',
+    heading:"Try a manual boost.",
+    progress:45,
+    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>Press the <strong>boost button</strong> on the eddi to manually trigger heating.</li><li>Check the myenergi app to make sure the eddi shows as active.</li><li>Ensure your zappi (if you have one) isn't taking all the solar priority.</li></ol></div>`,
+    next:'eddi_no_error_result',
+  },
+
+  eddi_no_error_result: {
+    type:'choice',
+    eyebrow:'eddi — No Heat',
+    heading:"Is the eddi now heating water?",
+    progress:65,
+    options:[
+      { emoji:'✅', label:'Yes, heating now!',      next:'fixed_success',        tag:'eddi - No Heat Fixed' },
+      { emoji:'❌', label:'Still not heating',      next:'zappi_escalate_upload', tag:'eddi - No Heat Persists' },
+    ],
+  },
+
+  // ══ REBOOTING ═════════════════════════════════════════════════════════════
+
+  rebooting_device: {
+    type:'choice',
+    eyebrow:'Device Rebooting',
+    heading:"Which device keeps restarting?",
+    progress:30,
+    options:[
+      { emoji:'🚗', label:'zappi (EV charger)', next:'rebooting_firmware',  tag:'Rebooting - zappi' },
+      { emoji:'🌡️', label:'eddi (hot water)',   next:'rebooting_firmware',  tag:'Rebooting - eddi' },
+      { emoji:'🔌', label:'harvi (sensor)',      next:'rebooting_firmware',  tag:'Rebooting - harvi' },
+    ],
+  },
+
+  rebooting_firmware: {
+    type:'choice',
+    eyebrow:'Device Rebooting',
+    heading:"Is your device's firmware up to date?",
+    sub:"You can check the firmware version in the device menu under Settings → About, or in the myenergi app.",
+    progress:45,
+    options:[
+      { emoji:'✅', label:'Yes, firmware is up to date',        next:'rebooting_escalate',   tag:'Rebooting - Firmware Current' },
+      { emoji:'❌', label:'No, it needs updating',             next:'rebooting_update',     tag:'Rebooting - Firmware Old' },
+      { emoji:'🤷', label:'I\'m not sure how to check',        next:'rebooting_update',     tag:'Rebooting - Firmware Unsure' },
+    ],
+  },
+
+  rebooting_update: {
+    type:'info',
+    eyebrow:'Device Rebooting',
+    heading:"Update the firmware — this often fixes rebooting issues.",
+    progress:60,
+    content:`<div class="info-box"><h3>How to update</h3><ol><li>Open the <strong>myenergi app</strong>.</li><li>Go to your device and tap <strong>Settings → Firmware Update</strong>.</li><li>Follow the on-screen instructions.</li><li>The device may reboot during the update — this is normal.</li></ol></div>`,
+    next:'rebooting_result',
+  },
+
+  rebooting_result: {
+    type:'choice',
+    eyebrow:'Device Rebooting',
+    heading:"Has the rebooting stopped after the firmware update?",
+    progress:75,
+    options:[
+      { emoji:'✅', label:'Yes, it\'s stable now!',       next:'fixed_success',        tag:'Rebooting - Fixed Firmware' },
+      { emoji:'❌', label:'Still rebooting unexpectedly', next:'rebooting_escalate',   tag:'Rebooting - Persists' },
+    ],
+  },
+
+  rebooting_escalate: {
+    type:'info',
+    eyebrow:'Device Rebooting',
+    heading:"This needs a closer look.",
+    progress:65,
+    content:`<div class="info-box"><h3>What we'll need</h3><p>Persistent rebooting may indicate a loose wiring connection or a hardware fault. This needs to be looked at by our technical team.</p></div>`,
+    next:'zappi_escalate_upload',
+  },
+
+  // ══ SCREEN ISSUES ═════════════════════════════════════════════════════════
+
+  screen_issue: {
+    type:'choice',
+    eyebrow:'Display Issue',
+    heading:"What does the screen issue look like?",
+    progress:30,
+    options:[
+      { emoji:'💀', label:'Screen is completely blank',         next:'screen_blank_device',  tag:'Screen - Blank' },
+      { emoji:'🌫️', label:'Missing lines, pixels, or scrambled', next:'screen_display_fault', tag:'Screen - Display Fault' },
+      { emoji:'💡', label:'LEDs aren\'t lighting up correctly', next:'screen_led',           tag:'Screen - LED' },
+      { emoji:'🖐️', label:'Buttons aren\'t responding',         next:'screen_controls',      tag:'Screen - Controls' },
+    ],
+  },
+
+  screen_blank_device: {
+    type:'choice',
+    eyebrow:'Blank Screen',
+    heading:"Which device has the blank screen?",
+    progress:40,
+    options:[
+      { emoji:'🚗', label:'zappi (EV charger)', next:'zappi_dead',   tag:'Blank - zappi' },
+      { emoji:'🌡️', label:'eddi (hot water)',   next:'eddi_dead',    tag:'Blank - eddi' },
+    ],
+  },
+
+  screen_display_fault: {
+    type:'info',
+    eyebrow:'Display Issue',
+    heading:"Check if the device is still working.",
+    progress:45,
+    content:`<div class="info-box"><h3>What to check</h3><ol><li>Even with a partial display, is the device still functioning? (e.g. is the car still charging?)</li><li>Try a reboot — turn off at the fuse board, wait 30 seconds, turn back on.</li><li>If the screen is scrambled but functioning, this often requires a <strong>display or board replacement</strong>.</li></ol></div>`,
+    next:'screen_display_result',
+  },
+
+  screen_display_result: {
+    type:'choice',
+    eyebrow:'Display Issue',
+    heading:"After rebooting, how is the screen?",
+    progress:60,
+    options:[
+      { emoji:'✅', label:'Screen is back to normal!',         next:'fixed_success',        tag:'Display - Fixed Reboot' },
+      { emoji:'🌫️', label:'Still scrambled or has missing parts', next:'zappi_escalate_upload', tag:'Display - Persists' },
+    ],
+  },
+
+  screen_led: {
+    type:'info',
+    eyebrow:'LED Issue',
+    heading:"Try a factory reset.",
+    progress:45,
+    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>Go into the device <strong>Settings menu</strong>.</li><li>Select <strong>Factory Reset</strong>.</li><li>Once reset, check if the LEDs are working correctly.</li></ol></div>`,
+    next:'screen_led_result',
+  },
+
+  screen_led_result: {
+    type:'choice',
+    eyebrow:'LED Issue',
+    heading:"Are the LEDs working after the factory reset?",
+    progress:65,
+    options:[
+      { emoji:'✅', label:'Yes, LEDs are fine now!',  next:'fixed_success',        tag:'LED - Fixed Reset' },
+      { emoji:'❌', label:'LEDs still faulty',         next:'zappi_escalate_upload', tag:'LED - Persists' },
+    ],
+  },
+
+  screen_controls: {
+    type:'info',
+    eyebrow:'Controls Unresponsive',
+    heading:"Try a reboot first.",
+    progress:45,
+    content:`<div class="info-box"><h3>Steps</h3><ol><li>Turn the device off at the fuse board.</li><li>Wait 30 seconds.</li><li>Turn back on and test the buttons.</li></ol></div>`,
+    next:'screen_controls_result',
+  },
+
+  screen_controls_result: {
+    type:'choice',
+    eyebrow:'Controls Unresponsive',
+    heading:"Are the controls responding after the reboot?",
+    progress:65,
+    options:[
+      { emoji:'✅', label:'Yes, buttons work now!',      next:'fixed_success',        tag:'Controls - Fixed Reboot' },
+      { emoji:'❌', label:'Still not responding',         next:'zappi_escalate_upload', tag:'Controls - Persists' },
+    ],
+  },
+
+  // ══ CONNECTIVITY ═════════════════════════════════════════════════════════
+
+  connectivity: {
+    type:'choice',
+    eyebrow:'Connectivity',
+    heading:"What kind of connectivity problem is it?",
+    progress:30,
+    options:[
+      { emoji:'📶', label:'Won\'t connect to Wi-Fi',              next:'wifi_issue',    tag:'Wi-Fi' },
+      { emoji:'🔗', label:'Devices won\'t pair with each other',  next:'pairing_issue', tag:'Pairing' },
+      { emoji:'🔓', label:'Keeps losing pairing',                 next:'loses_pairing', tag:'Loses Pairing' },
+      { emoji:'🔄', label:'Firmware won\'t update',               next:'firmware_issue', tag:'Firmware Update' },
+    ],
+  },
+
+  wifi_issue: {
+    type:'choice',
+    eyebrow:'Wi-Fi Issue',
+    heading:"Has this device ever connected to Wi-Fi before?",
+    progress:40,
+    options:[
+      { emoji:'✅', label:'Yes, it was connected but dropped off',  next:'wifi_reboot_router', tag:'Wi-Fi - Was Connected' },
+      { emoji:'🆕', label:'No, this is a new setup',                next:'wifi_new_setup',     tag:'Wi-Fi - First Time' },
+    ],
+  },
+
+  wifi_reboot_router: {
+    type:'info',
+    eyebrow:'Wi-Fi Issue',
+    heading:"Start by rebooting your router.",
+    progress:50,
+    content:`<div class="info-box"><h3>Steps</h3><ol><li>Turn your <strong>Wi-Fi router off</strong> (unplug it from the wall).</li><li>Wait <strong>30 seconds</strong>.</li><li>Plug back in and wait 2 minutes for it to fully restart.</li><li>Check if your device reconnects automatically.</li></ol></div>`,
+    next:'wifi_result',
+  },
+
+  wifi_new_setup: {
+    type:'info',
+    eyebrow:'Wi-Fi — New Setup',
+    heading:"Follow the Wi-Fi setup steps.",
+    progress:50,
+    content:`<div class="info-box"><h3>How to connect</h3><ol><li>On the device, go to <strong>Settings → Wi-Fi</strong>.</li><li>Select your Wi-Fi network from the list.</li><li>Enter your password carefully (Wi-Fi passwords are case-sensitive).</li><li>If it says "Failed", double-check your password and try again.</li></ol></div>`,
+    next:'wifi_result',
+  },
+
+  wifi_result: {
+    type:'choice',
+    eyebrow:'Wi-Fi Issue',
+    heading:"Is Wi-Fi now connected?",
+    progress:70,
+    options:[
+      { emoji:'✅', label:'Yes, connected!',          next:'fixed_success',        tag:'Wi-Fi - Fixed' },
+      { emoji:'❌', label:'Still not connecting',     next:'zappi_escalate_upload', tag:'Wi-Fi - Persists' },
+    ],
+  },
+
+  pairing_issue: {
+    type:'info',
+    eyebrow:'Pairing Issue',
+    heading:"Try putting both devices on the same channel.",
+    progress:45,
+    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>On <strong>both devices</strong>, go to Settings and set the <strong>channel to 4</strong>.</li><li>Reboot both devices.</li><li>Try pairing again.</li><li>Make sure the devices are within <strong>20 metres</strong> of each other with no thick stone or metal walls between them.</li></ol></div>`,
+    next:'pairing_result',
+  },
+
+  pairing_result: {
+    type:'choice',
+    eyebrow:'Pairing Issue',
+    heading:"Are the devices now paired?",
+    progress:65,
+    options:[
+      { emoji:'✅', label:'Yes, paired successfully!',  next:'fixed_success',        tag:'Pairing - Fixed' },
+      { emoji:'❌', label:'Still won\'t pair',           next:'zappi_escalate_upload', tag:'Pairing - Persists' },
+    ],
+  },
+
+  loses_pairing: {
+    type:'info',
+    eyebrow:'Loses Pairing',
+    heading:"Check your Wi-Fi signal strength.",
+    progress:45,
+    content:`<div class="info-box"><h3>What to check</h3><ol><li>Check the Wi-Fi signal strength to <strong>both devices</strong> in their Settings → Network menu.</li><li>If signal is weak, consider a Wi-Fi extender or moving the router closer.</li><li>Make sure both devices are connected to the <strong>same Wi-Fi access point</strong> (not different extenders with the same name).</li></ol></div>`,
+    next:'loses_pairing_result',
+  },
+
+  loses_pairing_result: {
+    type:'choice',
+    eyebrow:'Loses Pairing',
+    heading:"Has improving the Wi-Fi signal helped?",
+    progress:65,
+    options:[
+      { emoji:'✅', label:'Yes, pairing is stable now!',  next:'fixed_success',        tag:'Loses Pairing - Fixed' },
+      { emoji:'❌', label:'Still losing pairing',          next:'zappi_escalate_upload', tag:'Loses Pairing - Persists' },
+    ],
+  },
+
+  firmware_issue: {
+    type:'info',
+    eyebrow:'Firmware Update',
+    heading:"Check your hub connection first.",
+    progress:45,
+    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>Make sure your device is correctly connected to the myenergi hub or vHub.</li><li>Reboot the device and try downloading the firmware again via the app or device menu.</li><li>If it still fails, try a <strong>factory reset</strong> and attempt the firmware update again.</li></ol></div>`,
+    next:'firmware_result',
+  },
+
+  firmware_result: {
+    type:'choice',
+    eyebrow:'Firmware Update',
+    heading:"Did the firmware update successfully?",
+    progress:65,
+    options:[
+      { emoji:'✅', label:'Yes, updated!',          next:'fixed_success',        tag:'Firmware - Fixed' },
+      { emoji:'❌', label:'Still failing to update', next:'zappi_escalate_upload', tag:'Firmware - Persists' },
+    ],
+  },
+
+  // ══ POWER READINGS ═══════════════════════════════════════════════════════
+
+  power_readings: {
+    type:'choice',
+    eyebrow:'Incorrect Readings',
+    heading:"Which readings look wrong?",
+    progress:30,
+    options:[
+      { emoji:'⚡', label:'Grid power reading is wrong',         next:'grid_ct_check',   tag:'Readings - Grid Wrong' },
+      { emoji:'☀️', label:'Solar/generation reading is wrong',   next:'other_ct_check',  tag:'Readings - Solar Wrong' },
+      { emoji:'🏠', label:'Home consumption reading is wrong',   next:'other_ct_check',  tag:'Readings - Home Wrong' },
+      { emoji:'📱', label:'App shows wrong figures overall',     next:'other_ct_check',  tag:'Readings - App Wrong' },
+    ],
+  },
+
+  grid_ct_check: {
+    type:'info',
+    eyebrow:'Grid Reading Wrong',
+    heading:"The CT clamp sensor may need repositioning.",
+    progress:50,
+    content:`
+      <div class="info-box">
+        <h3>What is a CT clamp?</h3>
+        <p>A small clip attached to your main electricity cable that measures your grid usage. If it's in the wrong place or loose, readings will be wrong.</p>
+      </div>
+      <div class="warning-box">
+        <p><strong>⚠️ Electrical safety:</strong> Checking or moving the CT clamp requires access to your electrical installation. Only a qualified electrician should do this.</p>
+      </div>
+      <div class="info-box">
+        <h3>What to check (for your installer)</h3>
+        <ol>
+          <li>CT clamp should be on the <strong>meter tail directly after the isolator</strong>.</li>
+          <li>The clamp must be <strong>clicked fully shut</strong>.</li>
+          <li>If the cable has been extended, only <strong>1 twisted pair</strong> should be used.</li>
+          <li>There should only be <strong>1 Grid CT set</strong> in the myenergi system.</li>
+        </ol>
+      </div>`,
+    next:'readings_escalate',
+  },
+
+  other_ct_check: {
+    type:'info',
+    eyebrow:'Incorrect Reading',
+    heading:"A CT clamp may be fitted to the wrong cable.",
+    progress:50,
+    content:`<div class="info-box"><h3>What your installer needs to check</h3><ol><li>Verify the CT clamp is clipped around the <strong>correct cable</strong> for what it's measuring.</li><li>Check the CT is correctly set in the myenergi system settings.</li></ol></div><div class="warning-box"><p><strong>⚠️ This requires an electrician</strong> to access the electrical installation safely.</p></div>`,
+    next:'readings_escalate',
+  },
+
+  readings_escalate: {
+    type:'choice',
+    eyebrow:'Incorrect Readings',
+    heading:"Would you like us to raise a support ticket for your installer?",
+    progress:65,
+    options:[
+      { emoji:'✅', label:'Yes, please raise a support ticket', next:'zappi_escalate_upload', tag:'Readings - Escalate' },
+      { emoji:'🔧', label:'I\'ll contact my installer directly', next:'fixed_success',         tag:'Readings - Self Resolve' },
+    ],
+  },
+
+  // ══ OVERHEATING ══════════════════════════════════════════════════════════
+
+  overheating: {
+    type:'choice',
+    eyebrow:'Overheating',
+    heading:"Where is the device installed?",
+    progress:35,
+    options:[
+      { emoji:'☀️', label:'In direct sunlight or a very hot location', next:'overheating_environment', tag:'Overheating - Environment' },
+      { emoji:'🏠', label:'In a normal indoor or garage location',      next:'overheating_install',     tag:'Overheating - Normal Location' },
+    ],
+  },
+
+  overheating_environment: {
+    type:'info',
+    eyebrow:'Overheating',
+    heading:"The location is causing the overheating.",
+    progress:60,
+    resolve:true,
+    content:`
+      <div class="info-box">
+        <h3>What to do</h3>
+        <p>The device is overheating because of its environment. You'll need to:</p>
+        <ol>
+          <li>Shade the device from direct sunlight (a small canopy or shade is fine).</li>
+          <li>Ensure there is adequate airflow around the device — don't box it in.</li>
+          <li>Contact your installer if relocation is needed.</li>
+        </ol>
+      </div>`,
+    next:'fixed_check',
+  },
+
+  overheating_install: {
+    type:'info',
+    eyebrow:'Overheating',
+    heading:"Check the installation meets myenergi guidelines.",
+    progress:55,
+    content:`<div class="info-box"><h3>What to check</h3><ol><li>The device must be installed as per myenergi's installation guidelines — correct mounting, correct clearances, correct cable routing.</li><li>If it's not installed correctly, your <strong>original installer</strong> should be contacted to refit it.</li></ol></div>`,
+    next:'overheating_result',
+  },
+
+  overheating_result: {
+    type:'choice',
+    eyebrow:'Overheating',
+    heading:"Is the overheating resolved?",
+    progress:70,
+    options:[
+      { emoji:'✅', label:'Yes, it\'s running normally now', next:'fixed_success',        tag:'Overheating - Fixed' },
+      { emoji:'❌', label:'Still overheating',               next:'zappi_escalate_upload', tag:'Overheating - Persists' },
+    ],
+  },
+
+  // ══ OTHER / WHICH DEVICE ══════════════════════════════════════════════════
+
+  which_device_other: {
+    type:'choice',
+    eyebrow:'Other Issue',
+    heading:"Which myenergi device do you have a problem with?",
+    progress:30,
+    options:[
+      { emoji:'🚗', label:'zappi — EV charger',        tag:'zappi',  next:'generic_other' },
+      { emoji:'🌡️', label:'eddi — hot water diverter',  tag:'eddi',   next:'generic_other' },
+      { emoji:'🔋', label:'libbi — home battery',      tag:'libbi',  next:'generic_other' },
+      { emoji:'📡', label:'harvi — CT sensor',          tag:'harvi',  next:'generic_other' },
+      { emoji:'📱', label:'myenergi app',               tag:'App',    next:'generic_other' },
+    ],
+  },
+
+  // Single consolidated step replacing all 5 near-identical "X_other" steps
+  generic_other: {
+    type:'info',
+    eyebrow:'Get support',
+    heading:"Let's get you to the right team.",
+    progress:45,
+    content:`<div class="info-box"><h3>We'll take it from here</h3><p>Our support team will look into this for you. Use the button below to log your issue — include as much detail as you can so we can help quickly.</p></div>`,
+    next:'zappi_escalate_upload',
+  },
+
+  // ══ DID THIS FIX IT? ═════════════════════════════════════════════════════
+
+  fixed_check: {
+    type:'choice',
+    eyebrow:'All done?',
+    heading:"Did that solve the problem?",
+    progress:90,
+    options:[
+      { emoji:'✅', label:'Yes, it\'s all working!',                    next:'fixed_success',        tag:'Resolved' },
+      { emoji:'❌', label:'No, still having issues',                    next:'zappi_escalate_upload', tag:'Not Resolved' },
+      { emoji:'🔁', label:'New problem appeared / different issue',     next:'main_issue',            tag:'New Issue' },
+    ],
+  },
+
+  fixed_success: {
+    type:'success',
+    heading:"Great news — problem solved! 🎉",
+    progress:100,
+    content:`
+      <div class="success-box">
+        <div class="success-icon">✅</div>
+        <h2>You're all sorted!</h2>
+        <p>We're glad we could help you get things working again. If the issue comes back or you have any other questions, don't hesitate to start the wizard again or contact our support team.</p>
+      </div>
+      <div class="info-box">
+        <h3>💡 Keep things running smoothly</h3>
+        <ul>
+          <li>Keep your device firmware up to date via the myenergi app.</li>
+          <li>Check out the <a href="https://support.myenergi.com" target="_blank" style="color:var(--green)">myenergi help centre</a> for tips and guides.</li>
+        </ul>
+      </div>`,
+  },
+
+  // ══ ESCALATE & UPLOAD ═════════════════════════════════════════════════════
+
+  zappi_escalate_upload: {
+    type:'upload',
+    eyebrow:'Getting help',
+    heading:"Let's get our team on this.",
+    sub:"We weren't able to fix this with the steps above. Upload a photo of your device and any error messages — this helps our team diagnose the issue faster and avoids you needing to repeat yourself.",
+    progress:80,
+    uploadLabel:'Add photos of your device & any error messages on screen',
+    uploadTypes:['JPG','PNG','PDF'],
+    next:'escalate_contact',
+  },
+
+  escalate_contact: {
+    type:'contact',
+    eyebrow:'Almost done',
+    heading:"Your details",
+    sub:"We'll use these to create a support ticket and get back to you as soon as possible.",
+    progress:90,
+    next:'escalate_submit',
+  },
+
+  escalate_submit: {
+    type:'submit',
+    eyebrow:'Review',
+    heading:"Check your details",
+    sub:"Here's a summary of everything we'll send to the support team.",
+    progress:95,
+    next:'ticket_submitted',
+  },
+
+  ticket_submitted: {
+    type:'ticket_success',
+    heading:"Support ticket created ✅",
+    progress:100,
+  },
+};
+
+// ─── RENDER ENGINE ───────────────────────────────────────────────────────────
+
+function getStep(id){ return STEPS[id] || STEPS['main_issue']; }
+
+function setProgress(p){
+  document.getElementById('progressBar').style.width = (p||4)+'%';
+}
+
+function render(stepId, direction='forward'){
+  const step = getStep(stepId);
+  state.current = stepId;
+  setProgress(step.progress || 4);
+
+  const stage = document.getElementById('stage');
+  const old = stage.querySelector('.step-card.active');
+
+  // Build new card
+  const card = document.createElement('div');
+  card.className = 'step-card';
+  card.innerHTML = buildStep(step, stepId);
+  stage.appendChild(card);
+
+  // Animate out old
+  if(old){
+    old.classList.add('exit-left');
+    setTimeout(()=>{ if(old.parentNode) old.parentNode.removeChild(old); }, 300);
+  }
+
+  // Animate in new
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      card.classList.add('active');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  // Bind events
+  bindEvents(card, step, stepId);
+}
+
+function buildStep(step, stepId){
+  let html = '';
+
+  // Back button (not on welcome or success screens)
+  if(state.history.length > 0 && step.type !== 'success' && step.type !== 'ticket_success'){
+    html += `<button class="back-btn" onclick="goBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back
+    </button>`;
+  }
+
+  // Path trail (show after a few steps)
+  if(state.pathLabels.length > 1){
+    html += `<div class="path-trail">`;
+    state.pathLabels.forEach(l => { html += `<span class="path-crumb">${l}</span>`; });
+    html += `</div>`;
+  }
+
+  // Eyebrow
+  if(step.eyebrow){
+    html += `<div class="step-eyebrow">${step.eyebrow}</div>`;
+  }
+
+  // Heading
+  html += `<h1 class="step-heading">${step.heading}</h1>`;
+
+  // Sub
+  if(step.sub){
+    html += `<p class="step-sub">${step.sub}</p>`;
+  }
+
+  // Type-specific content
+  if(step.type === 'hero'){
+    html += `
+      <div style="margin:32px 0;padding:32px;background:var(--grey-dark);border-radius:var(--radius);border-left:4px solid var(--green);">
+        <p style="font-size:1.1rem;line-height:1.8;color:var(--grey-light);">${step.sub || ''}</p>
+        <p style="margin-top:16px;font-size:.9rem;color:#555;">Average resolution time: <strong style="color:var(--green)">under 5 minutes</strong></p>
+      </div>`;
+    html = html.replace(`<p class="step-sub">${step.sub}</p>`,'');
+    html += `<div class="btn-row"><button class="btn btn-primary" data-next="${step.next}">Get started →</button></div>`;
+  }
+
+  else if(step.type === 'choice'){
+    html += `<div class="choices" id="choices">`;
+    step.options.forEach((opt,i) => {
+      html += `
+        <button class="choice-btn" data-next="${opt.next}" data-tag="${opt.tag||''}" data-label="${opt.label}" style="animation-delay:${i*50}ms">
+          <span class="choice-emoji">${opt.emoji||'▸'}</span>
+          <span class="choice-text">
+            <span class="choice-label">${opt.label}</span>
+            ${opt.hint ? `<span class="choice-hint">${opt.hint}</span>` : ''}
+          </span>
+          <span class="choice-arrow">→</span>
+        </button>`;
+    });
+    html += `</div>`;
+  }
+
+  else if(step.type === 'info'){
+    html += step.content || '';
+    const nextStep = step.next ? getStep(step.next) : null;
+    const nextLabel = nextStep && nextStep.type === 'upload' ? 'I still need help →' :
+                      step.resolve ? 'Yes, that fixed it! ✅' : 'Next →';
+    if(step.next){
+      html += `<div class="btn-row">
+        <button class="btn btn-primary" data-next="${step.next}">${nextLabel}</button>
+        ${step.resolve ? `<button class="btn btn-ghost" data-next="zappi_escalate_upload">Still having issues</button>` : ''}
+      </div>`;
+    }
+  }
+
+  else if(step.type === 'upload'){
+    html += step.content || '';
+    html += `
+      <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+        <input type="file" id="fileInput" accept="image/*,application/pdf" multiple>
+        <div class="upload-icon">📸</div>
+        <h4>${step.uploadLabel || 'Upload photos or documents'}</h4>
+        <p>Tap here to take a photo or choose a file</p>
+        <div class="upload-types">
+          ${(step.uploadTypes||['JPG','PNG','PDF']).map(t=>`<span>${t}</span>`).join('')}
+        </div>
+      </div>
+      <div class="upload-previews" id="uploadPreviews"></div>
+      <div id="uploadDocs"></div>
+    `;
+    html += `<div class="btn-row">
+      <button class="btn btn-primary" data-next="${step.next}">Continue →</button>
+      <button class="btn btn-ghost" data-next="${step.next}">Skip — no photos available</button>
+    </div>`;
+  }
+
+  else if(step.type === 'contact'){
+    // Serial sticker example SVG (illustrative label mockup)
+    const stickerSVG = `<svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+      <rect width="120" height="80" rx="4" fill="#f5f5f5"/>
+      <rect x="6" y="6" width="30" height="30" rx="2" fill="#222"/>
+      <rect x="8" y="8" width="26" height="26" rx="1" fill="#fff"/>
+      <rect x="9" y="9" width="7" height="7" fill="#222"/>
+      <rect x="19" y="9" width="7" height="7" fill="#222"/>
+      <rect x="29" y="9" width="6" height="7" fill="#222"/>
+      <rect x="9" y="19" width="7" height="7" fill="#222"/>
+      <rect x="12" y="22" width="4" height="4" fill="#fff"/>
+      <rect x="19" y="19" width="4" height="4" fill="#222"/>
+      <rect x="24" y="19" width="2" height="4" fill="#fff"/>
+      <rect x="27" y="19" width="4" height="4" fill="#222"/>
+      <rect x="9" y="27" width="7" height="7" fill="#222"/>
+      <rect x="12" y="30" width="4" height="4" fill="#fff"/>
+      <rect x="18" y="27" width="3" height="7" fill="#222"/>
+      <rect x="23" y="27" width="3" height="3" fill="#222"/>
+      <rect x="28" y="29" width="6" height="5" fill="#222"/>
+      <text x="42" y="18" font-family="monospace" font-size="6" fill="#111" font-weight="bold">myenergi</text>
+      <text x="42" y="27" font-family="monospace" font-size="5" fill="#333">Model: zappi v2</text>
+      <text x="42" y="36" font-family="monospace" font-size="5" fill="#333">S/N: 10012345</text>
+      <rect x="6" y="44" width="108" height="1" fill="#ddd"/>
+      <text x="6" y="55" font-family="monospace" font-size="4.5" fill="#555">||||| ||| || ||||| || |||</text>
+      <text x="6" y="65" font-family="monospace" font-size="4.5" fill="#777">CE  RoHS  ⚡ 230V~</text>
+      <rect x="2" y="2" width="116" height="76" rx="3" fill="none" stroke="#40ff7a" stroke-width="1.5" stroke-dasharray="4,2"/>
+    </svg>`;
+
+    html += `
+      <div class="field-group" style="margin-bottom:28px">
+        <label class="field-label">Serial number sticker photo <span class="field-required">*</span></label>
+        <div class="serial-example-wrap">
+          <div class="serial-example-img">${stickerSVG}</div>
+          <div class="serial-example-caption">
+            <strong>Where to find it</strong>
+            The serial sticker is on the side or back of your device. It has a barcode and shows "S/N:" followed by numbers. Take a photo of the whole sticker — this helps us verify your warranty and identify your exact unit.
+          </div>
+        </div>
+        <div class="upload-area" id="serialUploadArea" onclick="document.getElementById('serialFileInput').click()" style="padding:20px">
+          <input type="file" id="serialFileInput" accept="image/*" capture="environment">
+          <div class="upload-icon" style="font-size:1.8rem">📷</div>
+          <h4 style="font-size:.95rem">Tap to photograph your serial sticker</h4>
+          <p style="font-size:.8rem">Or choose an existing photo from your library</p>
+        </div>
+        <div id="serialPreview" style="margin-top:10px"></div>
+      </div>
+      <form id="contactForm" autocomplete="on">
+        <div class="field-group">
+          <label class="field-label" for="custRegion">Your country / region <span class="field-required">*</span></label>
+          <select class="field-select" id="custRegion" required>
+            <option value="" disabled ${!state.customer.region?'selected':''}>— Select your country —</option>
+            <optgroup label="United Kingdom">
+              <option value="GB-England" ${state.customer.region==='GB-England'?'selected':''}>England</option>
+              <option value="GB-Scotland" ${state.customer.region==='GB-Scotland'?'selected':''}>Scotland</option>
+              <option value="GB-Wales" ${state.customer.region==='GB-Wales'?'selected':''}>Wales</option>
+              <option value="GB-NI" ${state.customer.region==='GB-NI'?'selected':''}>Northern Ireland</option>
+            </optgroup>
+            <optgroup label="Europe">
+              <option value="DE" ${state.customer.region==='DE'?'selected':''}>Germany</option>
+              <option value="FR" ${state.customer.region==='FR'?'selected':''}>France</option>
+              <option value="NL" ${state.customer.region==='NL'?'selected':''}>Netherlands</option>
+              <option value="BE" ${state.customer.region==='BE'?'selected':''}>Belgium</option>
+              <option value="IE" ${state.customer.region==='IE'?'selected':''}>Ireland</option>
+              <option value="NO" ${state.customer.region==='NO'?'selected':''}>Norway</option>
+              <option value="SE" ${state.customer.region==='SE'?'selected':''}>Sweden</option>
+              <option value="DK" ${state.customer.region==='DK'?'selected':''}>Denmark</option>
+              <option value="AT" ${state.customer.region==='AT'?'selected':''}>Austria</option>
+              <option value="IT" ${state.customer.region==='IT'?'selected':''}>Italy</option>
+              <option value="ES" ${state.customer.region==='ES'?'selected':''}>Spain</option>
+              <option value="PL" ${state.customer.region==='PL'?'selected':''}>Poland</option>
+              <option value="EU-Other" ${state.customer.region==='EU-Other'?'selected':''}>Other EU country</option>
+            </optgroup>
+            <optgroup label="Asia Pacific">
+              <option value="AU" ${state.customer.region==='AU'?'selected':''}>Australia</option>
+              <option value="NZ" ${state.customer.region==='NZ'?'selected':''}>New Zealand</option>
+            </optgroup>
+            <option value="Other" ${state.customer.region==='Other'?'selected':''}>Other / not listed</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="custName">Your name <span class="field-required">*</span></label>
+          <input class="field-input" id="custName" type="text" placeholder="e.g. Jane Smith" autocomplete="name" value="${state.customer.name}" required>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="custEmail">Email address <span class="field-required">*</span></label>
+          <input class="field-input" id="custEmail" type="email" placeholder="e.g. jane@example.com" autocomplete="email" value="${state.customer.email}" required>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="custPhone">Phone number (optional)</label>
+          <input class="field-input" id="custPhone" type="tel" placeholder="e.g. 07700 900000" autocomplete="tel" value="${state.customer.phone}">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="deviceSerial">Device serial number <span class="field-required">*</span></label>
+          <input class="field-input" id="deviceSerial" type="text" placeholder="e.g. 10012345 — found on the sticker above" value="${state.device.serial}" required
+            style="font-family:monospace;font-size:1.1rem;letter-spacing:.04em">
+          <p style="margin-top:6px;font-size:.8rem;color:#666;">Type the number shown after "S/N:" on the sticker.</p>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="extraInfo">Any extra details (optional)</label>
+          <textarea class="field-textarea" id="extraInfo" placeholder="Anything else we should know — how long has this been happening, any recent changes, etc.">${state.device.extraInfo}</textarea>
+        </div>
+      </form>`;
+    html += `<div class="btn-row"><button class="btn btn-primary" id="contactNext">Review my ticket →</button></div>`;
+  }
+
+  else if(step.type === 'submit'){
+    const issueDesc = state.tags.join(' → ');
+    const regionLabel = state.customer.region || '—';
+    const serialUploads = state.uploads.filter(u=>u.isSerial);
+    const otherUploads  = state.uploads.filter(u=>!u.isSerial);
+    html += `
+      <div class="ticket-summary">
+        <h4>Your Support Ticket Summary</h4>
+        <div class="ticket-row"><span class="ticket-key">Region</span><span class="ticket-val">${regionLabel}</span></div>
+        <div class="ticket-row"><span class="ticket-key">Name</span><span class="ticket-val">${state.customer.name || '—'}</span></div>
+        <div class="ticket-row"><span class="ticket-key">Email</span><span class="ticket-val">${state.customer.email || '—'}</span></div>
+        ${state.customer.phone ? `<div class="ticket-row"><span class="ticket-key">Phone</span><span class="ticket-val">${state.customer.phone}</span></div>` : ''}
+        <div class="ticket-row"><span class="ticket-key">Serial No.</span><span class="ticket-val" style="font-family:monospace">${state.device.serial || '—'}</span></div>
+        <div class="ticket-row"><span class="ticket-key">Issue</span><span class="ticket-val">${issueDesc}</span></div>
+        <div class="ticket-row"><span class="ticket-key">Serial photo</span><span class="ticket-val">${serialUploads.length > 0 ? '✅ Attached' : '⚠️ Not provided'}</span></div>
+        <div class="ticket-row"><span class="ticket-key">Other photos</span><span class="ticket-val">${otherUploads.length > 0 ? otherUploads.length + ' file(s)' : 'None'}</span></div>
+      </div>`;
+    if(state.uploads.length > 0){
+      html += `<div class="upload-previews" style="margin-bottom:24px">`;
+      state.uploads.forEach(u => {
+        if(u.dataUrl && u.type.startsWith('image/')){
+          html += `<div class="upload-preview"><img src="${u.dataUrl}" alt="${u.name}"></div>`;
+        } else {
+          html += `<div class="upload-doc-item" style="display:inline-flex;margin-right:8px;border-radius:8px;padding:8px 12px;background:var(--grey-dark)"><span>📄 ${u.name}</span></div>`;
+        }
+      });
+      html += `</div>`;
+    }
+    html += `<div class="btn-row">
+      <button class="btn btn-primary" id="submitTicket">Submit to support team →</button>
+      <button class="btn btn-secondary" onclick="goBack()">← Edit details</button>
+    </div>`;
+  }
+
+  else if(step.type === 'success'){
+    html += step.content || '';
+    html += `<div class="btn-row"><button class="btn btn-primary" onclick="restartWizard()">Start a new enquiry</button></div>`;
+  }
+
+  else if(step.type === 'ticket_success'){
+    html += `
+      <div class="success-box">
+        <div class="success-icon">🎟️</div>
+        <h2>Your ticket has been raised!</h2>
+        <p>We've sent a confirmation to <strong>${state.customer.email}</strong>. Our support team will be in touch within <strong>1 working day</strong>.</p>
+        <p style="margin-top:12px;font-size:.85rem">Your reference number: <strong style="color:var(--green)" id="ticketRef">#generating…</strong></p>
+      </div>
+      <div class="info-box">
+        <h3>What happens next?</h3>
+        <ol>
+          <li>You'll receive a confirmation email shortly.</li>
+          <li>A myenergi support agent will review your information and photos.</li>
+          <li>They'll reply with next steps — usually a fix, a part replacement, or an installer visit.</li>
+        </ol>
+      </div>`;
+    html += `<div class="btn-row"><button class="btn btn-primary" onclick="restartWizard()">Back to start</button></div>`;
+  }
+
+  return html;
+}
+
+function bindEvents(card, step, stepId){
+  // Choice buttons
+  card.querySelectorAll('.choice-btn[data-next]').forEach(btn => {
+    btn.addEventListener('click', ()=>{
+      btn.classList.add('selected');
+      const next = btn.dataset.next;
+      const tag  = btn.dataset.tag;
+      const label= btn.dataset.label;
+      if(tag)   state.tags.push(tag);
+      if(label) state.pathLabels.push(label.length > 30 ? label.slice(0,28)+'…' : label);
+      state.history.push(stepId);
+      setTimeout(()=> render(next), 180);
+    });
+  });
+
+  // Generic next buttons — exclude .choice-btn which has its own handler above
+  card.querySelectorAll('button[data-next]:not(.choice-btn)').forEach(btn => {
+    btn.addEventListener('click', ()=>{
+      const next = btn.dataset.next;
+      state.history.push(stepId);
+      render(next);
+    });
+  });
+
+  // File upload
+  const fileInput = card.querySelector('#fileInput');
+  const uploadArea = card.querySelector('#uploadArea');
+  if(fileInput){
+    fileInput.addEventListener('change', e => handleFiles(e.target.files, card));
+    uploadArea.addEventListener('dragover', e =>{ e.preventDefault(); uploadArea.classList.add('drag-over'); });
+    uploadArea.addEventListener('dragleave', ()=> uploadArea.classList.remove('drag-over'));
+    uploadArea.addEventListener('drop', e =>{ e.preventDefault(); uploadArea.classList.remove('drag-over'); handleFiles(e.dataTransfer.files, card); });
+    uploadArea.addEventListener('click', e =>{ if(e.target === fileInput) return; fileInput.click(); e.stopPropagation(); });
+    renderUploadPreviews(card);
+  }
+
+  // Serial sticker upload
+  const serialFileInput = card.querySelector('#serialFileInput');
+  const serialUploadArea = card.querySelector('#serialUploadArea');
+  if(serialFileInput){
+    serialFileInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        // Remove any previous serial upload
+        state.uploads = state.uploads.filter(u => !u.isSerial);
+        state.uploads.unshift({ name: file.name, type: file.type, dataUrl: ev.target.result, isSerial: true });
+        const preview = card.querySelector('#serialPreview');
+        if(preview){
+          preview.innerHTML = `
+            <div style="display:flex;align-items:center;gap:12px;background:#0d2416;border:1px solid rgba(64,255,122,.3);border-radius:10px;padding:12px 16px;">
+              <img src="${ev.target.result}" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid rgba(64,255,122,.2)">
+              <div>
+                <div style="color:var(--green);font-weight:700;font-size:.88rem">✅ Sticker photo added</div>
+                <div style="color:var(--grey-light);font-size:.8rem;margin-top:2px">${file.name}</div>
+                <button onclick="removeSerialPhoto(this)" style="margin-top:6px;background:none;border:none;color:#888;font-size:.8rem;cursor:pointer;padding:0;font-family:var(--font)">Remove</button>
+              </div>
+            </div>`;
+        }
+        if(serialUploadArea) serialUploadArea.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    });
+    if(serialUploadArea){
+      serialUploadArea.addEventListener('click', e => {
+        if(e.target === serialFileInput) return;
+        serialFileInput.click();
+        e.stopPropagation();
+      });
+    }
+  }
+
+  // Contact form next
+  const contactNext = card.querySelector('#contactNext');
+  if(contactNext){
+    contactNext.addEventListener('click', ()=>{
+      const region = card.querySelector('#custRegion')?.value?.trim();
+      const name   = card.querySelector('#custName')?.value?.trim();
+      const email  = card.querySelector('#custEmail')?.value?.trim();
+      const serial = card.querySelector('#deviceSerial')?.value?.trim();
+
+      if(!region){
+        alert('Please select your country / region.');
+        card.querySelector('#custRegion')?.focus();
+        return;
+      }
+      if(!name){
+        alert('Please enter your name to continue.');
+        card.querySelector('#custName')?.focus();
+        return;
+      }
+      if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        alert('Please enter a valid email address.');
+        card.querySelector('#custEmail')?.focus();
+        return;
+      }
+      if(!serial){
+        alert('Please enter your device serial number — this is required to process your support request.');
+        card.querySelector('#deviceSerial')?.focus();
+        return;
+      }
+      state.customer.region = region;
+      state.customer.name   = name;
+      state.customer.email  = email;
+      state.customer.phone  = card.querySelector('#custPhone')?.value?.trim() || '';
+      state.device.serial   = serial;
+      state.device.extraInfo= card.querySelector('#extraInfo')?.value?.trim() || '';
+      state.history.push(stepId);
+      render('escalate_submit');
+    });
+  }
+
+  // Submit ticket
+  const submitBtn = card.querySelector('#submitTicket');
+  if(submitBtn){
+    submitBtn.addEventListener('click', submitTicket);
+  }
+
+  // Ticket ref animation
+  const ticketRef = card.querySelector('#ticketRef');
+  if(ticketRef){
+    const ref = 'ME-' + Math.floor(100000 + Math.random()*900000);
+    setTimeout(()=>{ ticketRef.textContent = ref; }, 800);
+  }
+}
+
+function handleFiles(files, card){
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      state.uploads.push({ name: file.name, type: file.type, dataUrl: e.target.result });
+      renderUploadPreviews(card);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderUploadPreviews(card){
+  const previewsEl = card.querySelector('#uploadPreviews');
+  const docsEl     = card.querySelector('#uploadDocs');
+  if(!previewsEl) return;
+
+  previewsEl.innerHTML = '';
+  docsEl && (docsEl.innerHTML = '');
+
+  state.uploads.forEach((u, i) => {
+    if(u.type && u.type.startsWith('image/')){
+      previewsEl.innerHTML += `
+        <div class="upload-preview">
+          <img src="${u.dataUrl}" alt="${u.name}">
+          <button class="remove-upload" onclick="removeUpload(${i}, this)">✕</button>
+        </div>`;
+    } else if(docsEl){
+      docsEl.innerHTML += `
+        <div class="upload-doc-item">
+          <span>📄 ${u.name}</span>
+          <button onclick="removeUpload(${i}, this)">✕</button>
+        </div>`;
+    }
+  });
+}
+
+function removeUpload(idx, el){
+  state.uploads.splice(idx, 1);
+  const card = el.closest('.step-card');
+  renderUploadPreviews(card);
+}
+
+function removeSerialPhoto(btn){
+  state.uploads = state.uploads.filter(u => !u.isSerial);
+  const card = btn.closest('.step-card');
+  const preview = card.querySelector('#serialPreview');
+  const area = card.querySelector('#serialUploadArea');
+  if(preview) preview.innerHTML = '';
+  if(area) area.style.display = '';
+}
+
+function goBack(){
+  if(state.history.length === 0) return;
+  const prev = state.history.pop();
+  // Also pop the last tag and label added
+  if(state.tags.length) state.tags.pop();
+  if(state.pathLabels.length) state.pathLabels.pop();
+  render(prev, 'back');
+}
+
+function restartWizard(){
+  state.history = [];
+  state.current = 'welcome';
+  state.tags = [];
+  state.pathLabels = [];
+  state.uploads = [];
+  state.customer = { name:'', email:'', phone:'', region:'' };
+  state.device   = { type:'', serial:'', extraInfo:'' };
+  render('welcome');
+}
+
+// ─── ZENDESK TICKET SUBMISSION ───────────────────────────────────────────────
+
+async function submitTicket(){
+  const overlay = document.getElementById('spinnerOverlay');
+  overlay.classList.add('active');
+
+  try {
+    if(CONFIG.useZendesk){
+      await submitToZendesk();
+    } else {
+      // Demo mode — simulate API call
+      await new Promise(r => setTimeout(r, 1800));
+    }
+    overlay.classList.remove('active');
+    state.history.push('escalate_submit');
+    render('ticket_submitted');
+  } catch(err) {
+    overlay.classList.remove('active');
+    alert('There was a problem submitting your ticket. Please try again or email support@myenergi.com\n\nError: ' + err.message);
+  }
+}
+
+async function submitToZendesk(){
+  const issueDesc = state.tags.join(' → ');
+  const serialUploads = state.uploads.filter(u=>u.isSerial).length;
+  const otherUploads  = state.uploads.filter(u=>!u.isSerial).length;
+  const body = `Support Wizard Ticket
+========================
+Region / Subsidiary: ${state.customer.region || 'Not provided'}
+Customer: ${state.customer.name} <${state.customer.email}>
+Phone: ${state.customer.phone || 'Not provided'}
+Serial No.: ${state.device.serial || 'Not provided'}
+
+Issue Path: ${issueDesc}
+
+Additional Details:
+${state.device.extraInfo || 'None provided'}
+
+Wizard Steps Taken:
+${state.pathLabels.join(' → ')}
+
+Attachments:
+- Serial sticker photo: ${serialUploads > 0 ? 'Yes' : 'Not provided'}
+- Other photos/docs: ${otherUploads} file(s)`;
+
+  const payload = {
+    ticket: {
+      subject: `Support Wizard: ${state.tags[state.tags.length-1] || 'Issue'}`,
+      comment: { body },
+      requester: { name: state.customer.name, email: state.customer.email },
+      tags: ['support_wizard', state.customer.region || 'region_unknown', ...state.tags.map(t => t.toLowerCase().replace(/[^a-z0-9]/g,'_'))],
+    }
+  };
+
+  const creds = btoa(`${CONFIG.zendeskEmail}/token:${CONFIG.zendeskToken}`);
+  const res = await fetch(`https://${CONFIG.zendeskSubdomain}.zendesk.com/api/v2/tickets.json`, {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'Authorization':`Basic ${creds}` },
+    body: JSON.stringify(payload),
+  });
+
+  if(!res.ok){
+    const err = await res.json().catch(()=>({}));
+    throw new Error(err.description || `HTTP ${res.status}`);
+  }
+}
+
+// ─── BOOT ────────────────────────────────────────────────────────────────────
+render('welcome');
+</script>
+</body>
+</html>
