@@ -428,6 +428,23 @@ body{
 }
 .serial-example-caption strong{color:var(--white);display:block;margin-bottom:4px}
 
+
+/* ─── LEARN MORE LINK ───────────────────────────────────────────────────── */
+.learn-more-link{
+  display:inline-flex;align-items:center;gap:8px;
+  color:var(--green);font-size:.88rem;font-weight:700;
+  text-decoration:none;font-family:var(--font);
+  padding:12px 0;border:none;background:none;cursor:pointer;
+  transition:color .2s;
+}
+.learn-more-link:hover{color:#5aff8e}
+.learn-more-link svg{width:14px;height:14px;flex-shrink:0;transition:transform .2s}
+.learn-more-link:hover svg{transform:translateX(3px)}
+.learn-more-wrap{
+  border-top:1px solid rgba(64,255,122,.15);
+  margin-top:8px;padding-top:4px;
+}
+
 /* ─── RESPONSIVE — MOBILE FIRST ────────────────────────────────── */
 @media(max-width:600px){
   .step-heading{font-size:1.5rem}
@@ -497,1281 +514,1641 @@ const state = {
 // Each step: { type, eyebrow?, heading, sub?, options?, content?, fields?, next?, resolve?, escalate? }
 const STEPS = {
 
-  // ══ WELCOME ══════════════════════════════════════════════════════════════
   welcome: {
     type:'hero',
-    heading:"Hello! Let's fix this together.",
-    sub:"Answer a few simple questions and we'll either solve your problem right away — or get the right people on the case for you. No technical knowledge needed.",
-    next:'main_issue',
-    nextLabel:'Get started',
+    eyebrow:'Welcome',
+    heading:`Hello! Let's fix this together.`,
+    sub:`Answer a few simple questions — we'll solve your problem right away, or get the right team on it for you. No technical knowledge needed.`,
     progress:4,
+    next:'main_issue',
   },
 
-  // ══ MAIN ISSUE SELECTOR ═══════════════════════════════════════════════════
   main_issue: {
     type:'choice',
-    eyebrow:'Step 1 of 3',
-    heading:"What's going wrong today?",
-    sub:"Pick the option that best describes your problem.",
+    eyebrow:'Navigation',
+    heading:`What's going wrong today?`,
+    sub:`Pick the option that best describes your problem.`,
     progress:15,
     options:[
-      { emoji:'🚗', label:'My electric car won\'t charge',        hint:'zappi EV charger',           next:'zappi_screen',        tag:'EV Charging' },
-      { emoji:'🌡️', label:'My hot water isn\'t heating up',       hint:'eddi hot water diverter',     next:'eddi_issue',          tag:'Hot Water' },
-      { emoji:'🔄', label:'My device keeps restarting itself',     hint:'zappi, eddi or harvi',        next:'rebooting_device',    tag:'Rebooting' },
-      { emoji:'📺', label:'The screen or LEDs look wrong',         hint:'blank screen, missing info',  next:'screen_issue',        tag:'Display' },
-      { emoji:'📶', label:'Wi-Fi or pairing isn\'t working',       hint:'can\'t connect or stay paired',next:'connectivity',       tag:'Connectivity' },
-      { emoji:'📊', label:'Readings in the app look wrong',        hint:'power or grid figures incorrect',next:'power_readings',  tag:'Power Readings' },
-      { emoji:'🌡️', label:'The device is getting very hot',        hint:'overheating',                 next:'overheating',         tag:'Overheating' },
-      { emoji:'❓', label:'Something else',                         hint:'other issue',                 next:'which_device_other',  tag:'Other' },
+      { emoji:`▸`, label:`My EV isn't charging`, next:'zappi_screen', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
+      { emoji:`▸`, label:`My hot water isn't heating up`, next:'eddi_issue', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
+      { emoji:`▸`, label:`My device keeps switching off or rebooting`, next:'rebooting_device', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
+      { emoji:`▸`, label:`The screen looks wrong`, next:'screen_issue', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
+      { emoji:`▸`, label:`My device is working, but not how I expect it to`, next:'behaviour_which_device', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
     ],
   },
 
-  // ══ ZAPPI FLOWS ═══════════════════════════════════════════════════════════
-
   zappi_screen: {
     type:'choice',
-    eyebrow:'zappi — Car won\'t charge',
-    heading:"What is your zappi screen showing right now?",
-    sub:"Look at the display on your zappi unit and pick the option that matches what you see.",
+    eyebrow:'zappi',
+    heading:`What is your zappi screen showing right now?`,
+    sub:`Look at the display on your zappi unit and pick the option that matches.`,
     progress:30,
     options:[
-      { emoji:'⚡', label:'"Waiting for surplus"',        hint:'common in Eco/Eco+ mode',         next:'zappi_eco_explain',     tag:'Waiting for Surplus' },
-      { emoji:'🔌', label:'"EV Disconnected"',            hint:'car shows as unplugged',           next:'zappi_ev_disconnected', tag:'EV Disconnected' },
-      { emoji:'⏰', label:'"Charge Delayed"',             hint:'charging is paused',               next:'zappi_charge_delayed',  tag:'Charge Delayed' },
-      { emoji:'✅', label:'"Charge Complete"',            hint:'says done but car isn\'t full',    next:'zappi_charge_complete', tag:'Charge Complete' },
-      { emoji:'⚠️', label:'"Pilot Error" or "Pilot Problem"', hint:'pilot communication fault',   next:'zappi_pilot_error',     tag:'Pilot Error' },
-      { emoji:'🔗', label:'"Unknown Cable"',              hint:'cable not recognised',             next:'zappi_unknown_cable',   tag:'Unknown Cable' },
-      { emoji:'❌', label:'"Output Fault #2417"',         hint:'output error code',                next:'zappi_output_fault',    tag:'Output Fault' },
-      { emoji:'⚡', label:'"Contactor Fault #28"',        hint:'contactor error code',             next:'zappi_contactor_fault', tag:'Contactor Fault' },
-      { emoji:'💀', label:'Screen is blank / no display', hint:'nothing showing at all',           next:'zappi_dead',            tag:'Dead Unit' },
-      { emoji:'🔒', label:'"Lock Fault"',                 hint:'locking mechanism issue',          next:'zappi_lock',            tag:'Lock Fault' },
-      { emoji:'📡', label:'"Comms Fault"',                hint:'communication error',              next:'zappi_comms_fault',     tag:'Comms Fault' },
-      { emoji:'🔋', label:'Normal screen, but still no charge', hint:'no error shown',             next:'zappi_no_error',        tag:'No Charge - No Error' },
+      { emoji:`▸`, label:`"Waiting for surplus"`, next:'zappi_eco_explain', tag:`More options on screen: Pilot Error→zappi_pilot_error | Unknown Cable→zappi_unknown_cable | Output Fault→zappi_output_fault | Contactor Fault→zappi_contactor_fault | Blank screen→zappi_dead | Lock Fault→zappi_lock | Comms Fault→zappi_comms_fault | Normal screen, no charge→zappi_no_error` },
+      { emoji:`▸`, label:`"EV Disconnected"`, next:'zappi_ev_disconnected', tag:`More options on screen: Pilot Error→zappi_pilot_error | Unknown Cable→zappi_unknown_cable | Output Fault→zappi_output_fault | Contactor Fault→zappi_contactor_fault | Blank screen→zappi_dead | Lock Fault→zappi_lock | Comms Fault→zappi_comms_fault | Normal screen, no charge→zappi_no_error` },
+      { emoji:`▸`, label:`"Charge Delayed"`, next:'zappi_charge_delayed', tag:`More options on screen: Pilot Error→zappi_pilot_error | Unknown Cable→zappi_unknown_cable | Output Fault→zappi_output_fault | Contactor Fault→zappi_contactor_fault | Blank screen→zappi_dead | Lock Fault→zappi_lock | Comms Fault→zappi_comms_fault | Normal screen, no charge→zappi_no_error` },
+      { emoji:`▸`, label:`"Charge Complete"`, next:'zappi_charge_complete', tag:`More options on screen: Pilot Error→zappi_pilot_error | Unknown Cable→zappi_unknown_cable | Output Fault→zappi_output_fault | Contactor Fault→zappi_contactor_fault | Blank screen→zappi_dead | Lock Fault→zappi_lock | Comms Fault→zappi_comms_fault | Normal screen, no charge→zappi_no_error`, hint:`car not full` },
     ],
   },
 
   zappi_eco_explain: {
     type:'info',
-    eyebrow:'zappi — Eco Mode explained',
-    heading:"Your zappi is waiting for free solar energy.",
+    eyebrow:'zappi',
+    heading:`Your zappi is waiting for free solar energy.`,
     progress:60,
-    resolve:true,
-    content:`
-      <div class="info-box">
-        <h3>What does "Waiting for Surplus" mean?</h3>
-        <p>Your zappi is in <strong>Eco</strong> or <strong>Eco+</strong> mode, which means it's patiently waiting until your solar panels produce more electricity than your home is using — then it uses that free energy to charge your car.</p>
-        <p style="margin-top:12px">This is totally normal and means the system is working correctly!</p>
-      </div>
-      <div class="info-box">
-        <h3>✅ Quick fix — switch to Fast mode</h3>
-        <ol>
-          <li>Press the <strong>middle button</strong> on your zappi until you see <strong>"Fast"</strong> mode.</li>
-          <li>Your car should start charging from the grid straight away.</li>
-          <li>Switch back to Eco mode when you want to use free solar energy again.</li>
-        </ol>
-      </div>
-      <div class="info-box">
-        <h3>⚡ Tip for the future</h3>
-        <p>Use <strong>Fast</strong> mode when you need to charge now. Use <strong>Eco/Eco+</strong> mode overnight or when you have solar panels producing power.</p>
-      </div>`,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020720298-What-are-the-zappi-charging-modes`,
+    content:`<div class="info-box">
+<p>Your zappi is set to charge your car using surplus solar energy — this means your home always gets powered by solar first, and your car uses anything left over that would otherwise be sent back to the grid. Your car needs at least 1.4kW of surplus before it will start charging, so if it's a cloudy day or your home is using a lot of power, the zappi will wait until there's enough spare energy available.</p>
+</div>
+<div class="info-box">
+<p>Want to get charging sooner? Try one of these:</p>
+<ol>
+<li><strong>Use the up/down arrow buttons on your zappi to switch to Eco mode (one leaf)</strong> — this uses a smaller minimum of solar and tops up from the grid if needed.</li>
+<li>Reduce the Minimum Green Level in your zappi settings to allow charging to begin with less surplus solar.</li>
+<li><strong>If you need to charge right now, use the up/down arrow buttons or the myenergi app to switch the mode to 'Fast'</strong> — your car will charge immediately from the grid.</li>
+</ol>
+</div>`,
     next:'fixed_check',
+    nextLabel:`Yes, that fixed it! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still having issues`,
   },
 
   zappi_ev_disconnected: {
     type:'choice',
-    eyebrow:'zappi — EV Disconnected',
-    heading:"Is your car definitely plugged in?",
-    sub:"Make sure the cable is fully pushed in at both ends — it should click into place.",
+    eyebrow:'zappi',
+    heading:`Is your car definitely plugged in?`,
+    sub:`Make sure the cable is fully pushed in at both ends — it should click into place.`,
     progress:45,
     options:[
-      { emoji:'✅', label:'Yes, it\'s fully plugged in and clicked',  next:'zappi_ev_cable_type',   tag:'EV Disconnected - Plugged In' },
-      { emoji:'🔌', label:'Let me try unplugging and replugging it',  next:'zappi_ev_replugged',    tag:'EV Disconnected - Replugging' },
-    ],
-  },
-
-  zappi_ev_cable_type: {
-    type:'choice',
-    eyebrow:'zappi — EV Disconnected',
-    heading:"What type of cable are you using?",
-    progress:55,
-    options:[
-      { emoji:'🔗', label:'A separate cable I plug in each time (untethered)', next:'zappi_ev_try_cable',       tag:'Untethered' },
-      { emoji:'📎', label:'A cable permanently attached to the zappi (tethered)', next:'zappi_ev_tethered',    tag:'Tethered' },
-      { emoji:'🔌', label:'I\'m using an extension cable',                        next:'zappi_ev_extension',   tag:'Extension Cable' },
-    ],
-  },
-
-  zappi_ev_try_cable: {
-    type:'choice',
-    eyebrow:'zappi — EV Disconnected',
-    heading:"Do you have another charge cable you could try?",
-    sub:"Try a different Type 2 cable if you have one available — this will help us figure out if the cable is faulty.",
-    progress:65,
-    options:[
-      { emoji:'✅', label:'Yes — I tried a different cable and it now works', next:'zappi_ev_cable_faulty',  tag:'Cable Faulty' },
-      { emoji:'❌', label:'Different cable — still showing EV Disconnected',  next:'zappi_escalate_upload', tag:'EV Disconnected - Persists' },
-      { emoji:'🤷', label:'I don\'t have another cable to try',               next:'zappi_escalate_upload', tag:'EV Disconnected - No Spare' },
-    ],
-  },
-
-  zappi_ev_cable_faulty: {
-    type:'info',
-    eyebrow:'zappi — Cable issue',
-    heading:"It looks like your charge cable is faulty.",
-    progress:80,
-    resolve:true,
-    content:`
-      <div class="success-box">
-        <div class="success-icon">🔌</div>
-        <h2>Good news — it's the cable, not the zappi!</h2>
-        <p>The issue is with your charge cable, not your zappi unit. You'll need to replace the charge cable.</p>
-      </div>
-      <div class="info-box">
-        <h3>What to do next</h3>
-        <ol>
-          <li>Contact <strong>myenergi support</strong> to arrange a cable replacement if your unit is under warranty.</li>
-          <li>Or purchase a replacement Type 2 cable from a reputable supplier.</li>
-        </ol>
-      </div>`,
-    next:'fixed_check',
-  },
-
-  zappi_ev_extension: {
-    type:'info',
-    eyebrow:'zappi — Extension Cable',
-    heading:"Extension cables can cause this problem.",
-    progress:75,
-    resolve:true,
-    content:`
-      <div class="warning-box">
-        <p><strong>⚠️ Extension cables are not recommended</strong> with EV chargers and can cause "EV Disconnected" errors.</p>
-      </div>
-      <div class="info-box">
-        <h3>What to try</h3>
-        <ol>
-          <li>Remove the extension cable and plug the charge cable directly into the zappi.</li>
-          <li>Test if your car charges normally.</li>
-          <li>If this fixes it, the extension cable is the issue — do not use it with your zappi.</li>
-        </ol>
-      </div>`,
-    next:'fixed_check',
-  },
-
-  zappi_ev_tethered: {
-    type:'choice',
-    eyebrow:'zappi — Tethered unit',
-    heading:"Did this start happening suddenly, or has it never worked?",
-    progress:60,
-    options:[
-      { emoji:'⚡', label:'It suddenly stopped working',     next:'zappi_escalate_upload', tag:'Tethered - Sudden Fault' },
-      { emoji:'🆕', label:'It has never worked since install', next:'zappi_escalate_upload', tag:'Tethered - Never Worked' },
+      { emoji:`▸`, label:`Yes, fully plugged in and clicked`, next:'zappi_ev_cable_type', tag:`` },
+      { emoji:`▸`, label:`Let me try unplugging and plugging it back in firmly`, next:'zappi_ev_replugged', tag:`` },
     ],
   },
 
   zappi_ev_replugged: {
     type:'choice',
-    eyebrow:'zappi — EV Disconnected',
-    heading:"After replugging, is the car now charging?",
+    eyebrow:'zappi',
+    heading:`After plugging in again, does zappi still say 'EV Disconnected'?`,
     progress:55,
     options:[
-      { emoji:'✅', label:'Yes! It\'s charging now',         next:'fixed_success',        tag:'EV Disconnected - Fixed Replug' },
-      { emoji:'❌', label:'No, still showing EV Disconnected', next:'zappi_ev_cable_type', tag:'EV Disconnected - Still Fault' },
+      { emoji:`▸`, label:`No! It's allowing me to charge when I change charge modes`, next:'fixed_success', tag:`` },
+      { emoji:`▸`, label:`Yes, still showing EV Disconnected`, next:'zappi_ev_cable_type', tag:`` },
+    ],
+  },
+
+  zappi_ev_cable_type: {
+    type:'choice',
+    eyebrow:'zappi',
+    heading:`What type of cable are you using?`,
+    progress:55,
+    options:[
+      { emoji:`▸`, label:`A cable I can remove from my zappi and take with me`, next:'zappi_ev_try_cable', tag:``, hint:`untethered zappi` },
+      { emoji:`▸`, label:`A cable that's permanently fixed to the bottom of the zappi`, next:'zappi_ev_tethered', tag:``, hint:`tethered zappi` },
+      { emoji:`▸`, label:`I've plugged in another cable to the fixed zappi cable to make it longer`, next:'zappi_ev_extension', tag:`` },
+    ],
+  },
+
+  zappi_ev_try_cable: {
+    type:'choice',
+    eyebrow:'zappi',
+    heading:`Do you have another charge cable you could try?`,
+    sub:`If you have access to a different charging cable, try using that one instead. This helps us check whether the cable is the problem.`,
+    progress:65,
+    options:[
+      { emoji:`▸`, label:`Yes — different cable and it now works`, next:'zappi_ev_cable_faulty', tag:`` },
+      { emoji:`▸`, label:`Different cable — still EV Disconnected`, next:'myenergi_escalate_upload', tag:`` },
+      { emoji:`▸`, label:`No spare cable available`, next:'myenergi_escalate_upload', tag:`` },
+    ],
+  },
+
+  zappi_ev_cable_faulty: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`It looks like your charge cable is faulty.`,
+    progress:80,
+    content:`<div class="info-box">
+<p>Good news — it's the cable, not the zappi! Replace the charge cable. Contact myenergi support to arrange a replacement under warranty, or purchase a Type 2 replacement.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`Yes, that fixed it! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still having issues`,
+  },
+
+  zappi_ev_extension: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`Extension cables can cause this problem.`,
+    progress:75,
+    content:`<div class="info-box">
+<p>⚠️ Extension cables are NOT safe to use with EV chargers. Remove the extension cable and plug directly into the zappi. Test if the car charges. If fixed - do not use extension cables.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`Yes, that fixed it! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still having issues`,
+  },
+
+  zappi_ev_tethered: {
+    type:'choice',
+    eyebrow:'zappi',
+    heading:`Did this start happening suddenly, or has it never worked?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`It suddenly stopped working`, next:'myenergi_escalate_upload', tag:`` },
+      { emoji:`▸`, label:`It has never worked since install`, next:'myenergi_escalate_upload', tag:`` },
     ],
   },
 
   zappi_charge_delayed: {
     type:'choice',
-    eyebrow:'zappi — Charge Delayed',
-    heading:"Does your car have a built-in charging timer?",
-    sub:"Some cars have a scheduled charging timer set in the car's own settings or app — this can cause \"Charge Delayed\".",
+    eyebrow:'zappi',
+    heading:`Does your car have a built-in charging timer?`,
+    sub:`Some EVs have their own charge timer that let you tell them when to start charging. If a charger is trying to charge outside of the EVs set schedule, the EV will refuse to charge until the time set. Check your car's display or app to see if a charging schedule is set.`,
     progress:45,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360019305197-Charge-Delayed`,
     options:[
-      { emoji:'✅', label:'Yes, my car has a timer — let me check the car settings', next:'zappi_charge_delayed_timer',  tag:'Charge Delayed - Car Timer' },
-      { emoji:'❌', label:'No timer set in the car',                                   next:'zappi_charge_delayed_unplug', tag:'Charge Delayed - No Timer' },
-      { emoji:'🤷', label:'I\'m not sure',                                             next:'zappi_charge_delayed_timer',  tag:'Charge Delayed - Unsure' },
+      { emoji:`▸`, label:`Yes — my car has a timer, let me check settings`, next:'zappi_charge_delayed_timer', tag:`` },
+      { emoji:`▸`, label:`No timer set in the car`, next:'zappi_charge_delayed_unplug', tag:`` },
+      { emoji:`▸`, label:`I'm not sure`, next:'zappi_charge_delayed_timer', tag:`` },
     ],
   },
 
   zappi_charge_delayed_timer: {
     type:'info',
-    eyebrow:'zappi — Charge Delayed',
-    heading:"A timer in your car is likely pausing the charge.",
+    eyebrow:'zappi',
+    heading:`A timer in your car is likely pausing the charge.`,
     progress:70,
-    resolve:true,
-    content:`
-      <div class="info-box">
-        <h3>How to fix this</h3>
-        <ol>
-          <li>Open your <strong>car's own settings</strong> or its companion app.</li>
-          <li>Find the <strong>charging schedule</strong> or <strong>timer</strong> settings.</li>
-          <li>Set the car to charge <strong>immediately / now</strong>, or disable any timers.</li>
-          <li>Unplug and replug the cable to restart the charging session.</li>
-        </ol>
-      </div>
-      <div class="info-box">
-        <h3>💡 Tip</h3>
-        <p>If you want scheduled charging, use the <strong>zappi's boost timer</strong> instead of the car's timer — this avoids conflicts.</p>
-      </div>`,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/4402861966609-How-to-Set-a-Timed-Charge-Boost-on-Your-zappi`,
+    content:`<div class="info-box">
+<p>1) Open your car's settings: either on the dashboard screen or in your car's app on your phone. 2) Look for something like 'Charging Schedule' or 'Charging Timer'. 3) Turn off any scheduled times, or set it to charge right now. 4) Unplug the charging cable from your car and plug it back in. It should start charging within a minute. 💡 Tip: Use the zappi's own boost timer rather than your car's timer to avoid this happening again.</p>
+</div>`,
     next:'fixed_check',
+    nextLabel:`Yes, that fixed it! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still showing Charge Delayed`,
   },
 
   zappi_charge_delayed_unplug: {
     type:'info',
-    eyebrow:'zappi — Charge Delayed',
-    heading:"Let's try a simple reset.",
+    eyebrow:'zappi',
+    heading:`Let's try a simple reset.`,
     progress:60,
-    content:`
-      <div class="info-box">
-        <h3>Try these steps in order</h3>
-        <ol>
-          <li>Unplug the cable from your car.</li>
-          <li>Wait 10 seconds.</li>
-          <li>Plug back in firmly.</li>
-          <li>If that doesn't work, try switching zappi to <strong>Fast</strong> mode using the middle button.</li>
-        </ol>
-      </div>`,
-    next:'zappi_charge_delayed_result',
-  },
-
-  zappi_charge_delayed_result: {
-    type:'choice',
-    eyebrow:'zappi — Charge Delayed',
-    heading:"Is it charging now?",
-    progress:75,
-    options:[
-      { emoji:'✅', label:'Yes, it\'s now charging!',   next:'fixed_success',        tag:'Charge Delayed - Fixed' },
-      { emoji:'❌', label:'Still showing Charge Delayed', next:'zappi_escalate_upload', tag:'Charge Delayed - Persists' },
-    ],
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/29701193193361-Understanding-State-of-Charge-Limits-and-Charging-Resumption-in-ECO-ECO-and-FAST-Modes-on-the-zappi`,
+    content:`<div class="info-box">
+<p>Steps: 1) Unplug cable from car. 2) Wait 10 seconds. 3) Plug back in firmly. 4) If no change, press middle button to switch to Fast mode.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, it's now charging!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still showing Charge Delayed`,
   },
 
   zappi_charge_complete: {
     type:'choice',
-    eyebrow:'zappi — Charge Complete',
-    heading:"Has any power actually gone into the car before it says 'Charge Complete'?",
+    eyebrow:'zappi',
+    heading:`Has any power actually gone into the car before it says Charge Complete?`,
     progress:40,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020984638-Charge-Complete-Issues-with-BMW-X1-PHEV-in-ECO-and-ECO-Modes`,
     options:[
-      { emoji:'✅', label:'Yes, it charged a bit then stopped',     next:'zappi_charge_complete_partial', tag:'Charge Complete - Partial' },
-      { emoji:'❌', label:'No, it said Charge Complete immediately', next:'zappi_charge_complete_none',   tag:'Charge Complete - Immediate' },
+      { emoji:`▸`, label:`Yes, it charged a bit then stopped`, next:'zappi_charge_complete_partial', tag:`` },
+      { emoji:`▸`, label:`No, said Charge Complete immediately`, next:'zappi_charge_complete_none', tag:`` },
     ],
   },
 
   zappi_charge_complete_partial: {
     type:'info',
-    eyebrow:'zappi — Charge Complete',
-    heading:"Your car is likely 'sleeping' during charging.",
+    eyebrow:'zappi',
+    heading:`Your car is likely 'sleeping' during charging.`,
     progress:70,
-    resolve:true,
-    content:`
-      <div class="info-box">
-        <h3>What's happening</h3>
-        <p>Some cars go into a power-saving sleep mode when charging stops briefly (such as when switching from Eco to Fast mode, or when solar drops). This makes the zappi think charging is complete.</p>
-      </div>
-      <div class="info-box">
-        <h3>How to fix it</h3>
-        <ol>
-          <li>Switch the zappi to <strong>Fast mode</strong> (press middle button).</li>
-          <li>Or disable any smart charging in your 3rd-party app (e.g. Ohme, Indra).</li>
-          <li>Unplug and replug the car to wake it up.</li>
-        </ol>
-      </div>`,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/21802420976657-Troubleshooting-Charge-Delayed-Notification-on-the-Renault-Megane`,
+    content:`<div class="info-box">
+<p>Some cars enter sleep mode when charging briefly stops (eco mode switching or solar drop). Fix: Switch zappi to Fast mode (middle button) → or disable smart charging in 3rd-party app (Ohme, Indra) → unplug and replug the car to wake it.</p>
+</div>`,
     next:'fixed_check',
+    nextLabel:`Yes, that fixed it! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still having issues`,
   },
 
   zappi_charge_complete_none: {
     type:'info',
-    eyebrow:'zappi — Charge Complete',
-    heading:"Let's try a quick reset.",
+    eyebrow:'zappi',
+    heading:`Let's try a quick reset.`,
     progress:60,
-    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>Unplug cable from car and replug firmly.</li><li>Switch to <strong>Fast mode</strong>.</li><li>If it still says Charge Complete, try a factory reset from the zappi menu.</li></ol></div>`,
-    next:'zappi_charge_complete_result',
-  },
-
-  zappi_charge_complete_result: {
-    type:'choice',
-    eyebrow:'zappi — Charge Complete',
-    heading:"Is it charging now?",
-    progress:80,
-    options:[
-      { emoji:'✅', label:'Yes, charging fine now!',       next:'fixed_success',        tag:'Charge Complete - Fixed' },
-      { emoji:'❌', label:'Still saying Charge Complete',  next:'zappi_escalate_upload', tag:'Charge Complete - Persists' },
-    ],
+    content:`<div class="info-box">
+<p>Unplug cable from car and replug firmly → Switch to Fast mode → If still says Charge Complete, try factory reset from zappi menu.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, charging fine now!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still saying Charge Complete`,
   },
 
   zappi_pilot_error: {
     type:'info',
-    eyebrow:'zappi — Pilot Error',
-    heading:"Let's clean the connection and try again.",
+    eyebrow:'zappi',
+    heading:`Let's clean the connection and try again.`,
     progress:45,
-    content:`
-      <div class="info-box">
-        <h3>What to try</h3>
-        <ol>
-          <li>Unplug the charge cable from the car.</li>
-          <li>Inspect the pins on the cable plug — gently clean them with a dry cloth or a tiny amount of WD-40.</li>
-          <li>Plug back in firmly.</li>
-          <li>If your zappi has a touch screen, try a <strong>factory reset</strong> from the Settings menu.</li>
-        </ol>
-      </div>`,
-    next:'zappi_pilot_result',
-  },
-
-  zappi_pilot_result: {
-    type:'choice',
-    eyebrow:'zappi — Pilot Error',
-    heading:"Is the Pilot Error gone now?",
-    progress:65,
-    options:[
-      { emoji:'✅', label:'Yes, it\'s resolved!',             next:'fixed_success',        tag:'Pilot Error - Fixed' },
-      { emoji:'❌', label:'Still showing Pilot Error',        next:'zappi_pilot_other_car', tag:'Pilot Error - Persists' },
-    ],
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/21535429815313-Pilot-Problem`,
+    content:`<div class="info-box">
+<p>1) Unplug charge cable from car. 2) Inspect pins on plug — gently clean with dry cloth or tiny amount of WD-40. 3) Plug back in firmly. 4) Try a factory reset from Settings if touch screen model.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, Pilot Error is gone!`,
+    next2:'zappi_pilot_other_car',
+    nextLabel2:`Still showing Pilot Error`,
   },
 
   zappi_pilot_other_car: {
     type:'choice',
-    eyebrow:'zappi — Pilot Error',
-    heading:"Do you have access to another electric car or charger to test with?",
+    eyebrow:'zappi',
+    heading:`Do you have access to another electric car to test with?`,
     progress:72,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/21535429815313-Pilot-Problem`,
     options:[
-      { emoji:'✅', label:'Yes — I tried another car and the error went away',  next:'zappi_pilot_car_issue',  tag:'Pilot Error - Car Fault' },
-      { emoji:'❌', label:'Yes — I tried another car and still get the error',  next:'zappi_escalate_upload',  tag:'Pilot Error - zappi Fault' },
-      { emoji:'🤷', label:'No access to another car',                           next:'zappi_escalate_upload',  tag:'Pilot Error - Unknown' },
+      { emoji:`▸`, label:`Yes — tried another car, error went away`, next:'zappi_pilot_car_issue', tag:`` },
+      { emoji:`▸`, label:`Yes — tried another car, still get error`, next:'myenergi_escalate_upload', tag:`` },
+      { emoji:`▸`, label:`No access to another car`, next:'myenergi_escalate_upload', tag:`` },
     ],
   },
 
   zappi_pilot_car_issue: {
     type:'info',
-    eyebrow:'zappi — Pilot Error',
-    heading:"The issue appears to be with your car, not the zappi.",
+    eyebrow:'zappi',
+    heading:`The issue appears to be with your car, not the zappi.`,
     progress:85,
-    resolve:true,
-    content:`<div class="info-box"><h3>Recommended action</h3><p>Contact your <strong>car manufacturer</strong> or dealer — the pilot communication system in the vehicle may need attention.</p></div>`,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/21535429815313-Pilot-Problem`,
+    content:`<div class="info-box">
+<p>Contact your car manufacturer or dealer — the pilot communication system in the vehicle needs attention.</p>
+</div>`,
     next:'fixed_check',
+    nextLabel:`Understood, I'll contact the manufacturer`,
+    next2:'✅ Yes',
+    nextLabel2:`Pilot Error - Car Fault`,
   },
 
   zappi_unknown_cable: {
     type:'choice',
-    eyebrow:'zappi — Unknown Cable',
-    heading:"Is your zappi a tethered unit (cable permanently attached)?",
+    eyebrow:'zappi',
+    heading:`Is your zappi a tethered unit (cable permanently attached)?`,
     progress:40,
     options:[
-      { emoji:'📎', label:'Yes — cable is permanently attached',   next:'zappi_unknown_tethered',   tag:'Unknown Cable - Tethered' },
-      { emoji:'🔗', label:'No — I use a separate cable each time', next:'zappi_unknown_untethered', tag:'Unknown Cable - Untethered' },
+      { emoji:`▸`, label:`Yes — cable is permanently attached`, next:'zappi_unknown_tethered', tag:`` },
+      { emoji:`▸`, label:`No — I use a separate cable each time`, next:'zappi_unknown_untethered', tag:`` },
     ],
   },
 
   zappi_unknown_tethered: {
     type:'info',
-    eyebrow:'zappi — Unknown Cable',
-    heading:"Try a factory reset first.",
+    eyebrow:'zappi',
+    heading:`Try a factory reset first.`,
     progress:60,
-    content:`<div class="info-box"><h3>Steps</h3><ol><li>Go into the zappi <strong>Settings menu</strong>.</li><li>Select <strong>Factory Reset</strong>.</li><li>Once reset, plug your car in again and check if "Unknown Cable" clears.</li></ol></div>`,
-    next:'zappi_unknown_result',
+    content:`<div class="info-box">
+<p>Go into zappi Settings menu → Select Factory Reset → Once reset, plug car in again and check if "Unknown Cable" clears.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, it's working now!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still showing Unknown Cable`,
   },
 
   zappi_unknown_untethered: {
     type:'info',
-    eyebrow:'zappi — Unknown Cable',
-    heading:"Try a different charge cable.",
+    eyebrow:'zappi',
+    heading:`Try a different charge cable.`,
     progress:60,
-    content:`<div class="info-box"><h3>Steps</h3><ol><li>Try charging with a <strong>different Type 2 cable</strong>.</li><li>If it works with the other cable, your original cable is faulty.</li><li>If it shows Unknown Cable with all cables, we may need to replace the zappi.</li></ol></div>`,
-    next:'zappi_unknown_result',
-  },
-
-  zappi_unknown_result: {
-    type:'choice',
-    eyebrow:'zappi — Unknown Cable',
-    heading:"Did that fix the Unknown Cable message?",
-    progress:75,
-    options:[
-      { emoji:'✅', label:'Yes, it\'s working now!',           next:'fixed_success',        tag:'Unknown Cable - Fixed' },
-      { emoji:'❌', label:'Still showing Unknown Cable',       next:'zappi_escalate_upload', tag:'Unknown Cable - Persists' },
-    ],
+    content:`<div class="info-box">
+<p>Try charging with a different Type 2 cable. If it works → original cable is faulty. If Unknown Cable persists with all cables → zappi may need replacing.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, it's working now!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still showing Unknown Cable`,
   },
 
   zappi_output_fault: {
     type:'info',
-    eyebrow:'zappi — Output Fault',
-    heading:"Let's try a reboot and firmware check.",
+    eyebrow:'zappi',
+    heading:`Let's try a reboot and firmware check.`,
     progress:45,
-    content:`
-      <div class="info-box">
-        <h3>Steps to try</h3>
-        <ol>
-          <li>Turn your zappi <strong>off and on again</strong> from the consumer unit (the fuse board) — flip the switch off, wait 10 seconds, flip back on.</li>
-          <li>Once rebooted, plug your car back in and check if the warning has cleared.</li>
-          <li>If it returns, check your <strong>firmware version</strong> in the zappi menu (Settings → About) — it should match the latest version shown at myenergi.com.</li>
-        </ol>
-      </div>`,
-    next:'zappi_output_result',
-  },
-
-  zappi_output_result: {
-    type:'choice',
-    eyebrow:'zappi — Output Fault',
-    heading:"Is the Output Fault gone?",
-    progress:65,
-    options:[
-      { emoji:'✅', label:'Yes, it\'s resolved!',             next:'fixed_success',        tag:'Output Fault - Fixed' },
-      { emoji:'❌', label:'Still showing Output Fault',       next:'zappi_escalate_upload', tag:'Output Fault - Persists' },
-    ],
+    content:`<div class="info-box">
+<p>1) Turn zappi off/on from consumer unit (fuse board) — flip switch off, wait 10 sec, flip on. 2) Once rebooted, plug car in and check if warning cleared. 3) If returns, check firmware version: Settings → About. Update if not latest.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, Output Fault is gone!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still showing Output Fault`,
   },
 
   zappi_contactor_fault: {
     type:'choice',
-    eyebrow:'zappi — Contactor Fault #28',
-    heading:"Can you check the voltage readings on your zappi?",
-    sub:"Go into the zappi menu → Readings → Page 2. Look for the maximum and minimum voltage figures.",
+    eyebrow:'zappi',
+    heading:`Can you check the voltage readings on your zappi?`,
+    sub:`We need to check something on your charger's screen — don't worry, we'll walk you through it. On your zappi, press the menu button, then look for 'Readings' and press +. Press down to go to page 2 and look for numbers labelled 'Max' and 'Min' voltage.`,
     progress:45,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/20752396233745-Contactor-Fault-Voltage-Related`,
     options:[
-      { emoji:'📉', label:'Voltage went below 203V or above 257V',  next:'zappi_contactor_voltage',  tag:'Contactor - Voltage Issue' },
-      { emoji:'✅', label:'Voltage looks normal (within 203–257V)',  next:'zappi_escalate_upload',    tag:'Contactor - Normal Voltage' },
-      { emoji:'🤷', label:'I\'m not sure how to check',             next:'zappi_escalate_upload',    tag:'Contactor - Unsure' },
+      { emoji:`▸`, label:`The numbers I can see are outside the 203–257 range`, next:'zappi_contactor_voltage', tag:`` },
+      { emoji:`▸`, label:`The numbers are somewhere between 203 and 257`, next:'myenergi_escalate_upload', tag:`` },
+      { emoji:`▸`, label:`I'm not sure how to check`, next:'myenergi_escalate_upload', tag:`` },
     ],
   },
 
   zappi_contactor_voltage: {
     type:'info',
-    eyebrow:'zappi — Voltage Issue',
-    heading:"There may be a supply voltage problem at your property.",
+    eyebrow:'zappi',
+    heading:`There may be a supply voltage problem at your property.`,
     progress:70,
-    resolve:true,
-    content:`
-      <div class="warning-box"><p><strong>⚠️ Important:</strong> This is not a fault with the zappi — it's a problem with the electricity supply to your home.</p></div>
-      <div class="info-box"><h3>What to do</h3><ol><li>Contact your <strong>Distribution Network Operator (DNO)</strong> — the company that manages electricity cables in your area.</li><li>Report that you're experiencing over or under-voltage at your property.</li><li>Your energy supplier can tell you who your DNO is.</li></ol></div>`,
+    content:`<div class="info-box">
+<p>⚠️ This is NOT a fault with the zappi — it's a problem with the electricity supply to your home. Contact your Distribution Network Operator (DNO) — the company managing electricity cables in your area. Report over/under voltage. Your energy supplier can confirm your DNO.</p>
+</div>`,
     next:'fixed_check',
+    nextLabel:`Understood, I'll contact the DNO`,
+    next2:'✅ Yes',
+    nextLabel2:`Contactor - Voltage`,
   },
 
   zappi_dead: {
     type:'choice',
-    eyebrow:'zappi — No Display',
-    heading:"Is the MCB or RCD switch for your zappi turned on?",
-    sub:"Check your consumer unit (fuse board). There should be a switch specifically for your EV charger — make sure it's flipped up (ON).",
+    eyebrow:'zappi',
+    heading:`Is the RCD switch and isolator switch (if installed) for your zappi turned on?`,
+    sub:`Check your consumer unit (switchboard. There should be a switch for your EV charger — make sure it's flipped up (ON).`,
     progress:40,
     options:[
-      { emoji:'✅', label:'Yes, the switch is on and stays on',         next:'zappi_dead_stays_on',  tag:'Dead - Switch OK' },
-      { emoji:'⚡', label:'The switch keeps tripping off',              next:'zappi_tripping',       tag:'Dead - Tripping' },
-      { emoji:'❓', label:'I\'m not sure which switch it is',           next:'zappi_dead_unsure',    tag:'Dead - Unsure Switch' },
+      { emoji:`▸`, label:`Yes, switch is on and stays on`, next:'zappi_dead_stays_on', tag:`` },
+      { emoji:`▸`, label:`The switch keeps tripping off`, next:'zappi_tripping', tag:`` },
+      { emoji:`▸`, label:`I'm not sure which switch it is`, next:'zappi_dead_unsure', tag:`` },
     ],
   },
 
   zappi_dead_stays_on: {
     type:'info',
-    eyebrow:'zappi — No Display',
-    heading:"Try turning the switch off and back on.",
+    eyebrow:'zappi',
+    heading:`Try turning the switch off and back on.`,
     progress:55,
-    content:`<div class="info-box"><h3>Steps</h3><ol><li>At the fuse board, flip the zappi's switch <strong>off</strong>.</li><li>Wait <strong>30 seconds</strong>.</li><li>Flip it back <strong>on</strong>.</li><li>Check if the zappi screen comes back on.</li></ol></div>`,
-    next:'zappi_dead_result',
-  },
-
-  zappi_dead_result: {
-    type:'choice',
-    eyebrow:'zappi — No Display',
-    heading:"Did the zappi screen come back on?",
-    progress:70,
-    options:[
-      { emoji:'✅', label:'Yes, screen is back!',     next:'fixed_success',        tag:'Dead - Fixed Reboot' },
-      { emoji:'❌', label:'Still no display at all',  next:'zappi_escalate_upload', tag:'Dead - Persists' },
-    ],
+    content:`<div class="info-box">
+<p>At fuse board: flip zappi switch OFF → wait 30 seconds → flip back ON → check if zappi screen comes back on.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, screen is back!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still no display at all`,
   },
 
   zappi_dead_unsure: {
     type:'info',
-    eyebrow:'zappi — No Display',
-    heading:"Finding the right switch.",
+    eyebrow:'zappi',
+    heading:`Finding the right switch.`,
     progress:50,
-    content:`<div class="info-box"><h3>How to find the right switch</h3><ol><li>Open your <strong>consumer unit</strong> (the grey box of switches, usually in a cupboard or garage).</li><li>Look for a switch labelled <strong>"EV Charger"</strong>, <strong>"zappi"</strong>, or similar.</li><li>If unsure, take a photo of the fuse board and we can help identify it.</li></ol></div>`,
-    next:'zappi_dead_result',
+    content:`<div class="info-box">
+<p>Open your consumer unit/switchboard. Look for a switch labelled "EV Charger", "zappi" or similar → If unsure, take a photo of your switchboard.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Found it, screen is back!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still not sure / still no display`,
   },
 
   zappi_tripping: {
     type:'choice',
-    eyebrow:'zappi — Tripping MCB/RCD',
-    heading:"Is your car plugged into the zappi when it trips?",
+    eyebrow:'zappi',
+    heading:`Is your car plugged into the zappi when it trips?`,
     progress:45,
     options:[
-      { emoji:'✅', label:'Yes — trips when car is plugged in',   next:'zappi_tripping_unplug',   tag:'Tripping - With Car' },
-      { emoji:'❌', label:'No — trips even without car plugged',  next:'zappi_escalate_upload',   tag:'Tripping - Without Car' },
+      { emoji:`▸`, label:`Yes — trips when car is plugged in`, next:'zappi_tripping_unplug', tag:`` },
+      { emoji:`▸`, label:`No — trips even without car plugged in`, next:'myenergi_escalate_upload', tag:`` },
     ],
   },
 
   zappi_tripping_unplug: {
     type:'info',
-    eyebrow:'zappi — Tripping MCB/RCD',
-    heading:"Unplug the car and reboot the zappi.",
+    eyebrow:'zappi',
+    heading:`Unplug the car and reboot the zappi.`,
     progress:55,
-    content:`<div class="info-box"><h3>Steps to try</h3><ol><li><strong>Unplug</strong> your car from the zappi.</li><li>Turn the MCB/RCD <strong>off at the fuse board</strong>, wait 10 seconds, turn back on.</li><li>Once rebooted (without car), does the switch stay on?</li></ol></div>`,
-    next:'zappi_tripping_result',
-  },
-
-  zappi_tripping_result: {
-    type:'choice',
-    eyebrow:'zappi — Tripping MCB/RCD',
-    heading:"With the car unplugged, does the MCB/RCD stay on?",
-    progress:70,
-    options:[
-      { emoji:'✅', label:'Yes, stays on without car plugged in',   next:'zappi_tripping_car',    tag:'Tripping - Car Issue' },
-      { emoji:'❌', label:'No, still trips without car plugged in', next:'zappi_escalate_upload', tag:'Tripping - zappi Fault' },
-    ],
+    content:`<div class="info-box">
+<p>1) Unplug your car from the zappi. 2) At your fuse box, flip the switch for your EV charger to OFF, wait 10 seconds, then flip it back ON. 3) Does the switch stay on now that the car isn't plugged in?</p>
+</div>`,
+    next:'zappi_tripping_car',
+    nextLabel:`Yes, stays on without car plugged in`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`No, still trips without car plugged in`,
   },
 
   zappi_tripping_car: {
     type:'info',
-    eyebrow:'zappi — Tripping MCB/RCD',
-    heading:"The issue may be with your car or charge cable.",
+    eyebrow:'zappi',
+    heading:`The issue may be with your car or charge cable.`,
     progress:80,
-    content:`<div class="info-box"><h3>What to do</h3><ol><li>Try reducing the charge rate: go into zappi Settings and lower the <strong>max charge rate to 16 Amps</strong>.</li><li>Try charging with a different cable if available.</li><li>Try charging your car at a different AC charger to test the car itself.</li></ol></div>`,
-    next:'zappi_tripping_result2',
-  },
-
-  zappi_tripping_result2: {
-    type:'choice',
-    eyebrow:'zappi — Tripping MCB/RCD',
-    heading:"Has reducing the charge rate or trying a different charger helped?",
-    progress:85,
-    options:[
-      { emoji:'✅', label:'Yes, that fixed it!',               next:'fixed_success',        tag:'Tripping - Fixed Rate' },
-      { emoji:'❌', label:'Still tripping — car charges elsewhere', next:'zappi_escalate_upload', tag:'Tripping - Car OK, zappi Fault' },
-      { emoji:'🚗', label:'Car won\'t charge anywhere',        next:'tripping_car_issue',   tag:'Tripping - Car Fault' },
-    ],
+    content:`<div class="info-box">
+<p>Try reducing charge rate: Settings → lower max charge rate to 10 Amps → Test again. Also try a different cable if available, and try charging the car at a different AC charger.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, that fixed it!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still tripping — car charges elsewhere fine`,
   },
 
   tripping_car_issue: {
     type:'info',
-    eyebrow:'Tripping — Car Issue',
-    heading:"The problem appears to be with your car.",
+    eyebrow:'zappi',
+    heading:`The problem appears to be with your car.`,
     progress:85,
-    resolve:true,
-    content:`<div class="info-box"><h3>Recommended action</h3><p>Contact your <strong>car manufacturer or dealer</strong> — the issue appears to be with the vehicle's charging system, not the zappi.</p></div>`,
+    content:`<div class="info-box">
+<p>Contact your car manufacturer or dealer — the issue appears to be with the vehicle's charging system, not the zappi.</p>
+</div>`,
     next:'fixed_check',
+    nextLabel:`Understood`,
+    next2:'✅ Yes',
+    nextLabel2:`Tripping - Car Fault`,
   },
 
   zappi_lock: {
     type:'info',
-    eyebrow:'zappi — Lock Fault',
-    heading:"Let's try fixing the lock issue.",
+    eyebrow:'zappi',
+    heading:`Let's try fixing the lock issue.`,
     progress:45,
-    content:`
-      <div class="info-box">
-        <h3>Steps to try</h3>
-        <ol>
-          <li>Remove the charge cable completely and reboot the zappi (turn off at fuse board, wait 10 sec, turn on).</li>
-          <li>Check the <strong>top recess of the charge plug</strong> for any debris or dirt — clean if needed.</li>
-          <li>When replugging, push the cable in <strong>firmly and quickly</strong> — plugging in slowly can trigger a lock fault.</li>
-          <li>Repeat this 5 times to confirm.</li>
-        </ol>
-      </div>`,
-    next:'zappi_lock_result',
-  },
-
-  zappi_lock_result: {
-    type:'choice',
-    eyebrow:'zappi — Lock Fault',
-    heading:"Is the lock fault resolved?",
-    progress:65,
-    options:[
-      { emoji:'✅', label:'Yes, working now!',        next:'fixed_success',        tag:'Lock Fault - Fixed' },
-      { emoji:'❌', label:'Still getting lock fault', next:'zappi_escalate_upload', tag:'Lock Fault - Persists' },
-    ],
+    content:`<div class="info-box">
+<p>1) Remove charge cable completely and reboot zappi (off at switchboard or isolator 10 sec, on). 2) Check top recess of charge plug for debris — clean if needed. 3) When replugging, push firmly and QUICKLY (slow insertion can trigger lock fault). 4) Repeat 5 times to confirm.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, lock fault resolved!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still getting lock fault`,
   },
 
   zappi_comms_fault: {
     type:'info',
-    eyebrow:'zappi — Comms Fault',
-    heading:"Let's start with a simple reboot.",
+    eyebrow:'zappi',
+    heading:`Let's start with a simple reboot.`,
     progress:45,
-    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>Reboot your zappi — turn the switch off at the fuse board, wait 15 seconds, turn back on.</li><li>Wait 2 minutes for it to fully restart.</li><li>Check if the Comms Fault message has cleared.</li></ol></div>`,
-    next:'zappi_comms_result',
-  },
-
-  zappi_comms_result: {
-    type:'choice',
-    eyebrow:'zappi — Comms Fault',
-    heading:"Did the reboot clear the Comms Fault?",
-    progress:65,
-    options:[
-      { emoji:'✅', label:'Yes, it\'s cleared!',       next:'fixed_success',        tag:'Comms Fault - Fixed' },
-      { emoji:'❌', label:'Still showing Comms Fault', next:'zappi_escalate_upload', tag:'Comms Fault - Persists' },
-    ],
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/30507463191953-Comms-Fault-26-NMI-Displayed`,
+    content:`<div class="info-box">
+<p>Reboot zappi: turn switch off at fuse board → wait 15 seconds → turn back on → wait 2 minutes for full restart → Check if Comms Fault message has cleared.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, it's cleared!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still showing Comms Fault`,
   },
 
   zappi_no_error: {
     type:'choice',
-    eyebrow:'zappi — Not Charging',
-    heading:"Is your zappi currently in 'Stop' mode?",
-    sub:"Look at the screen — does it say 'Stop' or show a stop icon?",
+    eyebrow:'zappi',
+    heading:`Is your zappi currently in 'Stop' mode?`,
+    sub:`Look at the screen — does it say 'Stop' or show a stop icon?`,
     progress:40,
     options:[
-      { emoji:'🛑', label:'Yes, it says Stop',                  next:'zappi_stop_mode',       tag:'Stop Mode' },
-      { emoji:'❌', label:'No, it\'s not in Stop mode',         next:'zappi_no_error_mode',   tag:'Not Charging - No Stop' },
+      { emoji:`▸`, label:`Yes, it says Stop`, next:'zappi_stop_mode', tag:`` },
+      { emoji:`▸`, label:`No, it's not in Stop mode`, next:'zappi_no_error_mode', tag:`` },
     ],
   },
 
   zappi_stop_mode: {
     type:'info',
-    eyebrow:'zappi — Stop Mode',
-    heading:"Your zappi is in Stop mode — that's why it's not charging!",
+    eyebrow:'zappi',
+    heading:`Your zappi is in Stop mode. Only select Stop mode when you want to tell your zappi NOT to charge your EV while plugged in.`,
     progress:60,
-    resolve:true,
-    content:`<div class="info-box"><h3>How to fix</h3><ol><li>Press the <strong>middle button</strong> on your zappi to cycle through modes.</li><li>Select <strong>Fast</strong>, <strong>Eco</strong>, or <strong>Eco+</strong> mode.</li><li>Your car should start charging immediately.</li></ol></div>`,
+    content:`<div class="info-box">
+<p>Use the up/down arrow buttons on your zappi to cycle through modes and select Fast, Eco, or Eco+ — or change the mode in the myenergi app. Your car should start charging within a minute.</p>
+</div>`,
     next:'fixed_check',
+    nextLabel:`Yes, that fixed it! ✅`,
+    next2:'✅ Yes',
+    nextLabel2:`Stop Mode`,
   },
 
   zappi_no_error_mode: {
     type:'info',
-    eyebrow:'zappi — Not Charging',
-    heading:"Switch to Fast mode to test.",
+    eyebrow:'zappi',
+    heading:`Switch to Fast mode to test.`,
     progress:55,
-    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>Press the middle button to switch to <strong>Fast mode</strong>.</li><li>Unplug and replug the cable from your car.</li><li>Wait 1 minute — does it start charging?</li></ol></div>`,
-    next:'zappi_no_error_result',
+    content:`<div class="info-box">
+<p>Press middle button to switch to Fast mode → Unplug and replug the cable from your car → Wait 1 minute — does it start charging?</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, charging in Fast mode!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still not charging`,
   },
-
-  zappi_no_error_result: {
-    type:'choice',
-    eyebrow:'zappi — Not Charging',
-    heading:"Is it charging in Fast mode now?",
-    progress:70,
-    options:[
-      { emoji:'✅', label:'Yes, charging in Fast mode!',   next:'fixed_success',        tag:'Not Charging - Fixed Fast Mode' },
-      { emoji:'❌', label:'Still not charging',            next:'zappi_escalate_upload', tag:'Not Charging - Persists' },
-    ],
-  },
-
-  // ══ EDDI FLOWS ════════════════════════════════════════════════════════════
 
   eddi_issue: {
     type:'choice',
-    eyebrow:'eddi — Hot Water',
-    heading:"What does your eddi screen show?",
+    eyebrow:'eddi',
+    heading:`What does your eddi screen show?`,
     progress:30,
     options:[
-      { emoji:'☀️', label:'"Waiting for Surplus"',         hint:'waiting for solar power',     next:'eddi_waiting_solar',     tag:'eddi - Waiting Surplus' },
-      { emoji:'🌡️', label:'"Max Temp Reached"',            hint:'overtemperature message',     next:'eddi_max_temp',          tag:'eddi - Max Temp' },
-      { emoji:'💀', label:'Screen is blank / no display',  hint:'nothing showing at all',      next:'eddi_dead',              tag:'eddi - Dead' },
-      { emoji:'✅', label:'Normal screen, just no heat',   hint:'no error shown',              next:'eddi_no_error',          tag:'eddi - No Heat No Error' },
+      { emoji:`▸`, label:`"Waiting for Surplus"`, next:'eddi_waiting_solar', tag:`` },
+      { emoji:`▸`, label:`"Max Temp Reached"`, next:'eddi_max_temp', tag:`` },
+      { emoji:`▸`, label:`Screen is blank / no display`, next:'eddi_dead', tag:`` },
+      { emoji:`▸`, label:`Normal screen, just no heat`, next:'eddi_no_error', tag:`` },
     ],
   },
 
   eddi_waiting_solar: {
     type:'choice',
-    eyebrow:'eddi — Waiting for Surplus',
-    heading:"Do you actually have solar panels generating power right now?",
-    sub:"Check your solar inverter display, app, or the myenergi app to see if your panels are producing electricity.",
+    eyebrow:'eddi',
+    heading:`Do you actually have solar panels generating power right now?`,
+    sub:`Check your solar inverter display, app, or the myenergi app to see if panels are producing electricity.`,
     progress:40,
     options:[
-      { emoji:'☀️', label:'Yes, my solar panels are generating power',  next:'eddi_solar_ct',        tag:'eddi - Solar Active' },
-      { emoji:'🌧️', label:'No, it\'s cloudy / dark / panels not on',    next:'eddi_no_solar',        tag:'eddi - No Solar' },
-      { emoji:'🤷', label:'I\'m not sure',                              next:'eddi_no_solar',        tag:'eddi - Solar Unsure' },
+      { emoji:`▸`, label:`Yes, solar panels are generating power`, next:'eddi_solar_ct', tag:`` },
+      { emoji:`▸`, label:`No, it's cloudy / dark / panels off`, next:'eddi_no_solar', tag:`` },
+      { emoji:`▸`, label:`I'm not sure`, next:'eddi_no_solar', tag:`` },
     ],
   },
 
   eddi_no_solar: {
     type:'info',
-    eyebrow:'eddi — Waiting for Surplus',
-    heading:"The eddi is working correctly — it's just waiting for sunshine!",
+    eyebrow:'eddi',
+    heading:`The eddi is working correctly — it's just waiting for sunshine!`,
     progress:60,
-    resolve:true,
-    content:`
-      <div class="success-box">
-        <div class="success-icon">☀️</div>
-        <h2>Nothing wrong here!</h2>
-        <p>Your eddi is designed to heat water using <strong>surplus solar energy</strong>. When there's no sun (or not enough solar being generated), it waits. This is exactly how it should work.</p>
-      </div>
-      <div class="info-box">
-        <h3>💡 Tip — Manual boost</h3>
-        <p>If you need hot water now, press the <strong>boost button</strong> on your eddi to manually heat the water from the grid.</p>
-      </div>`,
+    content:`<div class="info-box">
+<p>The eddi is designed to heat water using surplus solar energy. When there's no sun (or not enough solar), it waits. This is exactly how it should work. 💡 Need hot water now? Press the BOOST button on your eddi to heat from the grid.</p>
+</div>`,
     next:'fixed_check',
+    nextLabel:`Makes sense, all good! ✅`,
+    next2:'✅ Yes',
+    nextLabel2:`eddi - No Solar`,
   },
 
   eddi_solar_ct: {
     type:'choice',
-    eyebrow:'eddi — CT Clamp Check',
-    heading:"Is the eddi set as Priority 1 in your system?",
-    sub:"Open the myenergi app → Devices → eddi → check the priority setting.",
+    eyebrow:'eddi',
+    heading:`Is the eddi set as Priority 1 in your system?`,
+    sub:`Open the myenergi app → Devices → eddi → check the priority setting.`,
     progress:55,
     options:[
-      { emoji:'1️⃣', label:'Yes, it\'s Priority 1',      next:'eddi_ct_check',      tag:'eddi - Priority 1 OK' },
-      { emoji:'❌', label:'No, it\'s a lower priority',  next:'eddi_set_priority',  tag:'eddi - Priority Wrong' },
-      { emoji:'🤷', label:'I\'m not sure',               next:'eddi_ct_check',      tag:'eddi - Priority Unsure' },
+      { emoji:`▸`, label:`Yes, it's Priority 1`, next:'eddi_ct_check', tag:`` },
+      { emoji:`▸`, label:`No, it's a lower priority`, next:'eddi_set_priority', tag:`` },
+      { emoji:`▸`, label:`I'm not sure`, next:'eddi_ct_check', tag:`` },
     ],
   },
 
   eddi_set_priority: {
     type:'info',
-    eyebrow:'eddi — Priority Setting',
-    heading:"Set the eddi to Priority 1.",
+    eyebrow:'eddi',
+    heading:`Set the eddi to Priority 1.`,
     progress:65,
-    content:`<div class="info-box"><h3>How to do this</h3><ol><li>Open the <strong>myenergi app</strong>.</li><li>Go to <strong>Devices → eddi → Priority</strong>.</li><li>Set it to <strong>Priority 1</strong>.</li><li>Wait a few minutes to see if it starts diverting.</li></ol></div>`,
-    next:'eddi_solar_result',
+    content:`<div class="info-box">
+<p>Open the myenergi app → Devices → eddi → Priority → Set to Priority 1 → Wait a few minutes to see if it starts diverting.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, it's now diverting!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still not diverting`,
   },
 
   eddi_ct_check: {
     type:'info',
-    eyebrow:'eddi — CT Clamp',
-    heading:"The issue may be with the CT clamp sensor.",
+    eyebrow:'eddi',
+    heading:`The issue may be with the CT clamp sensor.`,
     progress:65,
-    content:`
-      <div class="info-box">
-        <h3>What is a CT clamp?</h3>
-        <p>A small clip fitted to your electricity cables that measures how much power is being exported. If it's loose or wrongly fitted, the eddi won't know when to divert.</p>
-      </div>
-      <div class="warning-box">
-        <p><strong>⚠️ This requires an electrician.</strong> Do not attempt to access electrical components yourself. Contact your original installer or myenergi support to check the CT clamp.</p>
-      </div>`,
-    next:'zappi_escalate_upload',
-  },
-
-  eddi_solar_result: {
-    type:'choice',
-    eyebrow:'eddi — Diverting Check',
-    heading:"Is the eddi now diverting power and heating the water?",
-    progress:80,
-    options:[
-      { emoji:'✅', label:'Yes, it\'s working now!',          next:'fixed_success',        tag:'eddi - Fixed Priority' },
-      { emoji:'❌', label:'Still not diverting',              next:'zappi_escalate_upload', tag:'eddi - Still Not Diverting' },
-    ],
+    content:`<div class="info-box">
+<p>A CT clamp is a small clip fitted to your electricity cables that measures how much power is being exported. If it's loose or incorrectly fitted, the eddi won't know when to divert. ⚠️ This requires an electrician — do NOT attempt to access electrical components yourself. Please contact your original installer or myenergi support.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`I'll contact my installer`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Please raise a support ticket for me`,
   },
 
   eddi_max_temp: {
     type:'choice',
-    eyebrow:'eddi — Max Temp Reached',
-    heading:"Is the water in your tank already hot?",
-    sub:"Check if you can get hot water from a tap in your home.",
+    eyebrow:'eddi',
+    heading:`Is the water in your tank already hot?`,
+    sub:`Check if you can get hot water from a tap in your home.`,
     progress:45,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/15198408650641-Water-Cold-but-Max-Temp-Reached-and-the-heater-output-indicator-blue-is-lit`,
     options:[
-      { emoji:'🔥', label:'Yes, the water is already very hot',  next:'eddi_max_temp_hot',    tag:'eddi - Water Hot' },
-      { emoji:'❄️', label:'No, the water is cold or lukewarm',   next:'eddi_max_temp_cold',   tag:'eddi - Water Cold Max Temp' },
+      { emoji:`▸`, label:`Yes, the water is already very hot`, next:'eddi_max_temp_hot', tag:`` },
+      { emoji:`▸`, label:`No, the water is cold or lukewarm`, next:'eddi_max_temp_cold', tag:`` },
     ],
   },
 
   eddi_max_temp_hot: {
     type:'info',
-    eyebrow:'eddi — Max Temp Reached',
-    heading:"The eddi has done its job — the water is fully heated!",
+    eyebrow:'eddi',
+    heading:`The eddi has done its job — the water is fully heated!`,
     progress:70,
-    resolve:true,
-    content:`
-      <div class="success-box">
-        <div class="success-icon">✅</div>
-        <h2>Everything is working correctly!</h2>
-        <p>Your eddi heats water to the maximum temperature and then stops — this prevents overheating. Once the water cools down, it will start diverting again automatically.</p>
-      </div>`,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/15198408650641-Water-Cold-but-Max-Temp-Reached-and-the-heater-output-indicator-blue-is-lit`,
+    content:`<div class="info-box">
+<p>Your eddi heats water to the maximum temperature and then stops — this prevents overheating and is completely normal. Once the water cools down, it will start diverting again automatically.</p>
+</div>`,
     next:'fixed_check',
+    nextLabel:`Great, all makes sense! ✅`,
+    next2:'✅ Yes',
+    nextLabel2:`eddi - Water Hot`,
   },
 
   eddi_max_temp_cold: {
     type:'info',
-    eyebrow:'eddi — Max Temp Reached',
-    heading:"The thermostat may need attention.",
+    eyebrow:'eddi',
+    heading:`The thermostat may need attention.`,
     progress:65,
-    content:`<div class="info-box"><h3>Likely cause</h3><p>The immersion heater's thermostat may have tripped or failed. This is a plumbing/electrical issue — <strong>your original installer</strong> or a qualified plumber should check the immersion heater and thermostat.</p></div>`,
-    next:'zappi_escalate_upload',
+    content:`<div class="info-box">
+<p>The immersion heater's thermostat may have tripped or failed. This is a plumbing/electrical issue — your original installer or a qualified plumber should check the immersion heater and thermostat.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`I'll contact my installer`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Please raise a support ticket`,
   },
 
   eddi_dead: {
     type:'info',
-    eyebrow:'eddi — No Display',
-    heading:"Let's check the power supply.",
+    eyebrow:'eddi',
+    heading:`Let's check the power supply.`,
     progress:40,
-    content:`<div class="info-box"><h3>Check these first</h3><ol><li>Find the switch at your fuse board for the eddi — make sure it's switched ON (up).</li><li>Turn it off, wait 30 seconds, turn back on.</li><li>Check if the eddi screen comes back to life.</li></ol></div>`,
-    next:'eddi_dead_result',
-  },
-
-  eddi_dead_result: {
-    type:'choice',
-    eyebrow:'eddi — No Display',
-    heading:"Did the eddi screen come back on?",
-    progress:60,
-    options:[
-      { emoji:'✅', label:'Yes, screen is back!',   next:'fixed_success',        tag:'eddi - Dead Fixed' },
-      { emoji:'❌', label:'Still no display',       next:'zappi_escalate_upload', tag:'eddi - Dead Persists' },
-    ],
+    content:`<div class="info-box">
+<p>Find the switch at your fuse board for the eddi → Make sure it's switched ON (up) → Turn it off, wait 30 seconds, turn back on → Check if the eddi screen comes back.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, screen is back!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still no display`,
   },
 
   eddi_no_error: {
     type:'info',
-    eyebrow:'eddi — No Heat',
-    heading:"Try a manual boost.",
+    eyebrow:'eddi',
+    heading:`Try a manual boost.`,
     progress:45,
-    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>Press the <strong>boost button</strong> on the eddi to manually trigger heating.</li><li>Check the myenergi app to make sure the eddi shows as active.</li><li>Ensure your zappi (if you have one) isn't taking all the solar priority.</li></ol></div>`,
-    next:'eddi_no_error_result',
+    content:`<div class="info-box">
+<p>Press the BOOST button on the eddi to manually trigger heating → Check the myenergi app to make sure eddi shows as active → Ensure your zappi (if fitted) isn't taking all the solar priority.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, heating now!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still not heating`,
   },
-
-  eddi_no_error_result: {
-    type:'choice',
-    eyebrow:'eddi — No Heat',
-    heading:"Is the eddi now heating water?",
-    progress:65,
-    options:[
-      { emoji:'✅', label:'Yes, heating now!',      next:'fixed_success',        tag:'eddi - No Heat Fixed' },
-      { emoji:'❌', label:'Still not heating',      next:'zappi_escalate_upload', tag:'eddi - No Heat Persists' },
-    ],
-  },
-
-  // ══ REBOOTING ═════════════════════════════════════════════════════════════
 
   rebooting_device: {
     type:'choice',
-    eyebrow:'Device Rebooting',
-    heading:"Which device keeps restarting?",
+    eyebrow:'Rebooting',
+    heading:`Which device keeps restarting?`,
     progress:30,
     options:[
-      { emoji:'🚗', label:'zappi (EV charger)', next:'rebooting_firmware',  tag:'Rebooting - zappi' },
-      { emoji:'🌡️', label:'eddi (hot water)',   next:'rebooting_firmware',  tag:'Rebooting - eddi' },
-      { emoji:'🔌', label:'harvi (sensor)',      next:'rebooting_firmware',  tag:'Rebooting - harvi' },
+      { emoji:`▸`, label:`zappi`, next:'rebooting_firmware', tag:``, hint:`EV charger` },
+      { emoji:`▸`, label:`eddi`, next:'rebooting_firmware', tag:``, hint:`hot water` },
     ],
   },
 
   rebooting_firmware: {
     type:'choice',
-    eyebrow:'Device Rebooting',
-    heading:"Is your device's firmware up to date?",
-    sub:"You can check the firmware version in the device menu under Settings → About, or in the myenergi app.",
+    eyebrow:'Rebooting',
+    heading:`Is your device's firmware up to date?
+
+Firmware`,
+    sub:`Check the firmware version in device menu: Settings → About, or in the myenergi app.`,
     progress:45,
     options:[
-      { emoji:'✅', label:'Yes, firmware is up to date',        next:'rebooting_escalate',   tag:'Rebooting - Firmware Current' },
-      { emoji:'❌', label:'No, it needs updating',             next:'rebooting_update',     tag:'Rebooting - Firmware Old' },
-      { emoji:'🤷', label:'I\'m not sure how to check',        next:'rebooting_update',     tag:'Rebooting - Firmware Unsure' },
+      { emoji:`▸`, label:`Yes, firmware is up to date`, next:'rebooting_escalate', tag:`` },
+      { emoji:`▸`, label:`No, it needs updating`, next:'rebooting_update', tag:`` },
     ],
   },
 
   rebooting_update: {
     type:'info',
-    eyebrow:'Device Rebooting',
-    heading:"Update the firmware — this often fixes rebooting issues.",
+    eyebrow:'Rebooting',
+    heading:`Update the firmware — this often fixes rebooting issues.`,
     progress:60,
-    content:`<div class="info-box"><h3>How to update</h3><ol><li>Open the <strong>myenergi app</strong>.</li><li>Go to your device and tap <strong>Settings → Firmware Update</strong>.</li><li>Follow the on-screen instructions.</li><li>The device may reboot during the update — this is normal.</li></ol></div>`,
-    next:'rebooting_result',
-  },
-
-  rebooting_result: {
-    type:'choice',
-    eyebrow:'Device Rebooting',
-    heading:"Has the rebooting stopped after the firmware update?",
-    progress:75,
-    options:[
-      { emoji:'✅', label:'Yes, it\'s stable now!',       next:'fixed_success',        tag:'Rebooting - Fixed Firmware' },
-      { emoji:'❌', label:'Still rebooting unexpectedly', next:'rebooting_escalate',   tag:'Rebooting - Persists' },
-    ],
+    content:`<div class="info-box">
+<p>Open the myenergi app → Go to your device → Settings → Firmware Update → Follow on-screen instructions. The device may reboot during the update — this is normal.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, stable after updating!`,
+    next2:'rebooting_escalate',
+    nextLabel2:`Still rebooting unexpectedly`,
   },
 
   rebooting_escalate: {
     type:'info',
-    eyebrow:'Device Rebooting',
-    heading:"This needs a closer look.",
+    eyebrow:'Rebooting',
+    heading:`This needs a closer look.`,
     progress:65,
-    content:`<div class="info-box"><h3>What we'll need</h3><p>Persistent rebooting may indicate a loose wiring connection or a hardware fault. This needs to be looked at by our technical team.</p></div>`,
-    next:'zappi_escalate_upload',
+    content:`<div class="info-box">
+<p>Persistent rebooting may indicate a loose wiring connection or a hardware fault inside the device. This needs to be looked at by our technical team.</p>
+</div>`,
+    next:'myenergi_escalate_upload',
+    nextLabel:`Please raise a support ticket`,
   },
-
-  // ══ SCREEN ISSUES ═════════════════════════════════════════════════════════
 
   screen_issue: {
     type:'choice',
-    eyebrow:'Display Issue',
-    heading:"What does the screen issue look like?",
+    eyebrow:'Screen',
+    heading:`What does the screen issue look like?`,
     progress:30,
     options:[
-      { emoji:'💀', label:'Screen is completely blank',         next:'screen_blank_device',  tag:'Screen - Blank' },
-      { emoji:'🌫️', label:'Missing lines, pixels, or scrambled', next:'screen_display_fault', tag:'Screen - Display Fault' },
-      { emoji:'💡', label:'LEDs aren\'t lighting up correctly', next:'screen_led',           tag:'Screen - LED' },
-      { emoji:'🖐️', label:'Buttons aren\'t responding',         next:'screen_controls',      tag:'Screen - Controls' },
+      { emoji:`▸`, label:`Screen is completely blank`, next:'screen_blank_device', tag:`` },
+      { emoji:`▸`, label:`Missing lines, pixels, or scrambled`, next:'screen_display_fault', tag:`` },
+      { emoji:`▸`, label:`LEDs aren't lighting up correctly`, next:'screen_led', tag:`` },
+      { emoji:`▸`, label:`Buttons aren't responding`, next:'screen_controls', tag:`` },
     ],
   },
 
   screen_blank_device: {
     type:'choice',
-    eyebrow:'Blank Screen',
-    heading:"Which device has the blank screen?",
+    eyebrow:'Screen',
+    heading:`Which device has the blank screen?`,
     progress:40,
     options:[
-      { emoji:'🚗', label:'zappi (EV charger)', next:'zappi_dead',   tag:'Blank - zappi' },
-      { emoji:'🌡️', label:'eddi (hot water)',   next:'eddi_dead',    tag:'Blank - eddi' },
+      { emoji:`▸`, label:`zappi`, next:'zappi_dead', tag:``, hint:`EV charger` },
+      { emoji:`▸`, label:`eddi`, next:'eddi_dead', tag:``, hint:`hot water` },
     ],
   },
 
   screen_display_fault: {
     type:'info',
-    eyebrow:'Display Issue',
-    heading:"Check if the device is still working.",
+    eyebrow:'Screen',
+    heading:`Check if the device is still working.`,
     progress:45,
-    content:`<div class="info-box"><h3>What to check</h3><ol><li>Even with a partial display, is the device still functioning? (e.g. is the car still charging?)</li><li>Try a reboot — turn off at the fuse board, wait 30 seconds, turn back on.</li><li>If the screen is scrambled but functioning, this often requires a <strong>display or board replacement</strong>.</li></ol></div>`,
-    next:'screen_display_result',
-  },
-
-  screen_display_result: {
-    type:'choice',
-    eyebrow:'Display Issue',
-    heading:"After rebooting, how is the screen?",
-    progress:60,
-    options:[
-      { emoji:'✅', label:'Screen is back to normal!',         next:'fixed_success',        tag:'Display - Fixed Reboot' },
-      { emoji:'🌫️', label:'Still scrambled or has missing parts', next:'zappi_escalate_upload', tag:'Display - Persists' },
-    ],
+    content:`<div class="info-box">
+<p>Even with a partial display, is the device still functioning? (e.g. is the car still charging?) → Try a reboot: turn off at switchboard, wait 30 seconds, turn back on → If screen is scrambled but functioning, this often requires a display or board replacement.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Screen is back to normal!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still scrambled / missing parts`,
   },
 
   screen_led: {
     type:'info',
-    eyebrow:'LED Issue',
-    heading:"Try a factory reset.",
+    eyebrow:'Screen',
+    heading:`Try a factory reset.`,
     progress:45,
-    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>Go into the device <strong>Settings menu</strong>.</li><li>Select <strong>Factory Reset</strong>.</li><li>Once reset, check if the LEDs are working correctly.</li></ol></div>`,
-    next:'screen_led_result',
-  },
-
-  screen_led_result: {
-    type:'choice',
-    eyebrow:'LED Issue',
-    heading:"Are the LEDs working after the factory reset?",
-    progress:65,
-    options:[
-      { emoji:'✅', label:'Yes, LEDs are fine now!',  next:'fixed_success',        tag:'LED - Fixed Reset' },
-      { emoji:'❌', label:'LEDs still faulty',         next:'zappi_escalate_upload', tag:'LED - Persists' },
-    ],
+    content:`<div class="info-box">
+<p>Go into device Settings menu → Select Factory Reset → Once reset, check if the LEDs are working correctly.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, LEDs are fine now!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`LEDs still faulty`,
   },
 
   screen_controls: {
     type:'info',
-    eyebrow:'Controls Unresponsive',
-    heading:"Try a reboot first.",
+    eyebrow:'Screen',
+    heading:`Try a reboot first.`,
     progress:45,
-    content:`<div class="info-box"><h3>Steps</h3><ol><li>Turn the device off at the fuse board.</li><li>Wait 30 seconds.</li><li>Turn back on and test the buttons.</li></ol></div>`,
-    next:'screen_controls_result',
+    content:`<div class="info-box">
+<p>Turn the device off at the fuse board → wait 30 seconds → turn back on → test the buttons.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, buttons work now!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still not responding`,
   },
-
-  screen_controls_result: {
-    type:'choice',
-    eyebrow:'Controls Unresponsive',
-    heading:"Are the controls responding after the reboot?",
-    progress:65,
-    options:[
-      { emoji:'✅', label:'Yes, buttons work now!',      next:'fixed_success',        tag:'Controls - Fixed Reboot' },
-      { emoji:'❌', label:'Still not responding',         next:'zappi_escalate_upload', tag:'Controls - Persists' },
-    ],
-  },
-
-  // ══ CONNECTIVITY ═════════════════════════════════════════════════════════
 
   connectivity: {
     type:'choice',
     eyebrow:'Connectivity',
-    heading:"What kind of connectivity problem is it?",
+    heading:`What kind of connectivity problem is it?`,
     progress:30,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/5209609055377-Device-Wi-Fi-Setup`,
     options:[
-      { emoji:'📶', label:'Won\'t connect to Wi-Fi',              next:'wifi_issue',    tag:'Wi-Fi' },
-      { emoji:'🔗', label:'Devices won\'t pair with each other',  next:'pairing_issue', tag:'Pairing' },
-      { emoji:'🔓', label:'Keeps losing pairing',                 next:'loses_pairing', tag:'Loses Pairing' },
-      { emoji:'🔄', label:'Firmware won\'t update',               next:'firmware_issue', tag:'Firmware Update' },
+      { emoji:`▸`, label:`Won't connect to Wi-Fi`, next:'wifi_issue', tag:`` },
+      { emoji:`▸`, label:`Devices won't pair with each other`, next:'pairing_issue', tag:`` },
+      { emoji:`▸`, label:`Keeps losing pairing`, next:'loses_pairing', tag:`` },
+      { emoji:`▸`, label:`Firmware won't update`, next:'firmware_issue', tag:`` },
     ],
   },
 
   wifi_issue: {
     type:'choice',
-    eyebrow:'Wi-Fi Issue',
-    heading:"Has this device ever connected to Wi-Fi before?",
+    eyebrow:'Connectivity',
+    heading:`Has this device ever connected to Wi-Fi before?`,
     progress:40,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45487263593745-myenergi-Wi-Fi-Setup-Troubleshooting`,
     options:[
-      { emoji:'✅', label:'Yes, it was connected but dropped off',  next:'wifi_reboot_router', tag:'Wi-Fi - Was Connected' },
-      { emoji:'🆕', label:'No, this is a new setup',                next:'wifi_new_setup',     tag:'Wi-Fi - First Time' },
+      { emoji:`▸`, label:`Yes, it was connected but dropped off`, next:'wifi_reboot_router', tag:`` },
+      { emoji:`▸`, label:`No, this is a new setup`, next:'wifi_new_setup', tag:`` },
     ],
   },
 
   wifi_reboot_router: {
     type:'info',
-    eyebrow:'Wi-Fi Issue',
-    heading:"Start by rebooting your router.",
+    eyebrow:'Connectivity',
+    heading:`Start by rebooting your router.`,
     progress:50,
-    content:`<div class="info-box"><h3>Steps</h3><ol><li>Turn your <strong>Wi-Fi router off</strong> (unplug it from the wall).</li><li>Wait <strong>30 seconds</strong>.</li><li>Plug back in and wait 2 minutes for it to fully restart.</li><li>Check if your device reconnects automatically.</li></ol></div>`,
-    next:'wifi_result',
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45487263593745-myenergi-Wi-Fi-Setup-Troubleshooting`,
+    content:`<div class="info-box">
+<p>Turn your Wi-Fi router off (unplug from wall) → Wait 30 seconds → Plug back in and wait 2 minutes for full restart → Check if device reconnects automatically.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, connected!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still not connecting`,
   },
 
   wifi_new_setup: {
     type:'info',
-    eyebrow:'Wi-Fi — New Setup',
-    heading:"Follow the Wi-Fi setup steps.",
+    eyebrow:'Connectivity',
+    heading:`Follow the Wi-Fi setup steps.`,
     progress:50,
-    content:`<div class="info-box"><h3>How to connect</h3><ol><li>On the device, go to <strong>Settings → Wi-Fi</strong>.</li><li>Select your Wi-Fi network from the list.</li><li>Enter your password carefully (Wi-Fi passwords are case-sensitive).</li><li>If it says "Failed", double-check your password and try again.</li></ol></div>`,
-    next:'wifi_result',
-  },
-
-  wifi_result: {
-    type:'choice',
-    eyebrow:'Wi-Fi Issue',
-    heading:"Is Wi-Fi now connected?",
-    progress:70,
-    options:[
-      { emoji:'✅', label:'Yes, connected!',          next:'fixed_success',        tag:'Wi-Fi - Fixed' },
-      { emoji:'❌', label:'Still not connecting',     next:'zappi_escalate_upload', tag:'Wi-Fi - Persists' },
-    ],
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45487263593745-myenergi-Wi-Fi-Setup-Troubleshooting`,
+    content:`<div class="info-box">
+<p>On the device: Settings → Wi-Fi → Select your Wi-Fi network → Enter your password carefully (case-sensitive) → If it says "Failed", double-check the password and try again.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, connected!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still not connecting`,
   },
 
   pairing_issue: {
     type:'info',
-    eyebrow:'Pairing Issue',
-    heading:"Try putting both devices on the same channel.",
+    eyebrow:'Connectivity',
+    heading:`Try putting both devices on the same channel.`,
     progress:45,
-    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>On <strong>both devices</strong>, go to Settings and set the <strong>channel to 4</strong>.</li><li>Reboot both devices.</li><li>Try pairing again.</li><li>Make sure the devices are within <strong>20 metres</strong> of each other with no thick stone or metal walls between them.</li></ol></div>`,
-    next:'pairing_result',
-  },
-
-  pairing_result: {
-    type:'choice',
-    eyebrow:'Pairing Issue',
-    heading:"Are the devices now paired?",
-    progress:65,
-    options:[
-      { emoji:'✅', label:'Yes, paired successfully!',  next:'fixed_success',        tag:'Pairing - Fixed' },
-      { emoji:'❌', label:'Still won\'t pair',           next:'zappi_escalate_upload', tag:'Pairing - Persists' },
-    ],
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/34623041760657-Installation-Guidelines-for-harvi`,
+    content:`<div class="info-box">
+<p>On BOTH devices: go to Settings → set the channel to 4 → Reboot both devices → Try pairing again. Make sure devices are within 20 metres of each other with no thick stone or metal walls between them.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, paired successfully!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still won't pair`,
   },
 
   loses_pairing: {
     type:'info',
-    eyebrow:'Loses Pairing',
-    heading:"Check your Wi-Fi signal strength.",
+    eyebrow:'Connectivity',
+    heading:`Check your Wi-Fi signal strength.`,
     progress:45,
-    content:`<div class="info-box"><h3>What to check</h3><ol><li>Check the Wi-Fi signal strength to <strong>both devices</strong> in their Settings → Network menu.</li><li>If signal is weak, consider a Wi-Fi extender or moving the router closer.</li><li>Make sure both devices are connected to the <strong>same Wi-Fi access point</strong> (not different extenders with the same name).</li></ol></div>`,
-    next:'loses_pairing_result',
-  },
-
-  loses_pairing_result: {
-    type:'choice',
-    eyebrow:'Loses Pairing',
-    heading:"Has improving the Wi-Fi signal helped?",
-    progress:65,
-    options:[
-      { emoji:'✅', label:'Yes, pairing is stable now!',  next:'fixed_success',        tag:'Loses Pairing - Fixed' },
-      { emoji:'❌', label:'Still losing pairing',          next:'zappi_escalate_upload', tag:'Loses Pairing - Persists' },
-    ],
+    content:`<div class="info-box">
+<p>Check the Wi-Fi signal strength to BOTH devices in Settings → Network menu → If signal is weak, consider a Wi-Fi extender → Make sure both devices are connected to the SAME Wi-Fi access point (not different extenders).</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, pairing is stable now!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still losing pairing`,
   },
 
   firmware_issue: {
     type:'info',
-    eyebrow:'Firmware Update',
-    heading:"Check your hub connection first.",
+    eyebrow:'Connectivity',
+    heading:`Check your hub connection first.`,
     progress:45,
-    content:`<div class="info-box"><h3>Steps to try</h3><ol><li>Make sure your device is correctly connected to the myenergi hub or vHub.</li><li>Reboot the device and try downloading the firmware again via the app or device menu.</li><li>If it still fails, try a <strong>factory reset</strong> and attempt the firmware update again.</li></ol></div>`,
-    next:'firmware_result',
+    content:`<div class="info-box">
+<p>Make sure your device is correctly connected to the myenergi hub or vHub → Reboot the device and try downloading firmware again via app or device menu → If still fails, try a factory reset and attempt the firmware update again.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, updated!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still failing to update`,
   },
-
-  firmware_result: {
-    type:'choice',
-    eyebrow:'Firmware Update',
-    heading:"Did the firmware update successfully?",
-    progress:65,
-    options:[
-      { emoji:'✅', label:'Yes, updated!',          next:'fixed_success',        tag:'Firmware - Fixed' },
-      { emoji:'❌', label:'Still failing to update', next:'zappi_escalate_upload', tag:'Firmware - Persists' },
-    ],
-  },
-
-  // ══ POWER READINGS ═══════════════════════════════════════════════════════
 
   power_readings: {
     type:'choice',
-    eyebrow:'Incorrect Readings',
-    heading:"Which readings look wrong?",
+    eyebrow:'Power Readings',
+    heading:`Which readings look wrong?`,
     progress:30,
     options:[
-      { emoji:'⚡', label:'Grid power reading is wrong',         next:'grid_ct_check',   tag:'Readings - Grid Wrong' },
-      { emoji:'☀️', label:'Solar/generation reading is wrong',   next:'other_ct_check',  tag:'Readings - Solar Wrong' },
-      { emoji:'🏠', label:'Home consumption reading is wrong',   next:'other_ct_check',  tag:'Readings - Home Wrong' },
-      { emoji:'📱', label:'App shows wrong figures overall',     next:'other_ct_check',  tag:'Readings - App Wrong' },
+      { emoji:`▸`, label:`Grid power reading is wrong`, next:'grid_ct_check', tag:`` },
+      { emoji:`▸`, label:`Solar / generation reading is wrong`, next:'other_ct_check', tag:`` },
+      { emoji:`▸`, label:`Home consumption reading is wrong`, next:'other_ct_check', tag:`` },
+      { emoji:`▸`, label:`App shows wrong figures overall`, next:'other_ct_check', tag:`` },
     ],
   },
 
   grid_ct_check: {
     type:'info',
-    eyebrow:'Grid Reading Wrong',
-    heading:"The CT clamp sensor may need repositioning.",
+    eyebrow:'Power Readings',
+    heading:`The CT clamp sensor may need repositioning.`,
     progress:50,
-    content:`
-      <div class="info-box">
-        <h3>What is a CT clamp?</h3>
-        <p>A small clip attached to your main electricity cable that measures your grid usage. If it's in the wrong place or loose, readings will be wrong.</p>
-      </div>
-      <div class="warning-box">
-        <p><strong>⚠️ Electrical safety:</strong> Checking or moving the CT clamp requires access to your electrical installation. Only a qualified electrician should do this.</p>
-      </div>
-      <div class="info-box">
-        <h3>What to check (for your installer)</h3>
-        <ol>
-          <li>CT clamp should be on the <strong>meter tail directly after the isolator</strong>.</li>
-          <li>The clamp must be <strong>clicked fully shut</strong>.</li>
-          <li>If the cable has been extended, only <strong>1 twisted pair</strong> should be used.</li>
-          <li>There should only be <strong>1 Grid CT set</strong> in the myenergi system.</li>
-        </ol>
-      </div>`,
-    next:'readings_escalate',
+    content:`<div class="info-box">
+<p>A CT clamp is a small clip on your main electricity cable measuring grid usage. If wrong or loose, readings will be off. ⚠️ Only a qualified electrician should check/move CT clamps. For installer: CT clamp should be on the meter tail directly after isolator, must be clicked fully shut, only 1 twisted pair if extended, only 1 Grid CT set in the system.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`I'll contact my installer`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Please raise a support ticket`,
   },
 
   other_ct_check: {
     type:'info',
-    eyebrow:'Incorrect Reading',
-    heading:"A CT clamp may be fitted to the wrong cable.",
+    eyebrow:'Power Readings',
+    heading:`A CT clamp may be fitted to the wrong cable.`,
     progress:50,
-    content:`<div class="info-box"><h3>What your installer needs to check</h3><ol><li>Verify the CT clamp is clipped around the <strong>correct cable</strong> for what it's measuring.</li><li>Check the CT is correctly set in the myenergi system settings.</li></ol></div><div class="warning-box"><p><strong>⚠️ This requires an electrician</strong> to access the electrical installation safely.</p></div>`,
-    next:'readings_escalate',
+    content:`<div class="info-box">
+<p>Your installer needs to verify the CT clamp is clipped around the correct cable for what it's measuring, and that the CT is correctly set in the myenergi system settings. ⚠️ This requires an electrician to access the installation safely.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`I'll contact my installer`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Please raise a support ticket`,
   },
-
-  readings_escalate: {
-    type:'choice',
-    eyebrow:'Incorrect Readings',
-    heading:"Would you like us to raise a support ticket for your installer?",
-    progress:65,
-    options:[
-      { emoji:'✅', label:'Yes, please raise a support ticket', next:'zappi_escalate_upload', tag:'Readings - Escalate' },
-      { emoji:'🔧', label:'I\'ll contact my installer directly', next:'fixed_success',         tag:'Readings - Self Resolve' },
-    ],
-  },
-
-  // ══ OVERHEATING ══════════════════════════════════════════════════════════
 
   overheating: {
     type:'choice',
     eyebrow:'Overheating',
-    heading:"Where is the device installed?",
+    heading:`Where is the device installed?`,
     progress:35,
     options:[
-      { emoji:'☀️', label:'In direct sunlight or a very hot location', next:'overheating_environment', tag:'Overheating - Environment' },
-      { emoji:'🏠', label:'In a normal indoor or garage location',      next:'overheating_install',     tag:'Overheating - Normal Location' },
+      { emoji:`▸`, label:`In direct sunlight or poorly ventilated location`, next:'overheating_environment', tag:`` },
+      { emoji:`▸`, label:`In a normal indoor or garage location`, next:'overheating_install', tag:`` },
     ],
   },
 
   overheating_environment: {
     type:'info',
     eyebrow:'Overheating',
-    heading:"The location is causing the overheating.",
+    heading:`The location is causing the overheating.`,
     progress:60,
-    resolve:true,
-    content:`
-      <div class="info-box">
-        <h3>What to do</h3>
-        <p>The device is overheating because of its environment. You'll need to:</p>
-        <ol>
-          <li>Shade the device from direct sunlight (a small canopy or shade is fine).</li>
-          <li>Ensure there is adequate airflow around the device — don't box it in.</li>
-          <li>Contact your installer if relocation is needed.</li>
-        </ol>
-      </div>`,
+    content:`<div class="info-box">
+<p>The device is overheating due to its environment. Solutions: 1) Shade the device from direct sunlight (small canopy is fine). 2) Ensure adequate airflow — don't box it in. 3) Contact your installer if relocation is needed.</p>
+</div>`,
     next:'fixed_check',
+    nextLabel:`Yes, overheating resolved! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still overheating after changes`,
   },
 
   overheating_install: {
     type:'info',
     eyebrow:'Overheating',
-    heading:"Check the installation meets myenergi guidelines.",
+    heading:`Check the installation meets myenergi guidelines.`,
     progress:55,
-    content:`<div class="info-box"><h3>What to check</h3><ol><li>The device must be installed as per myenergi's installation guidelines — correct mounting, correct clearances, correct cable routing.</li><li>If it's not installed correctly, your <strong>original installer</strong> should be contacted to refit it.</li></ol></div>`,
-    next:'overheating_result',
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/41782342913041-Concerns-about-zappi-overheating-in-hot-environments`,
+    content:`<div class="info-box">
+<p>The device must be installed as per myenergi's installation guidelines — correct mounting, clearances, and cable routing. If not installed correctly, your original installer should be contacted to refit it.</p>
+</div>`,
+    next:'fixed_success',
+    nextLabel:`Yes, overheating resolved!`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still overheating`,
   },
-
-  overheating_result: {
-    type:'choice',
-    eyebrow:'Overheating',
-    heading:"Is the overheating resolved?",
-    progress:70,
-    options:[
-      { emoji:'✅', label:'Yes, it\'s running normally now', next:'fixed_success',        tag:'Overheating - Fixed' },
-      { emoji:'❌', label:'Still overheating',               next:'zappi_escalate_upload', tag:'Overheating - Persists' },
-    ],
-  },
-
-  // ══ OTHER / WHICH DEVICE ══════════════════════════════════════════════════
 
   which_device_other: {
     type:'choice',
-    eyebrow:'Other Issue',
-    heading:"Which myenergi device do you have a problem with?",
+    eyebrow:'Other',
+    heading:`Which myenergi device do you have a problem with?`,
     progress:30,
     options:[
-      { emoji:'🚗', label:'zappi — EV charger',        tag:'zappi',  next:'generic_other' },
-      { emoji:'🌡️', label:'eddi — hot water diverter',  tag:'eddi',   next:'generic_other' },
-      { emoji:'🔋', label:'libbi — home battery',      tag:'libbi',  next:'generic_other' },
-      { emoji:'📡', label:'harvi — CT sensor',          tag:'harvi',  next:'generic_other' },
-      { emoji:'📱', label:'myenergi app',               tag:'App',    next:'generic_other' },
+      { emoji:`▸`, label:`zappi — EV charger`, next:'generic_other', tag:`Also: myenergi app → generic_other` },
+      { emoji:`▸`, label:`eddi — solar diverter`, next:'generic_other', tag:`Also: myenergi app → generic_other` },
+      { emoji:`▸`, label:`libbi — home battery`, next:'generic_other', tag:`Also: myenergi app → generic_other` },
+      { emoji:`▸`, label:`harvi — CT sensor`, next:'generic_other', tag:`Also: myenergi app → generic_other` },
     ],
   },
 
-  // Single consolidated step replacing all 5 near-identical "X_other" steps
   generic_other: {
     type:'info',
-    eyebrow:'Get support',
-    heading:"Let's get you to the right team.",
+    eyebrow:'Other',
+    heading:`Let's get you to the right team.`,
     progress:45,
-    content:`<div class="info-box"><h3>We'll take it from here</h3><p>Our support team will look into this for you. Use the button below to log your issue — include as much detail as you can so we can help quickly.</p></div>`,
-    next:'zappi_escalate_upload',
+    content:`<div class="info-box">
+<p>Our support team will look into this for you. Use the button below to log your issue — include as much detail as you can so we can help quickly.</p>
+</div>`,
+    next:'myenergi_escalate_upload',
+    nextLabel:`Log a support ticket`,
   },
-
-  // ══ DID THIS FIX IT? ═════════════════════════════════════════════════════
 
   fixed_check: {
     type:'choice',
-    eyebrow:'All done?',
-    heading:"Did that solve the problem?",
+    eyebrow:'Resolution',
+    heading:`Did that solve the problem?`,
     progress:90,
     options:[
-      { emoji:'✅', label:'Yes, it\'s all working!',                    next:'fixed_success',        tag:'Resolved' },
-      { emoji:'❌', label:'No, still having issues',                    next:'zappi_escalate_upload', tag:'Not Resolved' },
-      { emoji:'🔁', label:'New problem appeared / different issue',     next:'main_issue',            tag:'New Issue' },
+      { emoji:`▸`, label:`Yes, it's all working! ✅`, next:'fixed_success', tag:`` },
+      { emoji:`▸`, label:`No, still having issues`, next:'myenergi_escalate_upload', tag:`` },
+      { emoji:`▸`, label:`New problem appeared`, next:'main_issue', tag:`` },
     ],
   },
 
   fixed_success: {
     type:'success',
-    heading:"Great news — problem solved! 🎉",
+    eyebrow:'Resolution',
+    heading:`Great news — problem solved! 🎉`,
     progress:100,
-    content:`
-      <div class="success-box">
-        <div class="success-icon">✅</div>
-        <h2>You're all sorted!</h2>
-        <p>We're glad we could help you get things working again. If the issue comes back or you have any other questions, don't hesitate to start the wizard again or contact our support team.</p>
-      </div>
-      <div class="info-box">
-        <h3>💡 Keep things running smoothly</h3>
-        <ul>
-          <li>Keep your device firmware up to date via the myenergi app.</li>
-          <li>Check out the <a href="https://support.myenergi.com" target="_blank" style="color:var(--green)">myenergi help centre</a> for tips and guides.</li>
-        </ul>
-      </div>`,
+    next:'✅ Yes',
   },
 
-  // ══ ESCALATE & UPLOAD ═════════════════════════════════════════════════════
-
-  zappi_escalate_upload: {
+  myenergi_escalate_upload: {
     type:'upload',
-    eyebrow:'Getting help',
-    heading:"Let's get our team on this.",
-    sub:"We weren't able to fix this with the steps above. Upload a photo of your device and any error messages — this helps our team diagnose the issue faster and avoids you needing to repeat yourself.",
+    eyebrow:'Escalation',
+    heading:`Let's get our team on this.`,
+    sub:`Don't worry, this will be escalated to our support team who will sort this out for you. To help them resolve quicker, please upload a photo of your device and its screen if you can. This way you won't need to explain everything again when you speak with them.`,
     progress:80,
-    uploadLabel:'Add photos of your device & any error messages on screen',
+    uploadLabel:'Add photos of your device and any error messages',
     uploadTypes:['JPG','PNG','PDF'],
     next:'escalate_contact',
   },
 
   escalate_contact: {
     type:'contact',
-    eyebrow:'Almost done',
-    heading:"Your details",
-    sub:"We'll use these to create a support ticket and get back to you as soon as possible.",
+    eyebrow:'Escalation',
+    heading:`Your details`,
+    sub:`We'll use these to create a support ticket and get back to you as soon as possible.`,
     progress:90,
     next:'escalate_submit',
   },
 
   escalate_submit: {
     type:'submit',
-    eyebrow:'Review',
-    heading:"Check your details",
-    sub:"Here's a summary of everything we'll send to the support team.",
+    eyebrow:'Escalation',
+    heading:`Check your details`,
+    sub:`Here's a summary of everything we'll send to the support team.`,
     progress:95,
     next:'ticket_submitted',
   },
 
   ticket_submitted: {
     type:'ticket_success',
-    heading:"Support ticket created ✅",
+    eyebrow:'Escalation',
+    heading:`Support ticket created ✅`,
     progress:100,
+    next:'welcome',
   },
+
+  behaviour_which_device: {
+    type:'choice',
+    eyebrow:'Behaviour',
+    heading:`Which device isn't behaving as expected?`,
+    sub:`Pick the one that best describes your situation.`,
+    progress:25,
+    options:[
+      { emoji:`▸`, label:`My zappi`, next:'zappi_behaviour', tag:``, hint:`EV charger` },
+      { emoji:`▸`, label:`My eddi`, next:'eddi_behaviour', tag:``, hint:`hot water` },
+    ],
+  },
+
+  zappi_behaviour: {
+    type:'choice',
+    eyebrow:'zappi',
+    heading:`What is your zappi doing?`,
+    sub:`Pick the option that best describes what's happening.`,
+    progress:30,
+    options:[
+      { emoji:`▸`, label:`It's charging too slowly`, next:'zappi_speed', tag:`` },
+      { emoji:`▸`, label:`My scheduled boost isn't working`, next:'zappi_boost', tag:`` },
+      { emoji:`▸`, label:`I can't change the charge mode`, next:'zappi_mode', tag:`` },
+      { emoji:`▸`, label:`There's a delay before charging starts, or it keeps stopping`, next:'zappi_start_stop', tag:`` },
+    ],
+  },
+
+  zappi_speed: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`Let's check why your car is charging slowly.`,
+    progress:45,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/24486225055505-Lower-than-Expected-Charging-Rates-Slow-Charge`,
+    content:`<div class="info-box">
+<p>Your charging speed depends on a few things:</p>
+</div>
+<div class="info-box">
+<p>1) Check your charge mode — Eco and Eco+ modes limit charging to available solar surplus, which can be slow or stop altogether if there isn't enough solar. For faster charging, use the up/down arrow buttons or the myenergi app to switch to Fast mode.</p>
+</div>
+<div class="info-box">
+<p>2) Your EV may limit its own charge rate. Check your car's settings or app to see if a maximum charge rate has been set.</p>
+</div>
+<div class="info-box">
+<p>3) Your zappi's maximum charge rate will depend on whether the zappi is connected single phase or 3 phase. If you are not sure, check with your installer.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`Yes, that helped! ✅`,
+    next2:'zappi_speed_fast',
+    nextLabel2:`Still not charging at the speed I'd expect`,
+  },
+
+  zappi_boost: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`Let's check your boost settings.`,
+    progress:45,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/4402861966609-How-to-Set-a-Timed-Charge-Boost-on-Your-zappi`,
+    content:`<div class="info-box">
+<p>A boost tells your zappi to charge your car at a set time or for a set amount, regardless of solar. Here's how to check it's set up correctly:</p>
+</div>
+<div class="info-box">
+<ol>
+<li>On your zappi home screen, check the time and date displayed are correct</li>
+<li><strong>Make sure your car is plugged in and set to ECO or ECO+ before the boost time begins</strong> — the zappi can't start a boost if nothing is connected or it is set to STOP.</li>
+<li><strong>Check the boost hasn't already completed</strong> — if your car is already at the target charge level, the boost won't run again until the next scheduled time.</li>
+</ol>
+</div>
+<div class="info-box">
+<p>You can also set and manage scheduled boost in the myenergi app under your zappi's settings.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`Yes, that fixed it! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`My boost still isn't working`,
+  },
+
+  zappi_mode: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`Here's how to change your charge mode.`,
+    progress:45,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020720298-What-are-the-zappi-charging-modes`,
+    content:`<div class="info-box">
+<p>Your zappi has three charge modes you can switch between at any time:</p>
+</div>
+<div class="info-box">
+<ul>
+<li>Fast — charges your car as quickly as possible using grid electricity.</li>
+<li>Eco — uses solar energy where available and tops up from the grid to keep charging going.</li>
+<li>Eco+ — uses solar energy only. Your car will only charge when there is enough surplus solar (at least 1.4kW). It will pause if solar drops below this.</li>
+</ul>
+</div>
+<div class="info-box">
+<p>To change mode:</p>
+<ol>
+<li>Use the up/down arrow buttons on your zappi to cycle through the modes until you see the one you want.</li>
+<li>Or open the myenergi app, select your zappi, and tap the mode you'd like.</li>
+</ol>
+</div>
+<div class="info-box">
+<p>If the buttons aren't responding, try rebooting your zappi by turning it off at the fuse box, waiting 10 seconds, and turning it back on.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`Yes, that helped! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`The buttons still aren't working`,
+  },
+
+  zappi_start_stop: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`Here's why your car might be pausing or slow to start.`,
+    progress:45,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020720298-What-are-the-zappi-charging-modes`,
+    content:`<div class="info-box">
+<p>It's normal for charging to pause or have a short delay in some situations. Here's what might be happening:</p>
+</div>
+<div class="info-box">
+<p>1) Eco+ mode — if you're in Eco+ mode, your car will only charge when there is at least 1.4kW of surplus solar. If solar drops below this, charging will pause automatically and resume when there's enough again. This is expected behaviour.</p>
+</div>
+<div class="info-box">
+<p>2) Car timer — your car may have its own charging schedule set. If the zappi tries to charge outside of this window, the car will refuse until its timer allows it. Check your car's display or app for any scheduled charging times.</p>
+</div>
+<div class="info-box">
+<p>3) Start delay — when you first plug in, there is usually a short handshake between the zappi and your car (up to 30 seconds) before charging begins. This is normal.</p>
+</div>
+<div class="info-box">
+<p>4) Smart charging apps — if you use a third-party app like Octopus Energy or a smart tariff, it may be controlling when your car charges. Check the app to see if it has paused charging.</p>
+</div>
+<div class="info-box">
+<p>If none of these apply and charging keeps stopping unexpectedly, please get in touch with our support team.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`Yes, that makes sense! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`It's still stopping unexpectedly`,
+  },
+
+  zappi_speed_fast: {
+    type:'choice',
+    eyebrow:'zappi',
+    heading:`How fast is your zappi charging when set to Fast or Boost mode?`,
+    sub:`Check the power reading on your zappi screen or in the myenergi app — it shows how many kW are currently being delivered to your car. Pick the option closest to what you see.`,
+    progress:55,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/24486225055505-Lower-than-Expected-Charging-Rates-Slow-Charge`,
+    options:[
+      { emoji:`▸`, label:`~1.4kW`, next:'zappi_speed_1p4_carlimit', tag:`` },
+      { emoji:`▸`, label:`~4.2kW`, next:'zappi_speed_4p2', tag:`` },
+      { emoji:`▸`, label:`~7kW`, next:'zappi_speed_7kw', tag:`` },
+      { emoji:`▸`, label:`~11kW or higher`, next:'zappi_speed_11kw', tag:`` },
+      { emoji:`▸`, label:`Varies or cuts in and out`, next:'zappi_speed_varies', tag:`` },
+    ],
+  },
+
+  zappi_speed_1p4_carlimit: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`Your car may be limiting its own charge rate.`,
+    progress:65,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/24486225055505-Lower-than-Expected-Charging-Rates-Slow-Charge`,
+    content:`<div class="info-box">
+<p>Charging at ~1.4kW (6 Amps) usually means one of the following:</p>
+</div>
+<div class="info-box">
+<p>1) Your car is limiting its own charge rate — many EVs let you set a maximum charge rate in the car's own settings or app. Check your car's charging settings and make sure it isn't set to a low limit.</p>
+</div>
+<div class="info-box">
+<p>2) The zappi minimum charge rate — on your zappi, go to Settings → Charge Rates and check the minimum is set to at least 6 Amps (1.4kW). If it's set higher and the car can't match it, charging may stop and restart at the minimum.</p>
+</div>
+<div class="info-box">
+<p>3) Your home supply — if your home is using a lot of electricity at the same time, the zappi may reduce the charge rate to avoid overloading your supply. Check what other appliances are running.</p>
+</div>
+<div class="info-box">
+<p>4) Try charging at a public charger or friend's charger — if your car charges faster elsewhere, the issue is likely with the zappi settings. If it charges slowly everywhere, the car's own charge rate setting is likely the cause.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`Yes, that helped! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still only getting ~1.4kW`,
+  },
+
+  zappi_speed_4p2: {
+    type:'choice',
+    eyebrow:'zappi',
+    heading:`Do you know if your home has a single-phase or three-phase electricity supply?`,
+    sub:`Most homes in the UK, Ireland, Australia and New Zealand have a single-phase supply. Three-phase is more common in Germany, Benelux and in larger properties or commercial buildings. If you're not sure, check your fuse box — a single-phase supply usually has one main incoming cable, while three-phase has three.`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Single-phase`, next:'zappi_speed_1p4_carlimit', tag:``, hint:`or I'm not sure` },
+      { emoji:`▸`, label:`Three-phase`, next:'zappi_speed_4p2_3ph', tag:`` },
+    ],
+  },
+
+  zappi_speed_4p2_3ph: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`~4.2kW in Eco mode on a three-phase supply usually means your zappi is set to prioritise solar from all 3 phases`,
+    progress:75,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/5780558509201-ECO-ECO-charge-rates-in-a-three-phase-zappi`,
+    content:`<div class="info-box">
+<p>Your zappi can be set to use one or all three phases when charging in Eco or Eco+ mode. If it's set to use all three phases, the minimum charge rate is 4.2kW — it can't go lower than this in that mode.</p>
+</div>
+<div class="info-box">
+<p>To allow slower charging (down to 1.4kW), you need to switch Eco/Eco+ mode to single-phase only. You can do this in two ways:</p>
+<ol>
+<li>On your zappi: go to Charge Settings, find the Eco/Eco+ phase setting, and change it to single phase or auto.</li>
+<li>In the myenergi app: go to your zappi's settings and look for the Eco phase option.</li>
+</ol>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`Yes, that helped! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still not getting the speed I expect`,
+  },
+
+  zappi_speed_7kw: {
+    type:'choice',
+    eyebrow:'zappi',
+    heading:`Were you expecting to charge faster than 7kW?`,
+    sub:`7kW is the maximum speed for a single-phase supply, which is what most UK homes have.`,
+    progress:65,
+    options:[
+      { emoji:`▸`, label:`Yes — I expected faster than 7kW`, next:'zappi_speed_7kw_3ph', tag:`` },
+      { emoji:`▸`, label:`No — 7kW sounds about right`, next:'fixed_check', tag:`` },
+    ],
+  },
+
+  zappi_speed_7kw_3ph: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`To charge faster than 7kW you need a three-phase supply and a compatible car.`,
+    progress:75,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/5780558509201-ECO-ECO-charge-rates-in-a-three-phase-zappi`,
+    content:`<div class="info-box">
+<p>Charging faster than 7kW requires two things:</p>
+</div>
+<div class="info-box">
+<p>1) A three-phase electricity supply — most UK homes have a single-phase supply, which limits AC charging to 7kW. Three-phase supplies are more common in larger or newer properties. Check with your network operator or installer if you're unsure what you have.</p>
+</div>
+<div class="info-box">
+<p>2) A car that supports three-phase AC charging — not all EVs can accept three-phase AC. Many popular models (including some Teslas, Nissan Leafs, and others) can only accept single-phase AC, capping them at 7kW regardless of the supply. Check your car's specification sheet for its maximum AC charge rate.</p>
+</div>
+<div class="info-box">
+<p>If you have a three-phase supply and a compatible car but still aren't getting above 7kW, your zappi may need to be configured for three-phase operation by your installer.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`That explains it, thanks! ✅`,
+    next2:'zappi_speed_phase_icon',
+    nextLabel2:`I do have three-phase — still not getting above 7kW`,
+  },
+
+  zappi_speed_phase_icon: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`Set your zappi to Fast mode. Does the zappi icon show a '3' inside it, or is it blank?`,
+    sub:`7kW is the maximum speed for a single-phase supply, which is what most homes have. If you're on a three-phase supply, you may be able to charge faster.`,
+    progress:80,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/15198583707025-Understanding-and-Fixing-Single-Phase-Operation-in-3-Phase-Zappi-Models`,
+    content:`<div class="info-box">
+<p>When your zappi detects 3 phases, it will indicate that 3 phases are available for charging</p>
+</div>`,
+    next:'zappi_speed_7kw_cable',
+    nextLabel:`Yes, zappi icon has a 3 inside it`,
+    next2:'zappi_speed_phase_rotation',
+    nextLabel2:`No, the zappi icon is blank`,
+  },
+
+  zappi_speed_phase_rotation: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`Your zappi is unable to detect 3 phases, or the direction of phases`,
+    sub:`You will need an electrician to confirm the zappi has power on all phases, and the phase direction is correct.`,
+    progress:85,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/15198583707025-Understanding-and-Fixing-Single-Phase-Operation-in-3-Phase-Zappi-Models`,
+    content:`<div class="info-box">
+<p>Charging faster than 7kW requires two things:</p>
+</div>
+<div class="info-box">
+<p>1) A three-phase electricity supply — most homes have a single-phase supply, which limits AC charging to 7kW. Three-phase is more common in larger properties, commercial buildings, and in some countries such as Germany. Check with your installer if you're unsure what type of supply you have.</p>
+</div>
+<div class="info-box">
+<p>2) A car that supports three-phase AC charging — not all EVs can accept three-phase AC. Many popular models (including some Teslas, Nissan Leafs, and others) can only accept single-phase AC, capping them at 7kW regardless of the supply. Check your car's specification sheet for its maximum AC charge rate.</p>
+</div>
+<div class="info-box">
+<p>If you have a three-phase supply and a compatible car but still aren't getting above 7kW, your zappi may need to be configured for three-phase operation by your installer.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`That explains it, thanks! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`My electrician has checked this`,
+  },
+
+  zappi_speed_7kw_cable: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`If your zappi is untethered, you may be using a cable which is only suited for 7kW`,
+    progress:85,
+    content:`<div class="info-box">
+<p>You will need an electrician to confirm your zappi has power on all three phases and that the phase rotation is correct.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`That explains it, thanks! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`No, my cable is 32A/3 phase`,
+  },
+
+  zappi_speed_11kw: {
+    type:'choice',
+    eyebrow:'zappi',
+    heading:`Were you expecting to charge faster than 11kW?`,
+    sub:`11kW is a common charge rate on a three-phase supply when your car accepts 3 phase charging.`,
+    progress:65,
+    options:[
+      { emoji:`▸`, label:`Yes — I expected faster than 11kW`, next:'zappi_speed_11kw_more', tag:`` },
+      { emoji:`▸`, label:`No — 11kW sounds about right`, next:'fixed_check', tag:`` },
+    ],
+  },
+
+  zappi_speed_11kw_more: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`Here's what determines your maximum charge speed on three-phase.`,
+    progress:75,
+    content:`<div class="info-box">
+<p>On a three-phase supply, the maximum AC charge rate depends on both your zappi model and your car:</p>
+</div>
+<div class="info-box">
+<p>1) zappi maximum output — the zappi supports up to 22kW on three-phase (3 x 32 Amps). Check Settings → Charge Rates to make sure the maximum is set to 32 Amps per phase.</p>
+</div>
+<div class="info-box">
+<p>2) Your car's maximum AC charge rate — this is the most common reason for being below 22kW. Many EVs can only accept 11kW AC (3 x 16 Amps) even on a three-phase supply. Check your car's specification for its maximum on-board AC charger rating.</p>
+</div>
+<div class="info-box">
+<p>3) Your home's supply capacity — if your three-phase supply fuse is rated below 32 Amps per phase, your installer may have limited the zappi's output. Contact your installer to confirm the maximum available.</p>
+</div>
+<div class="info-box">
+<p>If your car's spec confirms it supports above 11kW AC and you're still not reaching it, please contact our support team.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`That explains it, thanks! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`My car supports above 11kW — still not reaching it`,
+  },
+
+  zappi_speed_varies: {
+    type:'choice',
+    eyebrow:'zappi',
+    heading:`The 'e' symbol means an external signal is controlling your zappi's charging`,
+    sub:`Look at the charging display on your zappi — next to or below the kW figure you may see a small icon. See the image below for reference.`,
+    progress:65,
+    options:[
+      { emoji:`▸`, label:`I can see an 'e' symbol`, next:'zappi_speed_symbol_e', tag:`` },
+      { emoji:`▸`, label:`I can see a 'home' or house symbol`, next:'zappi_speed_symbol_home', tag:`` },
+      { emoji:`▸`, label:`I can see a 'haze' or wavy lines symbol`, next:'zappi_speed_symbol_haze', tag:`` },
+      { emoji:`▸`, label:`I don't see any of these symbols`, next:'zappi_speed_varies_noload', tag:`` },
+    ],
+  },
+
+  zappi_speed_symbol_e: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`The 'e' symbol means eSense is active`,
+    progress:75,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/28930566712337-Using-the-e-Sense-Port-on-the-zappi-to-change-into-stop-mode`,
+    content:`<div class="info-box">
+<p>zappi has a eSense function, which can allow a signal wire to override the charging behaviour when the relay is active. This is most commonly used for off-peak tariffs or more complex installations. This can be adjusted or turned off in Installer Settings.</p>
+</div>
+<div class="info-box">
+<p>More information here: https://support.myenergi.com/hc/en-gb/articles/28930566712337-Using-the-e-Sense-Port-on-the-zappi-to-change-into-stop-mode</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`That makes sense, thanks! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`The speed is still unstable in Fast mode`,
+  },
+
+  zappi_speed_symbol_home: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`The 'haze' symbol means your zappi is adjusting its charge rate to maintain a safe operating temperature`,
+    progress:75,
+    content:`<div class="info-box">
+<p>The house symbol indicates that your home's electricity demand is affecting the charge rate available to your car.</p>
+</div>
+<div class="info-box">
+<p>What's happening:</p>
+<ul>
+<li>Your zappi monitors your whole home's electricity usage in real time.</li>
+<li>When large appliances switch on (oven, kettle, heat pump, washing machine etc.), they consume grid power. If your supply has a limit set, the zappi will automatically reduce the car's charge rate to avoid overloading it.</li>
+<li>Once those appliances switch off, the available power increases and charging speeds up again.</li>
+</ul>
+</div>
+<div class="info-box">
+<p>This is your zappi working correctly to protect your home's supply. If you want a consistently fast charge, try switching off other high-power appliances while charging, or speak to your installer about increasing the supply limit in the zappi settings.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`That makes sense, thanks! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`No large appliances are on — still varying`,
+  },
+
+  zappi_speed_symbol_haze: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`The 'haze' symbol means your zappi is is adjusting its charge rate to maintain a working operating temperature`,
+    sub:`Like all modern smart devices, including solar inverters and EV chargers, zappi includes built-in thermal protection to ensure safe operation. Under certain conditions, the charger may temporarily reduce its charging power if internal temperatures approach predefined safety thresholds.`,
+    progress:75,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/15587880239249-What-is-the-Minimum-Green-Level-MGL`,
+    content:`<div class="info-box">
+<p>If your charge speed varies in Fast mode without any symbols showing, here are the most likely causes:</p>
+</div>
+<div class="info-box">
+<p>1) Supply limit set on your zappi — your installer may have set a maximum supply limit to protect your home's fuse. As other appliances switch on and off, the zappi adjusts its output to stay within this limit. Go to Settings → Supply Settings to check the limit set.</p>
+</div>
+<div class="info-box">
+<p>2) Sensor measuring home electricity use — your zappi uses a small sensor (fitted to your electricity cables by your installer) to monitor how much power your home is using. If this sensor is loose or not fitted correctly, the zappi may misread your home's usage and vary the charge rate unnecessarily. This would need to be checked by your installer.</p>
+</div>
+<div class="info-box">
+<p>3) Your car's own charge management — some EVs vary how much power they accept over the course of a session, particularly as the battery gets full. This is normal and controlled by the car, not the zappi.</p>
+</div>
+<div class="info-box">
+<p>If none of these seem to apply, please contact our support team.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`That makes sense, thanks! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`It shouldn't be doing this`,
+  },
+
+  zappi_speed_varies_noload: {
+    type:'info',
+    eyebrow:'zappi',
+    heading:`Let's check if your home supply limit is affecting charge speed.`,
+    progress:75,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/24486225055505-Lower-than-Expected-Charging-Rates-Slow-Charge`,
+    content:`<div class="info-box">
+<p>If your charge speed varies in Fast mode without any symbols showing, here are the most likely causes:</p>
+</div>
+<div class="info-box">
+<p>1) Supply limit set on your zappi — your installer may have set a maximum supply limit to protect your home's fuse. As other appliances switch on and off, the zappi adjusts its output to stay within this limit. Go to Settings → Supply Settings to check the limit set.</p>
+</div>
+<div class="info-box">
+<p>2) CT clamp measuring home load — your zappi uses a CT clamp sensor to monitor your home's electricity usage. If the CT clamp is loose or incorrectly fitted, the zappi may be misreading your home load and varying the charge rate unnecessarily. This would need to be checked by your installer.</p>
+</div>
+<div class="info-box">
+<p>3) Your car's own charge management — some EVs vary how much power they accept over the course of a session, particularly as the battery gets full. This is normal and controlled by the car, not the zappi.</p>
+</div>
+<div class="info-box">
+<p>If none of these seem to apply, please contact our support team.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`Yes, that helped! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Still varying unexpectedly`,
+  },
+
+  eddi_behaviour: {
+    type:'choice',
+    eyebrow:'eddi',
+    heading:`What is your eddi doing?`,
+    sub:`Pick the option that best describes what's happening.`,
+    progress:30,
+    options:[
+      { emoji:`▸`, label:`It's not heating as much as I expected`, next:'eddi_behaviour_heat', tag:`` },
+      { emoji:`▸`, label:`My boost isn't working as expected`, next:'eddi_behaviour_boost', tag:`` },
+      { emoji:`▸`, label:`It keeps stopping and starting`, next:'eddi_behaviour_stop', tag:`` },
+      { emoji:`▸`, label:`I don't understand the priority settings`, next:'eddi_behaviour_priority', tag:`` },
+    ],
+  },
+
+  eddi_behaviour_heat: {
+    type:'info',
+    eyebrow:'eddi',
+    heading:`Here's why your water might not be as hot as you'd expect.`,
+    progress:45,
+    content:`<div class="info-box">
+<p>The eddi heats water using surplus solar energy, so how much it heats depends on how much solar is available. Here are the most common reasons:</p>
+</div>
+<div class="info-box">
+<p>1) Not enough solar — on cloudy days or during winter, there may not be enough surplus solar to fully heat your tank. This is normal. Press the BOOST button on the eddi to top up from the grid whenever you need more hot water.</p>
+</div>
+<div class="info-box">
+<p>2) Priority settings — if you have both a zappi and an eddi, they share your solar surplus. If your zappi is set to a higher priority, it will use the solar first, leaving less for the eddi. Check the priority order in the myenergi app under Devices.</p>
+</div>
+<div class="info-box">
+<p>3) Tank size or usage — if your household uses a lot of hot water, the eddi may not be generating enough to keep up on solar alone. Consider using a scheduled boost during off-peak electricity hours to top up your tank overnight.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`Yes, that makes sense! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`I still think something is wrong`,
+  },
+
+  eddi_behaviour_boost: {
+    type:'info',
+    eyebrow:'eddi',
+    heading:`Let's check your eddi boost settings.`,
+    progress:45,
+    content:`<div class="info-box">
+<p>The eddi boost lets you heat your water on demand or at a scheduled time, using grid electricity if needed. Here's how to check it's set up correctly:</p>
+</div>
+<div class="info-box">
+<p>1) Manual boost — press the BOOST button on the front of your eddi to start heating immediately. The light should change to show it's active.</p>
+</div>
+<div class="info-box">
+<p>2) Scheduled boost — on your eddi, go to Settings → Boost → Scheduled Boost and check the time and days are set correctly.</p>
+</div>
+<div class="info-box">
+<p>3) Check the eddi's clock — if the time is wrong, your scheduled boost may run at the wrong time. Go to Settings → Date & Time to check.</p>
+</div>
+<div class="info-box">
+<p>4) Check the target temperature — if your water is already at or above the boost target temperature, the boost won't run. Go to Settings → Boost → Target Temp to review.</p>
+</div>
+<div class="info-box">
+<p>You can also manage boost schedules in the myenergi app under your eddi's settings.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`Yes, that fixed it! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`My boost still isn't working`,
+  },
+
+  eddi_behaviour_stop: {
+    type:'info',
+    eyebrow:'eddi',
+    heading:`It's normal for your eddi to stop and start — here's why.`,
+    progress:45,
+    content:`<div class="info-box">
+<p>The eddi is designed to divert surplus solar energy to heat your water. Because solar generation naturally goes up and down (clouds, time of day, household usage), the eddi will pause and resume automatically to match what's available. This is completely normal behaviour.</p>
+</div>
+<div class="info-box">
+<p>Here's what's most likely happening:</p>
+</div>
+<div class="info-box">
+<p>1) Solar fluctuation — every time a cloud passes or a large appliance switches on in your home, the available surplus changes. The eddi responds in real time, so it may start and stop frequently on mixed weather days.</p>
+</div>
+<div class="info-box">
+<p>2) Tank at maximum temperature — once the water reaches the maximum set temperature, the eddi stops automatically to prevent overheating. It will start again once the water cools.</p>
+</div>
+<div class="info-box">
+<p>3) Priority conflicts — if your zappi is set to a higher priority, it may be taking the available solar before the eddi gets a chance to use it. Check priorities in the myenergi app.</p>
+</div>
+<div class="info-box">
+<p>If the eddi is stopping for a reason that doesn't seem to match any of the above, please get in touch with our support team.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`Yes, that makes sense! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Something still seems wrong`,
+  },
+
+  eddi_behaviour_priority: {
+    type:'info',
+    eyebrow:'eddi',
+    heading:`Here's how priorities work between your devices.`,
+    progress:45,
+    content:`<div class="info-box">
+<p>If you have more than one myenergi device (for example, a zappi and an eddi), they share the surplus solar energy available. Priority settings decide which device gets the solar first.</p>
+</div>
+<div class="info-box">
+<p>How it works:</p>
+<ul>
+<li>Priority 1 gets first access to surplus solar.</li>
+<li>Priority 2 gets whatever is left after Priority 1 has taken what it needs.</li>
+<li>If there isn't enough surplus for both, the lower priority device will wait.</li>
+</ul>
+</div>
+<div class="info-box">
+<p>To change priority settings:</p>
+<ol>
+<li>Open the myenergi app.</li>
+<li>Hold and drag the device above the other devices to change device priorities.</li>
+</ol>
+</div>
+<div class="info-box">
+<p>For example: if you want your hot water heated before your car charges, drag your eddi above the zappi. If charging your car quickly is more important, swap them around.</p>
+</div>
+<div class="info-box">
+<p>There's no right or wrong answer — it depends on what matters most to you.</p>
+</div>`,
+    next:'fixed_check',
+    nextLabel:`That makes sense, thanks! ✅`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`I need more help with this`,
+  },
+
 };
 
 // ─── RENDER ENGINE ───────────────────────────────────────────────────────────
@@ -1872,17 +2249,44 @@ function buildStep(step, stepId){
         </button>`;
     });
     html += `</div>`;
+    // Learn More link on choice steps
+    if(step.learnMoreUrl){
+      html += `<div class="learn-more-wrap" style="margin-top:20px">
+        <a href="${step.learnMoreUrl}" target="_blank" rel="noopener" class="learn-more-link">
+          📖 Read the full technical guide
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>`;
+    }
   }
 
   else if(step.type === 'info'){
     html += step.content || '';
+    // Learn More link
+    if(step.learnMoreUrl){
+      html += `<div class="learn-more-wrap">
+        <a href="${step.learnMoreUrl}" target="_blank" rel="noopener" class="learn-more-link">
+          📖 Read the full technical guide
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>`;
+    }
+    // Buttons — use nextLabel/nextLabel2 if set, else derive from flags
     const nextStep = step.next ? getStep(step.next) : null;
-    const nextLabel = nextStep && nextStep.type === 'upload' ? 'I still need help →' :
-                      step.resolve ? 'Yes, that fixed it! ✅' : 'Next →';
+    const nextLabel = step.nextLabel ||
+      (nextStep && nextStep.type === 'upload' ? 'I still need help →' :
+       step.resolve ? 'Yes, that fixed it! ✅' : 'Next →');
     if(step.next){
+      const secondBtn = step.next2
+        ? `<button class="btn btn-ghost" data-next="${step.next2}">${step.nextLabel2 || 'Still having issues'}</button>`
+        : (step.resolve ? `<button class="btn btn-ghost" data-next="myenergi_escalate_upload">Still having issues</button>` : '');
       html += `<div class="btn-row">
         <button class="btn btn-primary" data-next="${step.next}">${nextLabel}</button>
-        ${step.resolve ? `<button class="btn btn-ghost" data-next="zappi_escalate_upload">Still having issues</button>` : ''}
+        ${secondBtn}
       </div>`;
     }
   }
