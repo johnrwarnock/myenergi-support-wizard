@@ -446,7 +446,7 @@ body{
 }
 
 
-/* ─── MAGENTA NEXT BUTTON ───────────────────────────────────────────────── */
+/* ─── MAGENTA — further troubleshooting / navigation ────────────────────── */
 .btn-magenta{
   background:#e72887;color:#fff;
   padding:17px 36px;font-size:1rem;
@@ -456,6 +456,18 @@ body{
 .btn-magenta:hover{background:#f03a96;transform:translateY(-2px);box-shadow:0 8px 32px rgba(231,40,135,.45)}
 .btn-magenta:active{transform:translateY(0);box-shadow:none}
 @media(max-width:600px){.btn-magenta{width:100%;justify-content:center}}
+
+/* ─── ELECTRIC BLUE — yes that helped / resolved ────────────────────────── */
+.btn-blue{
+  background:#56c1dd;color:#000;
+  padding:17px 36px;font-size:1rem;
+  box-shadow:0 4px 20px rgba(86,193,221,.35);
+  min-height:52px;border-radius:999px;
+  font-weight:700;
+}
+.btn-blue:hover{background:#70cfe8;transform:translateY(-2px);box-shadow:0 8px 32px rgba(86,193,221,.45)}
+.btn-blue:active{transform:translateY(0);box-shadow:none}
+@media(max-width:600px){.btn-blue{width:100%;justify-content:center}}
 
 /* ─── COUNTRY PILLS ─────────────────────────────────────────────────────── */
 .country-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
@@ -2349,9 +2361,9 @@ function buildStep(step, stepId){
        step.resolve ? 'Yes, that fixed it! ✅' : 'Next →');
     if(step.next){
       const secondBtn = step.next2
-        ? `<button class="btn btn-ghost" data-next="${step.next2}">${step.nextLabel2 || 'Still having issues'}</button>`
-        : (step.resolve ? `<button class="btn btn-ghost" data-next="myenergi_escalate_upload">Still having issues</button>` : '');
-      const btnClass = step.resolve ? 'btn btn-primary' : 'btn btn-magenta';
+        ? `<button class="btn btn-magenta" data-next="${step.next2}">${step.nextLabel2 || 'Still having issues'}</button>`
+        : (step.resolve ? `<button class="btn btn-magenta" data-next="myenergi_escalate_upload">Still having issues</button>` : '');
+      const btnClass = step.resolve ? 'btn btn-blue' : 'btn btn-magenta';
       html += `<div class="btn-row">
         <button class="${btnClass}" data-next="${step.next}">${nextLabel}</button>
         ${secondBtn}
