@@ -2972,19 +2972,9 @@ render('welcome');
     type:'info',
     eyebrow:'CT Configuration — Grid',
     heading:`The Grid CT clamp tells your system how much power you're importing or exporting.`,
+    sub:`This is an installer-level check. Use the link below for the full technical guide, or raise a support ticket and we'll help you through it.`,
     progress:55,
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
-    content:`<div class="info-box">
-<h3>What your installer needs to check</h3>
-<ol>
-<li>The <strong>Grid CT clamp</strong> must be fitted to the <strong>meter tail</strong> — the cable that runs directly from your electricity meter to your consumer unit (fuse board).</li>
-<li>It must be <strong>clicked fully closed</strong> and seated squarely around just one cable.</li>
-<li>In the myenergi app, go to <strong>Hub → CT Configuration</strong> and confirm only one CT is set as Grid.</li>
-<li>If the reading is <strong>reversed</strong> (shows import when you're exporting), your installer can flip the CT clamp 180° to reverse the direction.</li>
-<li>If the cable has been extended, only a <strong>single twisted pair</strong> of wire should be used.</li>
-</ol>
-</div>
-<div class="warning-box"><p><strong>⚠️ Electrical safety:</strong> CT clamps sit close to live cables. Only a qualified electrician should reposition or adjust them.</p></div>`,
     next:'ct_readings_result',
     nextLabel:`I've checked this / I'll ask my installer`,
     next2:'myenergi_escalate_upload',
@@ -2995,18 +2985,9 @@ render('welcome');
     type:'info',
     eyebrow:'CT Configuration — Solar',
     heading:`The Solar CT clamp measures power coming from your panels.`,
+    sub:`This is an installer-level check. Use the link below for the full technical guide, or raise a support ticket and we'll help you through it.`,
     progress:55,
-    content:`<div class="info-box">
-<h3>What your installer needs to check</h3>
-<ol>
-<li>The <strong>Solar CT clamp</strong> should be fitted to the <strong>output cable of your solar inverter</strong> — after the inverter, before it connects to your consumer unit.</li>
-<li>It must be <strong>clicked fully closed</strong> around just one cable.</li>
-<li>In the myenergi app, go to <strong>Hub → CT Configuration</strong> and confirm a CT is assigned as Solar/Generation.</li>
-<li>If no CT is assigned as Solar, the app may instead calculate generation by comparing grid and consumption readings — this is less accurate. Ask your installer to fit a dedicated Solar CT if one is missing.</li>
-<li>If the reading shows <strong>zero when your panels are generating</strong>, the CT clamp may be on the wrong cable, disconnected, or set to the wrong type in the app.</li>
-</ol>
-</div>
-<div class="warning-box"><p><strong>⚠️ Electrical safety:</strong> This must only be checked or adjusted by a qualified electrician.</p></div>`,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
     next:'ct_readings_result',
     nextLabel:`I've checked this / I'll ask my installer`,
     next2:'myenergi_escalate_upload',
@@ -3016,21 +2997,10 @@ render('welcome');
   ct_home_fix: {
     type:'info',
     eyebrow:'CT Configuration — Home Consumption',
-    heading:`Home consumption is calculated from your other CT readings — it isn't measured directly.`,
+    heading:`Home consumption is calculated from your other readings — it isn't measured directly.`,
+    sub:`If grid and solar readings are both accurate but home consumption still looks wrong, it may be worth checking your battery CT configuration too. Use the link below or raise a support ticket.`,
     progress:55,
-    content:`<div class="info-box">
-<h3>How it works</h3>
-<p>Your myenergi system calculates home consumption by combining what it knows about grid import/export and solar generation. If either of those readings is wrong, the home consumption figure will also be wrong.</p>
-</div>
-<div class="info-box">
-<h3>What to check</h3>
-<ol>
-<li>First confirm your <strong>Grid CT reading</strong> is accurate — this is the most common cause of wrong home consumption.</li>
-<li>Then confirm your <strong>Solar CT reading</strong> is accurate if you have solar panels.</li>
-<li>Once both are correct, home consumption should calculate itself accurately.</li>
-<li>If you have a battery, make sure a <strong>Battery CT</strong> is also configured — otherwise battery charge/discharge will appear as unexpected home load.</li>
-</ol>
-</div>`,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
     next:'ct_grid_fix',
     nextLabel:`Check my Grid CT reading`,
     next2:'myenergi_escalate_upload',
@@ -3041,17 +3011,9 @@ render('welcome');
     type:'info',
     eyebrow:'CT Configuration — Battery',
     heading:`For accurate battery readings, your installer may need to add a Battery CT clamp.`,
+    sub:`This is an installer-level check. Use the link below for the full technical guide, or raise a support ticket and we'll help you through it.`,
     progress:55,
-    content:`<div class="info-box">
-<h3>What your installer needs to check</h3>
-<ol>
-<li>A <strong>dedicated Battery CT clamp</strong> should be fitted to the <strong>AC output cable of your battery inverter</strong> or the battery's grid connection point.</li>
-<li>In the myenergi app, go to <strong>Hub → CT Configuration</strong> and confirm a CT is assigned as Battery.</li>
-<li>Without a Battery CT, the system cannot distinguish battery charge/discharge from home load — this causes misleading readings across all channels.</li>
-<li>If your battery is a myenergi <strong>libbi</strong>, it communicates directly with the hub — no separate CT clamp is needed. Check the app to confirm the libbi is paired correctly.</li>
-</ol>
-</div>
-<div class="warning-box"><p><strong>⚠️ Electrical safety:</strong> This must only be checked or adjusted by a qualified electrician.</p></div>`,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
     next:'ct_readings_result',
     nextLabel:`I've checked this / I'll ask my installer`,
     next2:'myenergi_escalate_upload',
