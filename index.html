@@ -1571,7 +1571,7 @@ Firmware`,
       { emoji:`▸`, label:`It shows "Grid CT Lost"`, hint:`error message on screen or in app`, next:'grid_ct_lost', tag:`Grid - CT Lost` },
       { emoji:`▸`, label:`It shows zero — no reading at all`, hint:`reads 0 even when devices are running`, next:'grid_reading_zero', tag:`Grid - Zero Reading` },
       { emoji:`▸`, label:`It shows power exporting to the grid when there isn\'t enough solar`, hint:`shows negative / export when it should be importing`, next:'grid_reading_reversed', tag:`Grid - Reversed` },
-      { emoji:`▸`, label:`It shows a reading, but it doesn\'t make sense`, hint:`random numbers, fluctuating wildly, or just seems wrong`, next:'grid_reading_nonsense', tag:`Grid - Nonsense Reading` },
+      { emoji:`▸`, label:`It shows a reading, but it doesn\'t make sense`, hint:`random numbers, fluctuating wildly, or just seems wrong`, next:'grid_nonsense_phase_check', tag:`Grid - Nonsense Reading` },
     ],
   },
 
@@ -1651,6 +1651,43 @@ Firmware`,
 </div>`,
     next:'myenergi_escalate_upload',
     nextLabel:`Raise a support ticket for my installer`,
+  },
+
+
+  grid_nonsense_phase_check: {
+    type:'choice',
+    eyebrow:'Grid Reading — Nonsense Reading',
+    heading:`Is your property on a three-phase electricity supply?`,
+    sub:`Most homes have a single-phase supply. Three-phase is more common in larger properties, commercial buildings, and some European countries. If you\'re not sure, check with your installer or look at your fuse board — three-phase supplies usually have three main incoming cables.`,
+    progress:62,
+    options:[
+      { emoji:`▸`, label:`Yes, I have a three-phase supply`, next:'grid_reading_3phase', tag:`Grid - 3 Phase` },
+      { emoji:`▸`, label:`No, single-phase`, next:'grid_reading_nonsense', tag:`Grid - Single Phase Wrong Cable` },
+      { emoji:`▸`, label:`I\'m not sure`, next:'grid_reading_nonsense', tag:`Grid - Phase Unknown` },
+    ],
+  },
+
+  grid_reading_3phase: {
+    type:'info',
+    eyebrow:'Grid Reading — Three-Phase CT Issue',
+    heading:`On a three-phase supply, the CTs must be installed in the correct phase sequence.`,
+    sub:`This is an electrician-level fix.`,
+    progress:68,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/15198583707025-Understanding-and-Fixing-Single-Phase-Operation-in-3-Phase-Zappi-Models`,
+    content:`<div class="info-box">
+<h3>What this means</h3>
+<p>On a three-phase installation, there are three separate CT clamps — one for each phase. If the readings look wrong or don't make sense, it is usually because:</p>
+<ol>
+<li><strong>The CTs are not installed in the correct phase sequence</strong> — each CT must be on the correct phase (L1, L2, L3) in the right order.</li>
+<li><strong>The phase rotation is incorrect</strong> — the direction of current measurement across the three phases doesn't match what the system expects.</li>
+</ol>
+</div>
+<div class="info-box">
+<h3>What needs to happen</h3>
+<p>Your <strong>original installer</strong> needs to check the phase sequence and CT placement. This involves confirming which phase each CT is fitted to and ensuring the rotation direction matches the system configuration. This is an electrical job that must only be carried out by a qualified electrician.</p>
+</div>`,
+    next:'myenergi_escalate_upload',
+    nextLabel:`Raise a support ticket`,
   },
 
   grid_reading_nonsense: {
