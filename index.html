@@ -2363,7 +2363,7 @@ function buildStep(step, stepId){
       const secondBtn = step.next2
         ? `<button class="btn btn-magenta" data-next="${step.next2}">${step.nextLabel2 || 'Still having issues'}</button>`
         : (step.resolve ? `<button class="btn btn-magenta" data-next="myenergi_escalate_upload">Still having issues</button>` : '');
-      const btnClass = step.resolve ? 'btn btn-blue' : 'btn btn-magenta';
+      const btnClass = step.resolve ? 'btn btn-primary' : 'btn btn-blue';
       html += `<div class="btn-row">
         <button class="${btnClass}" data-next="${step.next}">${nextLabel}</button>
         ${secondBtn}
