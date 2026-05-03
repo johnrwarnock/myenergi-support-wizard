@@ -659,7 +659,7 @@ const STEPS = {
     progress:15,
     options:[
       { emoji:`▸`, label:`My EV isn't charging`, next:'zappi_screen', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
-      { emoji:`▸`, label:`My solar diverter isn't heating water`, next:'eddi_issue', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
+      { emoji:`▸`, label:`My eddi is not diverting power`, next:'eddi_issue', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
       { emoji:`▸`, label:`My device keeps switching off or rebooting`, next:'rebooting_device', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
       { emoji:`▸`, label:`The screen looks wrong`, next:'screen_issue', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
       { emoji:`▸`, label:`My device is working, but not how I expect it to`, next:'behaviour_which_device', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
@@ -674,7 +674,7 @@ const STEPS = {
     progress:30,
     options:[
       { emoji:`▸`, label:`A charging status message`, hint:`e.g. Waiting for surplus, EV Disconnected, Charge Delayed`, next:'zappi_screen_status', tag:`Charging Status` },
-      { emoji:`▸`, label:`A fault or error code`, hint:`any message ending in Fault, Failed, or showing a number`, next:'zappi_screen_faults', tag:`Fault Code` },
+      { emoji:`▸`, label:`A fault or error code`, hint:`any message ending in Fault, Failed, showing a number, or with a red LED`, next:'zappi_screen_faults', tag:`Fault Code` },
       { emoji:`▸`, label:`The screen is completely blank`, hint:`nothing showing at all`, next:'zappi_dead', tag:`Dead Unit` },
     ],
   },
@@ -1981,10 +1981,10 @@ Firmware`,
     sub:`Pick the option that best describes the problem.`,
     progress:35,
     options:[
-      { emoji:`📉`, label:`My battery is draining when I expect it to be charging`, next:'battery_draining', tag:`Battery - Draining` },
-      { emoji:`⚡`, label:`My zappi or eddi seems to be using grid power instead of my battery`, next:'battery_grid_over_battery', tag:`Battery - Grid Priority` },
-      { emoji:`📊`, label:`The battery reading in the app looks wrong`, next:'ct_battery_fix', tag:`Battery - Wrong Reading` },
-      { emoji:`🔌`, label:`My battery and myenergi devices don't seem to work together`, next:'battery_integration_setup', tag:`Battery - Integration` },
+      { emoji:`▸`, label:`The myenergi device is drawing power from my battery when I don\'t want it to`, next:'battery_draining', tag:`Battery - Draining` },
+      { emoji:`▸`, label:`My zappi or eddi seems to be using grid power instead of my battery`, next:'battery_grid_over_battery', tag:`Battery - Grid Priority` },
+      { emoji:`▸`, label:`The battery reading in the app looks wrong`, next:'ct_battery_fix', tag:`Battery - Wrong Reading` },
+      { emoji:`▸`, label:`My battery and myenergi devices don't seem to work together`, next:'battery_integration_setup', tag:`Battery - Integration` },
     ],
   },
 
@@ -1995,18 +1995,21 @@ Firmware`,
     progress:50,
     content:`<div class="info-box">
 <h3>Why this happens</h3>
-<p>If your myenergi device is in Eco or Eco+ mode and there is not enough solar surplus, it may draw power from whatever is available — including your battery — rather than from the grid. This is normal behaviour unless you specifically want to protect your battery charge.</p>
+<p>When your myenergi device is in Eco or Eco+ mode and solar surplus is low, it may draw power from whatever source is available — including your battery. To prevent this, your system needs to be configured so the myenergi device knows the battery is present and should be protected.</p>
 </div>
 <div class="info-box">
-<h3>How to stop your battery being drained</h3>
+<h3>Key steps to fix this</h3>
 <ol>
-<li><strong>Check your battery's export settings</strong> — most batteries (Powerwall, Sunsynk, GivEnergy, etc.) have an option to prevent export or discharge to home loads. Enable this to protect your battery from being drawn on by your EV charger or eddi.</li>
-<li><strong>Set a battery reserve</strong> — in your battery's own app, set a minimum state of charge (e.g. 20%) below which it will not discharge.</li>
-<li><strong>Check Minimum Green Level (MGL)</strong> on your zappi — if set too low, the zappi will charge even when only battery power is available. Raise the MGL in zappi Settings to force a minimum solar threshold.</li>
-<li><strong>Switch to Fast mode when needed</strong> — this charges from the grid at full rate, leaving your battery untouched.</li>
+<li><strong>Set a battery reserve</strong> — in your battery's own app, set a minimum state of charge (e.g. 20%) below which it will not discharge to home loads.</li>
+<li><strong>Check your Minimum Green Level (MGL)</strong> on the zappi — the MGL sets the minimum amount of solar required before the zappi will charge. If set too low, the zappi will use battery power instead. Go to zappi Settings → Minimum Green Level and raise it.</li>
+<li><strong>Review your CT clamp setup</strong> — for the myenergi system to correctly identify what power is available from your battery vs the grid, a dedicated Battery CT clamp should be fitted. Ask your installer to confirm this is in place.</li>
+<li><strong>Battery export settings</strong> — check in your battery's app that it is permitted to export or discharge to home loads. Some batteries default to charge-only mode.</li>
 </ol>
+</div>
+<div class="info-box">
+<p>The link below is a detailed setup guide for hybrid PV and battery systems with myenergi devices — recommended reading for your installer if they need to review the configuration.</p>
 </div>`,
-    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/15587880239249-What-is-the-Minimum-Green-Level-MGL`,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/4716922623633-Hybrid-PV-Battery-Set-up-Avoid-Draining`,
     next:'battery_draining_result',
     nextLabel:`That makes sense`,
     next2:'myenergi_escalate_upload',
@@ -2342,12 +2345,12 @@ Firmware`,
     sub:`Pick the option that best describes what's happening.`,
     progress:30,
     options:[
-      { emoji:`▸`, label:`It's charging too slowly`, next:'zappi_speed', tag:`` },
-      { emoji:`▸`, label:`My scheduled boost isn't working`, next:'zappi_boost', tag:`` },
-      { emoji:`▸`, label:`I can't change the charge mode`, next:'zappi_mode', tag:`` },
-      { emoji:`▸`, label:`There's a delay before charging starts, or it keeps stopping`, next:'zappi_start_stop', tag:`` },
       { emoji:`▸`, label:`The readings on my device or in the app look wrong`, next:'zappi_ct_readings', tag:`CT Readings` },
+      { emoji:`▸`, label:`It's charging too slowly`, next:'zappi_speed', tag:`` },
       { emoji:`▸`, label:`My battery is being drained or isn't working as expected`, next:'battery_integration', tag:`Battery Integration` },
+      { emoji:`▸`, label:`There's a delay before charging starts, or it keeps stopping`, next:'zappi_start_stop', tag:`` },
+      { emoji:`▸`, label:`I can't change the charge mode`, next:'zappi_mode', tag:`` },
+      { emoji:`▸`, label:`My scheduled boost isn't working`, next:'zappi_boost', tag:`` },
     ],
   },
 
