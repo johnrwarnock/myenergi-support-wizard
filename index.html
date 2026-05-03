@@ -528,6 +528,22 @@ body{
   .serial-side-layout .serial-device-img{width:100%;max-width:260px;align-self:center}
 }
 
+
+/* ─── ESCALATION TRIAGE CARDS ───────────────────────────────────────────── */
+.triage-card{
+  border-radius:var(--radius);padding:28px 28px 24px;margin-bottom:24px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.triage-icon{font-size:2.2rem;line-height:1;margin-bottom:4px}
+.triage-card h3{font-size:1.15rem;font-weight:800;font-style:italic}
+.triage-card p{font-size:.95rem;color:var(--grey-light);line-height:1.65}
+.triage-hardware{background:linear-gradient(135deg,#1a0a00,#2a1000);border:2px solid #ff6b2b}
+.triage-hardware h3{color:#ff6b2b}
+.triage-installer{background:linear-gradient(135deg,#001220,#00263d);border:2px solid #56c1dd}
+.triage-installer h3{color:#56c1dd}
+.triage-user{background:linear-gradient(135deg,#0d1a00,#1a2e00);border:2px solid var(--green)}
+.triage-user h3{color:var(--green)}
+
 /* ─── RESPONSIVE — MOBILE FIRST ────────────────────────────────── */
 @media(max-width:600px){
   .step-heading{font-size:1.5rem}
@@ -2300,6 +2316,60 @@ Firmware`,
     next:'escalate_contact',
   },
 
+
+  // ══ ESCALATION TRIAGE ════════════════════════════════════════════════════
+
+  escalate_triage: {
+    type:'triage',
+    eyebrow:'Getting help',
+    heading:`Let\'s make sure you get to the right place.`,
+    progress:82,
+  },
+
+  escalate_installer_first: {
+    type:'info',
+    eyebrow:'Getting help — Installer first',
+    heading:`This type of issue is usually resolved by your original installer.`,
+    sub:`Reaching out to them first is often faster than a support ticket — they know your installation and can check the physical setup on-site.`,
+    progress:84,
+    content:`<div class="info-box">
+<h3>Why contact your installer?</h3>
+<p>The issue you've described typically involves the physical installation — things like CT clamp positioning, cable routing, phase connections, or supply configuration. These can only be checked and corrected by someone with access to your electrical installation.</p>
+</div>
+<div class="info-box">
+<h3>If your installer is unavailable or unable to help</h3>
+<p>Raise a support ticket with myenergi. Include as much detail as possible about what you've tried — our team will review and advise on next steps.</p>
+</div>`,
+    next:'escalate_contact',
+    nextLabel:`Raise a myenergi support ticket`,
+    next2:'fixed_check',
+    nextLabel2:`I\'ll contact my installer`,
+  },
+
+  escalate_user_checkpoint: {
+    type:'choice',
+    eyebrow:'Before raising a ticket',
+    heading:`Have you been in touch with your original installer about this?`,
+    sub:`Many configuration and settings issues can be resolved quickly by the installer who set up your system — they may be able to help over the phone.`,
+    progress:84,
+    options:[
+      { emoji:`▸`, label:`Yes — they couldn\'t help or aren\'t available`, next:'escalate_contact', tag:`Installer Contacted` },
+      { emoji:`▸`, label:`I don\'t have an installer or I bought it myself`, next:'escalate_contact', tag:`No Installer` },
+      { emoji:`▸`, label:`I\'d like to try my installer first`, next:'escalate_skip_ticket', tag:`Installer First` },
+    ],
+  },
+
+  escalate_skip_ticket: {
+    type:'success',
+    heading:`Good idea — your installer can often fix this faster than we can.`,
+    progress:100,
+    content:`<div class="success-box">
+<div class="success-icon">👷</div>
+<h2>Contact your installer first</h2>
+<p>They have access to your installation and can check settings, CT clamps, and wiring directly. If they\'re unable to help, come back here and raise a ticket — we\'ll be happy to take it from there.</p>
+</div>`,
+  },
+
   escalate_contact: {
     type:'contact',
     eyebrow:'Escalation',
@@ -2917,6 +2987,37 @@ Firmware`,
 
 };
 
+
+// ─── ESCALATION TIER DETECTION ────────────────────────────────────────────────
+// Returns 'hardware' | 'installer' | 'user' based on the diagnostic path taken
+function getEscalationTier(){
+  const tags = state.tags.join(' ').toLowerCase();
+
+  // Tier 1 — Hardware fault: likely RMA / component replacement needed
+  const hwKeywords = [
+    'output fault','pe fault','rcd tripped','rcd - persists','selftest - persists',
+    'contactor fault','dead - persists','comms fault - persists','lock fault - persists',
+    'overload - persists','charge blocked - persists','rcd board',
+    'zappi fault','eddi - dead persists','screen - display fault','screen - led',
+    'controls unresponsive','dead - switch ok'
+  ];
+  if(hwKeywords.some(k => tags.includes(k))) return 'hardware';
+
+  // Tier 2 — Installer issue: configuration or physical installation work needed
+  const installKeywords = [
+    'ct - grid','ct - solar','ct - home','ct - battery',
+    'phase rotation','installation limit','bad voltage range',
+    'grid - reversed','grid - nonsense','grid - zero','grid - ct lost','grid - matches output',
+    'grid - single phase','grid - 3 phase',
+    'tethered','battery integration','battery - persists','installer',
+    'ct config','ct clamp','reads wrong','reading','eddi - ct clamp',
+    'readings - grid','readings - ct'
+  ];
+  if(installKeywords.some(k => tags.includes(k))) return 'installer';
+
+  return 'user';
+}
+
 // ─── RENDER ENGINE ───────────────────────────────────────────────────────────
 
 function getStep(id){ return STEPS[id] || STEPS['main_issue']; }
@@ -3079,7 +3180,7 @@ function buildStep(step, stepId){
     `;
     html += `<div class="btn-row">
       <button class="btn btn-primary" data-next="${step.next}">Continue →</button>
-      <button class="btn btn-ghost" data-next="${step.next}">Skip — no photos available</button>
+      <button class="btn btn-ghost" onclick="state.history.push('myenergi_escalate_upload');render('escalate_triage')">Skip — no photos available</button>
     </div>`;
   }
 
@@ -3551,7 +3652,7 @@ Attachments:
       subject: `Support Wizard: ${state.tags[state.tags.length-1] || 'Issue'}`,
       comment: { body },
       requester: { name: state.customer.name, email: state.customer.email },
-      tags: ['support_wizard', state.customer.region || 'region_unknown', ...state.tags.map(t => t.toLowerCase().replace(/[^a-z0-9]/g,'_'))],
+      tags: ['support_wizard', state.customer.region || 'region_unknown', getEscalationTier(), ...state.tags.map(t => t.toLowerCase().replace(/[^a-z0-9]/g,'_'))],
     }
   };
 
