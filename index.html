@@ -1652,6 +1652,217 @@ Firmware`,
     next:'✅ Yes',
   },
 
+  
+  // ══ CT READINGS TROUBLESHOOTING ══════════════════════════════════════════
+
+  zappi_ct_readings: {
+    type:'choice',
+    eyebrow:'zappi — Incorrect Readings',
+    heading:`Which reading looks wrong on your zappi or in the app?`,
+    sub:`Tap the reading that doesn't match what you'd expect.`,
+    progress:40,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
+    options:[
+      { emoji:`⚡`, label:`Grid reading — import or export from the street`, next:'ct_grid_fix', tag:`CT - Grid Wrong` },
+      { emoji:`☀️`, label:`Solar or generation reading — power from my panels`, next:'ct_solar_fix', tag:`CT - Solar Wrong` },
+      { emoji:`🏠`, label:`Home consumption — power being used in my home`, next:'ct_home_fix', tag:`CT - Home Wrong` },
+      { emoji:`🔋`, label:`Battery reading — charge or discharge of my battery`, next:'ct_battery_fix', tag:`CT - Battery Wrong` },
+    ],
+  },
+
+  eddi_ct_readings: {
+    type:'choice',
+    eyebrow:'eddi — Incorrect Readings',
+    heading:`Which reading looks wrong on your eddi or in the app?`,
+    sub:`Tap the reading that doesn't match what you'd expect.`,
+    progress:40,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
+    options:[
+      { emoji:`⚡`, label:`Grid reading — import or export from the street`, next:'ct_grid_fix', tag:`CT - Grid Wrong` },
+      { emoji:`☀️`, label:`Solar or generation reading — power from my panels`, next:'ct_solar_fix', tag:`CT - Solar Wrong` },
+      { emoji:`🏠`, label:`Home consumption — power being used in my home`, next:'ct_home_fix', tag:`CT - Home Wrong` },
+      { emoji:`🔋`, label:`Battery reading — charge or discharge of my battery`, next:'ct_battery_fix', tag:`CT - Battery Wrong` },
+    ],
+  },
+
+  ct_grid_fix: {
+    type:'info',
+    eyebrow:'CT Configuration — Grid',
+    heading:`The Grid CT clamp tells your system how much power you're importing or exporting.`,
+    sub:`This is an installer-level check. Use the link below for the full technical guide, or raise a support ticket and we'll help you through it.`,
+    progress:55,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
+    next:'ct_readings_result',
+    nextLabel:`I've checked this / I'll ask my installer`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`I need support`,
+  },
+
+  ct_solar_fix: {
+    type:'info',
+    eyebrow:'CT Configuration — Solar',
+    heading:`The Solar CT clamp measures power coming from your panels.`,
+    sub:`This is an installer-level check. Use the link below for the full technical guide, or raise a support ticket and we'll help you through it.`,
+    progress:55,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
+    next:'ct_readings_result',
+    nextLabel:`I've checked this / I'll ask my installer`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`I need support`,
+  },
+
+  ct_home_fix: {
+    type:'info',
+    eyebrow:'CT Configuration — Home Consumption',
+    heading:`Home consumption is calculated from your other readings — it isn't measured directly.`,
+    sub:`If grid and solar readings are both accurate but home consumption still looks wrong, it may be worth checking your battery CT configuration too. Use the link below or raise a support ticket.`,
+    progress:55,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
+    next:'ct_grid_fix',
+    nextLabel:`Check my Grid CT reading`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`I need support`,
+  },
+
+  ct_battery_fix: {
+    type:'info',
+    eyebrow:'CT Configuration — Battery',
+    heading:`For accurate battery readings, your installer may need to add a Battery CT clamp.`,
+    sub:`This is an installer-level check. Use the link below for the full technical guide, or raise a support ticket and we'll help you through it.`,
+    progress:55,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
+    next:'ct_readings_result',
+    nextLabel:`I've checked this / I'll ask my installer`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`I need support`,
+  },
+
+  ct_readings_result: {
+    type:'choice',
+    eyebrow:'CT Configuration',
+    heading:`After checking the CT configuration, are the readings now correct?`,
+    progress:75,
+    options:[
+      { emoji:`✅`, label:`Yes, readings are now accurate`, next:'fixed_success', tag:`CT - Fixed` },
+      { emoji:`▸`, label:`Still showing incorrect readings`, next:'myenergi_escalate_upload', tag:`CT - Persists` },
+    ],
+  },
+
+  // ══ BATTERY INTEGRATION ═══════════════════════════════════════════════════
+
+  battery_integration: {
+    type:'choice',
+    eyebrow:'Battery Integration',
+    heading:`What's happening with your battery?`,
+    sub:`Pick the option that best describes the problem.`,
+    progress:35,
+    options:[
+      { emoji:`📉`, label:`My battery is draining when I expect it to be charging`, next:'battery_draining', tag:`Battery - Draining` },
+      { emoji:`⚡`, label:`My zappi or eddi seems to be using grid power instead of my battery`, next:'battery_grid_over_battery', tag:`Battery - Grid Priority` },
+      { emoji:`📊`, label:`The battery reading in the app looks wrong`, next:'ct_battery_fix', tag:`Battery - Wrong Reading` },
+      { emoji:`🔌`, label:`My battery and myenergi devices don't seem to work together`, next:'battery_integration_setup', tag:`Battery - Integration` },
+    ],
+  },
+
+  battery_draining: {
+    type:'info',
+    eyebrow:'Battery Integration — Draining',
+    heading:`Your battery may be discharging to power your zappi or eddi.`,
+    progress:50,
+    content:`<div class="info-box">
+<h3>Why this happens</h3>
+<p>If your myenergi device is in Eco or Eco+ mode and there is not enough solar surplus, it may draw power from whatever is available — including your battery — rather than from the grid. This is normal behaviour unless you specifically want to protect your battery charge.</p>
+</div>
+<div class="info-box">
+<h3>How to stop your battery being drained</h3>
+<ol>
+<li><strong>Check your battery's export settings</strong> — most batteries (Powerwall, Sunsynk, GivEnergy, etc.) have an option to prevent export or discharge to home loads. Enable this to protect your battery from being drawn on by your EV charger or eddi.</li>
+<li><strong>Set a battery reserve</strong> — in your battery's own app, set a minimum state of charge (e.g. 20%) below which it will not discharge.</li>
+<li><strong>Check Minimum Green Level (MGL)</strong> on your zappi — if set too low, the zappi will charge even when only battery power is available. Raise the MGL in zappi Settings to force a minimum solar threshold.</li>
+<li><strong>Switch to Fast mode when needed</strong> — this charges from the grid at full rate, leaving your battery untouched.</li>
+</ol>
+</div>`,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/15587880239249-What-is-the-Minimum-Green-Level-MGL`,
+    next:'battery_draining_result',
+    nextLabel:`That makes sense`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`I still need help`,
+  },
+
+  battery_grid_over_battery: {
+    type:'info',
+    eyebrow:'Battery Integration — Grid Priority',
+    heading:`Your system may not know your battery is available as a source of power.`,
+    progress:50,
+    content:`<div class="info-box">
+<h3>How myenergi uses your battery</h3>
+<p>myenergi devices are designed to use <strong>surplus solar</strong> rather than specifically targeting your battery. Whether your battery discharges to power your EV or hot water depends on how your battery is configured — not the zappi or eddi directly.</p>
+</div>
+<div class="info-box">
+<h3>Steps to check</h3>
+<ol>
+<li><strong>Battery CT clamp</strong> — if your battery system has a CT clamp connected to the myenergi hub, the system can see when the battery is exporting. Check in the app: Hub → CT Configuration → Battery.</li>
+<li><strong>Battery export settings</strong> — in your battery's own app, enable discharge to home loads. If the battery is set to only charge and never discharge, your myenergi devices won't see any power from it.</li>
+<li><strong>libbi users</strong> — if you have a myenergi libbi battery, it integrates directly with your hub. Check priorities in the app: the libbi can be set to charge before the zappi or eddi, or discharge to power them.</li>
+<li><strong>Third-party batteries</strong> (Powerwall, Sunsynk, GivEnergy, etc.) — integration depends on your installer's setup. Ask your installer to confirm the battery's AC output CT is connected to the myenergi hub.</li>
+</ol>
+</div>`,
+    next:'battery_integration_result',
+    nextLabel:`I've checked this`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`I need support`,
+  },
+
+  battery_integration_setup: {
+    type:'info',
+    eyebrow:'Battery Integration — Setup',
+    heading:`How myenergi devices work with third-party batteries.`,
+    progress:50,
+    content:`<div class="info-box">
+<h3>How integration works</h3>
+<p>myenergi devices (zappi, eddi) don't communicate directly with most third-party batteries. Instead, the system uses <strong>CT clamp sensors</strong> to measure what the battery is doing and uses that information to decide how to charge your car or heat your water.</p>
+</div>
+<div class="info-box">
+<h3>For best results, your installer should</h3>
+<ol>
+<li>Fit a <strong>CT clamp on your battery's AC connection</strong> and assign it as Battery in the myenergi Hub settings.</li>
+<li>Configure the <strong>Minimum Green Level (MGL)</strong> on the zappi so it doesn't charge from the battery during periods of low solar.</li>
+<li>Set appropriate <strong>device priorities</strong> in the app — for example, charging the battery first, then the car.</li>
+<li>If you have a <strong>myenergi libbi</strong>, it connects directly to the hub without a CT clamp and can be managed through the app alongside your other devices.</li>
+</ol>
+</div>
+<div class="info-box">
+<p>If you're not sure whether your battery is integrated correctly, your original installer is best placed to check the setup.</p>
+</div>`,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/15587880239249-What-is-the-Minimum-Green-Level-MGL`,
+    next:'battery_integration_result',
+    nextLabel:`I've checked this / I'll ask my installer`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`I need support`,
+  },
+
+  battery_draining_result: {
+    type:'choice',
+    eyebrow:'Battery Integration',
+    heading:`Has adjusting the battery settings helped?`,
+    progress:70,
+    options:[
+      { emoji:`✅`, label:`Yes, battery is now behaving correctly`, next:'fixed_success', tag:`Battery - Fixed` },
+      { emoji:`▸`, label:`Still draining unexpectedly`, next:'myenergi_escalate_upload', tag:`Battery - Draining Persists` },
+    ],
+  },
+
+  battery_integration_result: {
+    type:'choice',
+    eyebrow:'Battery Integration',
+    heading:`Is the battery now working as expected with your myenergi device?`,
+    progress:70,
+    options:[
+      { emoji:`✅`, label:`Yes, working correctly now`, next:'fixed_success', tag:`Battery - Fixed` },
+      { emoji:`▸`, label:`Still not working as expected`, next:'myenergi_escalate_upload', tag:`Battery - Persists` },
+    ],
+  },
+
   myenergi_escalate_upload: {
     type:'upload',
     eyebrow:'Escalation',
@@ -2935,215 +3146,3 @@ Attachments:
 render('welcome');
 </script>
 </body>
-</html>
-  // ══ CT READINGS TROUBLESHOOTING ══════════════════════════════════════════
-
-  zappi_ct_readings: {
-    type:'choice',
-    eyebrow:'zappi — Incorrect Readings',
-    heading:`Which reading looks wrong on your zappi or in the app?`,
-    sub:`Tap the reading that doesn't match what you'd expect.`,
-    progress:40,
-    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
-    options:[
-      { emoji:`⚡`, label:`Grid reading — import or export from the street`, next:'ct_grid_fix', tag:`CT - Grid Wrong` },
-      { emoji:`☀️`, label:`Solar or generation reading — power from my panels`, next:'ct_solar_fix', tag:`CT - Solar Wrong` },
-      { emoji:`🏠`, label:`Home consumption — power being used in my home`, next:'ct_home_fix', tag:`CT - Home Wrong` },
-      { emoji:`🔋`, label:`Battery reading — charge or discharge of my battery`, next:'ct_battery_fix', tag:`CT - Battery Wrong` },
-    ],
-  },
-
-  eddi_ct_readings: {
-    type:'choice',
-    eyebrow:'eddi — Incorrect Readings',
-    heading:`Which reading looks wrong on your eddi or in the app?`,
-    sub:`Tap the reading that doesn't match what you'd expect.`,
-    progress:40,
-    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
-    options:[
-      { emoji:`⚡`, label:`Grid reading — import or export from the street`, next:'ct_grid_fix', tag:`CT - Grid Wrong` },
-      { emoji:`☀️`, label:`Solar or generation reading — power from my panels`, next:'ct_solar_fix', tag:`CT - Solar Wrong` },
-      { emoji:`🏠`, label:`Home consumption — power being used in my home`, next:'ct_home_fix', tag:`CT - Home Wrong` },
-      { emoji:`🔋`, label:`Battery reading — charge or discharge of my battery`, next:'ct_battery_fix', tag:`CT - Battery Wrong` },
-    ],
-  },
-
-  ct_grid_fix: {
-    type:'info',
-    eyebrow:'CT Configuration — Grid',
-    heading:`The Grid CT clamp tells your system how much power you're importing or exporting.`,
-    sub:`This is an installer-level check. Use the link below for the full technical guide, or raise a support ticket and we'll help you through it.`,
-    progress:55,
-    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
-    next:'ct_readings_result',
-    nextLabel:`I've checked this / I'll ask my installer`,
-    next2:'myenergi_escalate_upload',
-    nextLabel2:`I need support`,
-  },
-
-  ct_solar_fix: {
-    type:'info',
-    eyebrow:'CT Configuration — Solar',
-    heading:`The Solar CT clamp measures power coming from your panels.`,
-    sub:`This is an installer-level check. Use the link below for the full technical guide, or raise a support ticket and we'll help you through it.`,
-    progress:55,
-    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
-    next:'ct_readings_result',
-    nextLabel:`I've checked this / I'll ask my installer`,
-    next2:'myenergi_escalate_upload',
-    nextLabel2:`I need support`,
-  },
-
-  ct_home_fix: {
-    type:'info',
-    eyebrow:'CT Configuration — Home Consumption',
-    heading:`Home consumption is calculated from your other readings — it isn't measured directly.`,
-    sub:`If grid and solar readings are both accurate but home consumption still looks wrong, it may be worth checking your battery CT configuration too. Use the link below or raise a support ticket.`,
-    progress:55,
-    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
-    next:'ct_grid_fix',
-    nextLabel:`Check my Grid CT reading`,
-    next2:'myenergi_escalate_upload',
-    nextLabel2:`I need support`,
-  },
-
-  ct_battery_fix: {
-    type:'info',
-    eyebrow:'CT Configuration — Battery',
-    heading:`For accurate battery readings, your installer may need to add a Battery CT clamp.`,
-    sub:`This is an installer-level check. Use the link below for the full technical guide, or raise a support ticket and we'll help you through it.`,
-    progress:55,
-    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
-    next:'ct_readings_result',
-    nextLabel:`I've checked this / I'll ask my installer`,
-    next2:'myenergi_escalate_upload',
-    nextLabel2:`I need support`,
-  },
-
-  ct_readings_result: {
-    type:'choice',
-    eyebrow:'CT Configuration',
-    heading:`After checking the CT configuration, are the readings now correct?`,
-    progress:75,
-    options:[
-      { emoji:`✅`, label:`Yes, readings are now accurate`, next:'fixed_success', tag:`CT - Fixed` },
-      { emoji:`▸`, label:`Still showing incorrect readings`, next:'myenergi_escalate_upload', tag:`CT - Persists` },
-    ],
-  },
-
-  // ══ BATTERY INTEGRATION ═══════════════════════════════════════════════════
-
-  battery_integration: {
-    type:'choice',
-    eyebrow:'Battery Integration',
-    heading:`What's happening with your battery?`,
-    sub:`Pick the option that best describes the problem.`,
-    progress:35,
-    options:[
-      { emoji:`📉`, label:`My battery is draining when I expect it to be charging`, next:'battery_draining', tag:`Battery - Draining` },
-      { emoji:`⚡`, label:`My zappi or eddi seems to be using grid power instead of my battery`, next:'battery_grid_over_battery', tag:`Battery - Grid Priority` },
-      { emoji:`📊`, label:`The battery reading in the app looks wrong`, next:'ct_battery_fix', tag:`Battery - Wrong Reading` },
-      { emoji:`🔌`, label:`My battery and myenergi devices don't seem to work together`, next:'battery_integration_setup', tag:`Battery - Integration` },
-    ],
-  },
-
-  battery_draining: {
-    type:'info',
-    eyebrow:'Battery Integration — Draining',
-    heading:`Your battery may be discharging to power your zappi or eddi.`,
-    progress:50,
-    content:`<div class="info-box">
-<h3>Why this happens</h3>
-<p>If your myenergi device is in Eco or Eco+ mode and there is not enough solar surplus, it may draw power from whatever is available — including your battery — rather than from the grid. This is normal behaviour unless you specifically want to protect your battery charge.</p>
-</div>
-<div class="info-box">
-<h3>How to stop your battery being drained</h3>
-<ol>
-<li><strong>Check your battery's export settings</strong> — most batteries (Powerwall, Sunsynk, GivEnergy, etc.) have an option to prevent export or discharge to home loads. Enable this to protect your battery from being drawn on by your EV charger or eddi.</li>
-<li><strong>Set a battery reserve</strong> — in your battery's own app, set a minimum state of charge (e.g. 20%) below which it will not discharge.</li>
-<li><strong>Check Minimum Green Level (MGL)</strong> on your zappi — if set too low, the zappi will charge even when only battery power is available. Raise the MGL in zappi Settings to force a minimum solar threshold.</li>
-<li><strong>Switch to Fast mode when needed</strong> — this charges from the grid at full rate, leaving your battery untouched.</li>
-</ol>
-</div>`,
-    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/15587880239249-What-is-the-Minimum-Green-Level-MGL`,
-    next:'battery_draining_result',
-    nextLabel:`That makes sense`,
-    next2:'myenergi_escalate_upload',
-    nextLabel2:`I still need help`,
-  },
-
-  battery_grid_over_battery: {
-    type:'info',
-    eyebrow:'Battery Integration — Grid Priority',
-    heading:`Your system may not know your battery is available as a source of power.`,
-    progress:50,
-    content:`<div class="info-box">
-<h3>How myenergi uses your battery</h3>
-<p>myenergi devices are designed to use <strong>surplus solar</strong> rather than specifically targeting your battery. Whether your battery discharges to power your EV or hot water depends on how your battery is configured — not the zappi or eddi directly.</p>
-</div>
-<div class="info-box">
-<h3>Steps to check</h3>
-<ol>
-<li><strong>Battery CT clamp</strong> — if your battery system has a CT clamp connected to the myenergi hub, the system can see when the battery is exporting. Check in the app: Hub → CT Configuration → Battery.</li>
-<li><strong>Battery export settings</strong> — in your battery's own app, enable discharge to home loads. If the battery is set to only charge and never discharge, your myenergi devices won't see any power from it.</li>
-<li><strong>libbi users</strong> — if you have a myenergi libbi battery, it integrates directly with your hub. Check priorities in the app: the libbi can be set to charge before the zappi or eddi, or discharge to power them.</li>
-<li><strong>Third-party batteries</strong> (Powerwall, Sunsynk, GivEnergy, etc.) — integration depends on your installer's setup. Ask your installer to confirm the battery's AC output CT is connected to the myenergi hub.</li>
-</ol>
-</div>`,
-    next:'battery_integration_result',
-    nextLabel:`I've checked this`,
-    next2:'myenergi_escalate_upload',
-    nextLabel2:`I need support`,
-  },
-
-  battery_integration_setup: {
-    type:'info',
-    eyebrow:'Battery Integration — Setup',
-    heading:`How myenergi devices work with third-party batteries.`,
-    progress:50,
-    content:`<div class="info-box">
-<h3>How integration works</h3>
-<p>myenergi devices (zappi, eddi) don't communicate directly with most third-party batteries. Instead, the system uses <strong>CT clamp sensors</strong> to measure what the battery is doing and uses that information to decide how to charge your car or heat your water.</p>
-</div>
-<div class="info-box">
-<h3>For best results, your installer should</h3>
-<ol>
-<li>Fit a <strong>CT clamp on your battery's AC connection</strong> and assign it as Battery in the myenergi Hub settings.</li>
-<li>Configure the <strong>Minimum Green Level (MGL)</strong> on the zappi so it doesn't charge from the battery during periods of low solar.</li>
-<li>Set appropriate <strong>device priorities</strong> in the app — for example, charging the battery first, then the car.</li>
-<li>If you have a <strong>myenergi libbi</strong>, it connects directly to the hub without a CT clamp and can be managed through the app alongside your other devices.</li>
-</ol>
-</div>
-<div class="info-box">
-<p>If you're not sure whether your battery is integrated correctly, your original installer is best placed to check the setup.</p>
-</div>`,
-    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/15587880239249-What-is-the-Minimum-Green-Level-MGL`,
-    next:'battery_integration_result',
-    nextLabel:`I've checked this / I'll ask my installer`,
-    next2:'myenergi_escalate_upload',
-    nextLabel2:`I need support`,
-  },
-
-  battery_draining_result: {
-    type:'choice',
-    eyebrow:'Battery Integration',
-    heading:`Has adjusting the battery settings helped?`,
-    progress:70,
-    options:[
-      { emoji:`✅`, label:`Yes, battery is now behaving correctly`, next:'fixed_success', tag:`Battery - Fixed` },
-      { emoji:`▸`, label:`Still draining unexpectedly`, next:'myenergi_escalate_upload', tag:`Battery - Draining Persists` },
-    ],
-  },
-
-  battery_integration_result: {
-    type:'choice',
-    eyebrow:'Battery Integration',
-    heading:`Is the battery now working as expected with your myenergi device?`,
-    progress:70,
-    options:[
-      { emoji:`✅`, label:`Yes, working correctly now`, next:'fixed_success', tag:`Battery - Fixed` },
-      { emoji:`▸`, label:`Still not working as expected`, next:'myenergi_escalate_upload', tag:`Battery - Persists` },
-    ],
-  },
-
-
