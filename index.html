@@ -62,18 +62,18 @@ body{
 
 /* ─── STEP CARD ─────────────────────────────────────────────────── */
 .step-card{
-  opacity:0;transform:translateY(6px);
-  transition:opacity 0.28s ease,transform 0.3s ease;
+  opacity:0;transform:scale(0.97);
+  transition:opacity 0.3s ease-out,transform 0.32s ease-out;
   pointer-events:none;
 }
 .step-card.active{
-  opacity:1;transform:translateY(0);pointer-events:all;
+  opacity:1;transform:scale(1);pointer-events:all;
 }
 .step-card.exit-fade{
-  opacity:0;transform:translateY(-4px);
+  opacity:0;transform:scale(1.02);
   position:absolute;top:0;left:0;right:0;
   pointer-events:none;
-  transition:opacity .2s ease,transform .22s ease;
+  transition:opacity .2s ease-in,transform .22s ease-in;
   z-index:1;
 }
 
@@ -1841,10 +1841,10 @@ Firmware`,
     progress:40,
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
     options:[
-      { emoji:`⚡`, label:`Grid reading — import or export from the street`, next:'grid_reading_test', tag:`CT - Grid Wrong` },
-      { emoji:`☀️`, label:`Solar or generation reading — power from my panels`, next:'ct_solar_fix', tag:`CT - Solar Wrong` },
-      { emoji:`🏠`, label:`Home consumption — power being used in my home`, next:'ct_home_fix', tag:`CT - Home Wrong` },
-      { emoji:`🔋`, label:`Battery reading — charge or discharge of my battery`, next:'ct_battery_fix', tag:`CT - Battery Wrong` },
+      { emoji:`▸`, label:`Grid reading — import or export from the street`, next:'grid_reading_test', tag:`CT - Grid Wrong` },
+      { emoji:`▸`, label:`Solar or generation reading — power from my panels`, next:'ct_solar_fix', tag:`CT - Solar Wrong` },
+      { emoji:`▸`, label:`Home consumption — power being used in my home`, next:'ct_home_fix', tag:`CT - Home Wrong` },
+      { emoji:`▸`, label:`Battery reading — charge or discharge of my battery`, next:'ct_battery_fix', tag:`CT - Battery Wrong` },
     ],
   },
 
@@ -1856,10 +1856,10 @@ Firmware`,
     progress:40,
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
     options:[
-      { emoji:`⚡`, label:`Grid reading — import or export from the street`, next:'grid_reading_test', tag:`CT - Grid Wrong` },
-      { emoji:`☀️`, label:`Solar or generation reading — power from my panels`, next:'ct_solar_fix', tag:`CT - Solar Wrong` },
-      { emoji:`🏠`, label:`Home consumption — power being used in my home`, next:'ct_home_fix', tag:`CT - Home Wrong` },
-      { emoji:`🔋`, label:`Battery reading — charge or discharge of my battery`, next:'ct_battery_fix', tag:`CT - Battery Wrong` },
+      { emoji:`▸`, label:`Grid reading — import or export from the street`, next:'grid_reading_test', tag:`CT - Grid Wrong` },
+      { emoji:`▸`, label:`Solar or generation reading — power from my panels`, next:'ct_solar_fix', tag:`CT - Solar Wrong` },
+      { emoji:`▸`, label:`Home consumption — power being used in my home`, next:'ct_home_fix', tag:`CT - Home Wrong` },
+      { emoji:`▸`, label:`Battery reading — charge or discharge of my battery`, next:'ct_battery_fix', tag:`CT - Battery Wrong` },
     ],
   },
 
