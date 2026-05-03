@@ -470,7 +470,15 @@ body{
 @media(max-width:600px){.btn-blue{width:100%;justify-content:center}}
 
 /* ─── COUNTRY PILLS ─────────────────────────────────────────────────────── */
-.country-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.country-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;row-gap:10px}
+.country-group-label{
+  width:100%;flex-basis:100%;
+  font-size:.72rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--grey-light);
+  padding-top:6px;margin-bottom:-2px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.country-group-label:first-child{border-top:none;padding-top:0}
 .country-pill{
   display:inline-flex;align-items:center;gap:7px;
   padding:11px 20px;border-radius:999px;cursor:pointer;
@@ -2455,16 +2463,25 @@ function buildStep(step, stepId){
         <div class="field-group">
           <label class="field-label">Your country <span class="field-required">*</span></label>
           <div class="country-grid" id="countryGrid">
+            <span class="country-group-label">UK &amp; Ireland</span>
             <button type="button" class="country-pill" data-region="GB" data-code="+44" onclick="selectCountry(this)"><span class="cpflag">🇬🇧</span>United Kingdom</button>
             <button type="button" class="country-pill" data-region="IE" data-code="+353" onclick="selectCountry(this)"><span class="cpflag">🇮🇪</span>Ireland</button>
+
+            <span class="country-group-label">Europe</span>
             <button type="button" class="country-pill" data-region="NL" data-code="+31" onclick="selectCountry(this)"><span class="cpflag">🇳🇱</span>Netherlands</button>
+            <button type="button" class="country-pill" data-region="BE" data-code="+32" onclick="selectCountry(this)"><span class="cpflag">🇧🇪</span>Belgium</button>
+            <button type="button" class="country-pill" data-region="LU" data-code="+352" onclick="selectCountry(this)"><span class="cpflag">🇱🇺</span>Luxembourg</button>
             <button type="button" class="country-pill" data-region="DE" data-code="+49" onclick="selectCountry(this)"><span class="cpflag">🇩🇪</span>Germany</button>
-            <button type="button" class="country-pill" data-region="AU" data-code="+61" onclick="selectCountry(this)"><span class="cpflag">🇦🇺</span>Australia</button>
-            <button type="button" class="country-pill" data-region="NZ" data-code="+64" onclick="selectCountry(this)"><span class="cpflag">🇳🇿</span>New Zealand</button>
             <button type="button" class="country-pill" data-region="FR" data-code="+33" onclick="selectCountry(this)"><span class="cpflag">🇫🇷</span>France</button>
             <button type="button" class="country-pill" data-region="PL" data-code="+48" onclick="selectCountry(this)"><span class="cpflag">🇵🇱</span>Poland</button>
             <button type="button" class="country-pill" data-region="EU-Other" data-code="+EU" onclick="selectCountry(this)"><span class="cpflag">🌍</span>EU — Other</button>
+
+            <span class="country-group-label">Asia-Pacific</span>
+            <button type="button" class="country-pill" data-region="AU" data-code="+61" onclick="selectCountry(this)"><span class="cpflag">🇦🇺</span>Australia</button>
+            <button type="button" class="country-pill" data-region="NZ" data-code="+64" onclick="selectCountry(this)"><span class="cpflag">🇳🇿</span>New Zealand</button>
             <button type="button" class="country-pill" data-region="Asia-Other" data-code="+AS" onclick="selectCountry(this)"><span class="cpflag">🌏</span>Asia — Other</button>
+
+            <span class="country-group-label">Other</span>
             <button type="button" class="country-pill" data-region="Other" data-code="+??" onclick="selectCountry(this)"><span class="cpflag">🌐</span>Not Listed</button>
           </div>
           <input type="hidden" id="custRegion" value="${state.customer.region}">
@@ -2484,6 +2501,8 @@ function buildStep(step, stepId){
               <option value="+44" data-region="GB" data-min="10">🇬🇧 +44</option>
 <option value="+353" data-region="IE" data-min="9">🇮🇪 +353</option>
 <option value="+31" data-region="NL" data-min="9">🇳🇱 +31</option>
+<option value="+32" data-region="BE" data-min="9">🇧🇪 +32</option>
+<option value="+352" data-region="LU" data-min="6">🇱🇺 +352</option>
 <option value="+49" data-region="DE" data-min="10">🇩🇪 +49</option>
 <option value="+61" data-region="AU" data-min="9">🇦🇺 +61</option>
 <option value="+64" data-region="NZ" data-min="9">🇳🇿 +64</option>
@@ -2777,6 +2796,8 @@ function validatePhone(num, region){
   if(region==='GB') return digits.length >= 10;
   if(region==='IE') return digits.length >= 9;
   if(region==='NL') return digits.length >= 9;
+  if(region==='BE') return digits.length >= 9;
+  if(region==='LU') return digits.length >= 6;
   if(region==='DE') return digits.length >= 10;
   if(region==='AU') return digits.length >= 9;
   if(region==='NZ') return digits.length >= 9;
