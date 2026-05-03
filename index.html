@@ -679,6 +679,8 @@ const STEPS = {
       { emoji:`▸`, label:`My device keeps switching off or rebooting`, next:'rebooting_device', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
       { emoji:`▸`, label:`The screen looks wrong`, next:'screen_issue', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
       { emoji:`▸`, label:`My device is working, but not how I expect it to`, next:'behaviour_which_device', tag:`Also: Wi-Fi/pairing → connectivity | Readings wrong → power_readings | Overheating → overheating | Something else → which_device_other` },
+      { emoji:`▸`, label:`I\'m having trouble with my app`, hint:`myenergi app on my phone or tablet`, next:'app_issue', tag:`App Issue` },
+      { emoji:`▸`, label:`My device won\'t connect to the internet`, hint:`Wi-Fi, hub offline, or connectivity problems`, next:'internet_connectivity', tag:`Connectivity Issue` },
     ],
   },
 
@@ -2356,6 +2358,361 @@ Firmware`,
 <h2>Contact your installer first</h2>
 <p>They have access to your installation and can check settings, CT clamps, and wiring directly. If they\'re unable to help, come back here and raise a ticket — we\'ll be happy to take it from there.</p>
 </div>`,
+  },
+
+
+  // ══ APP TROUBLESHOOTING ═════════════════════════════════════════════════
+
+  app_issue: {
+    type:'choice',
+    eyebrow:'myenergi App',
+    heading:`What\'s happening with your app?`,
+    sub:`Pick the option that best describes what you\'re experiencing.`,
+    progress:25,
+    options:[
+      { emoji:`▸`, label:`I can\'t log in or register my devices`, hint:`login error, wrong password, or products won\'t appear after registering`, next:'app_login', tag:`App - Login` },
+      { emoji:`▸`, label:`My devices aren\'t appearing in the app`, hint:`the app opens but I can\'t see my zappi, eddi or other devices`, next:'app_no_devices', tag:`App - No Devices` },
+      { emoji:`▸`, label:`I\'m seeing yellow warning triangles`, hint:`warning icons next to my device in the app`, next:'app_yellow_triangles', tag:`App - Yellow Triangles` },
+      { emoji:`▸`, label:`The readings or data don\'t look right`, hint:`power figures seem wrong or aren\'t updating`, next:'power_readings', tag:`App - Readings Wrong` },
+      { emoji:`▸`, label:`The app keeps crashing or freezing`, hint:`app closes unexpectedly or becomes unresponsive`, next:'app_crashing', tag:`App - Crashing` },
+      { emoji:`▸`, label:`The app isn\'t sending commands to my device`, hint:`I press boost or change mode but nothing happens`, next:'app_not_responding', tag:`App - Not Responding` },
+      { emoji:`▸`, label:`My history or usage data isn\'t showing`, hint:`no charging history, energy graphs are empty`, next:'app_no_history', tag:`App - No History` },
+    ],
+  },
+
+  app_login: {
+    type:'info',
+    eyebrow:'App — Login Issue',
+    heading:`Can\'t log in or register devices to the myenergi app.`,
+    sub:`Most login issues are caused by one of a small number of easily fixed problems.`,
+    progress:40,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/18646687228561-I-can-t-login-or-register-products-to-the-myenergi-app`,
+    content:`<div class="info-box">
+<h3>Things to check</h3>
+<ol>
+<li><strong>Wrong email or password</strong> — check you\'re using the email you registered with. Try the Forgot Password link on the login screen to reset.</li>
+<li><strong>Account not yet verified</strong> — if you\'ve just created an account, check your email inbox (and spam folder) for a verification email from myenergi.</li>
+<li><strong>Multiple accounts</strong> — it\'s common to have accidentally created two accounts with different email addresses. Try any other email address you may have used.</li>
+<li><strong>Hub not connected to internet</strong> — devices can only be registered when the hub has an active internet connection. Check the hub has a solid green light before attempting to add devices.</li>
+<li><strong>App update required</strong> — check the App Store or Google Play for a pending myenergi app update. Older versions may have login compatibility issues.</li>
+</ol>
+</div>`,
+    next:'app_login_result',
+    nextLabel:`I\'ve tried these steps`,
+  },
+
+  app_login_result: {
+    type:'choice',
+    eyebrow:'App — Login Issue',
+    heading:`Were you able to log in?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, I\'m now logged in`, next:'fixed_success', tag:`App Login - Fixed` },
+      { emoji:`▸`, label:`No, still can\'t log in`, next:'escalate_contact', tag:`App Login - Persists` },
+    ],
+  },
+
+  app_no_devices: {
+    type:'info',
+    eyebrow:'App — Devices Not Appearing',
+    heading:`Your devices aren\'t showing in the app.`,
+    sub:`This is usually because the hub isn\'t online, or the devices haven\'t been paired to your account yet.`,
+    progress:40,
+    content:`<div class="info-box">
+<h3>Steps to check</h3>
+<ol>
+<li><strong>Check the hub LED</strong> — your myenergi hub should show a solid green light when connected to the internet. If it\'s flashing or off, the devices won\'t be visible in the app.</li>
+<li><strong>Restart the hub</strong> — turn it off at the power socket, wait 30 seconds, and turn it back on. Allow 2 minutes for it to reconnect.</li>
+<li><strong>Devices need to be paired to the hub</strong> — if this is a new installation, the installer needs to pair each device to the hub before they appear in the app. Check with your installer that commissioning was completed.</li>
+<li><strong>Check your internet connection</strong> — make sure your phone has an active internet connection (Wi-Fi or mobile data). The app needs internet access to communicate with the hub.</li>
+<li><strong>Log out and back in</strong> — occasionally a session refresh resolves a display issue. Log out of the app and log back in.</li>
+</ol>
+</div>`,
+    next:'app_no_devices_result',
+    nextLabel:`I\'ve checked these`,
+  },
+
+  app_no_devices_result: {
+    type:'choice',
+    eyebrow:'App — Devices Not Appearing',
+    heading:`Are your devices now showing in the app?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, I can see my devices now`, next:'fixed_success', tag:`App Devices - Fixed` },
+      { emoji:`▸`, label:`Still not appearing`, next:'escalate_contact', tag:`App Devices - Persists` },
+    ],
+  },
+
+  app_yellow_triangles: {
+    type:'info',
+    eyebrow:'App — Yellow Warning Triangles',
+    heading:`Yellow warning triangles appear next to your device in the app.`,
+    sub:`These usually mean the device is offline, or there\'s a reading or configuration issue that needs attention.`,
+    progress:40,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/18865269913361-Resolving-Yellow-Warning-Triangles-in-the-myenergi-App`,
+    content:`<div class="info-box">
+<h3>What yellow triangles mean</h3>
+<p>A yellow triangle on a device in the myenergi app is a warning indicator. The most common causes are:</p>
+<ol>
+<li><strong>Device is offline</strong> — the device has lost its connection to the hub or the internet. Check the hub LED and restart if needed.</li>
+<li><strong>CT clamp issue</strong> — the system can\'t read grid, solar or battery power correctly. This may require an installer to check the CT clamp connections.</li>
+<li><strong>Device in an unexpected state</strong> — sometimes a firmware update or a communication glitch triggers a warning. A reboot of the device often clears it.</li>
+</ol>
+</div>
+<div class="info-box">
+<h3>Quick fix to try</h3>
+<ol>
+<li>Reboot the device — turn off at the fuse board, wait 30 seconds, turn back on.</li>
+<li>Reboot the hub — unplug from power, wait 30 seconds, replug.</li>
+<li>Check if the triangle clears after both have restarted.</li>
+</ol>
+</div>`,
+    next:'app_triangles_result',
+    nextLabel:`I\'ve rebooted both`,
+  },
+
+  app_triangles_result: {
+    type:'choice',
+    eyebrow:'App — Yellow Warning Triangles',
+    heading:`Have the warning triangles cleared?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, triangles are gone`, next:'fixed_success', tag:`Yellow Triangles - Fixed` },
+      { emoji:`▸`, label:`Still showing warning triangles`, next:'app_triangles_which', tag:`Yellow Triangles - Persists` },
+    ],
+  },
+
+  app_triangles_which: {
+    type:'choice',
+    eyebrow:'App — Yellow Warning Triangles',
+    heading:`Which device is showing the warning triangle?`,
+    progress:65,
+    options:[
+      { emoji:`▸`, label:`zappi (EV charger)`, next:'escalate_contact', tag:`Yellow Triangle - zappi` },
+      { emoji:`▸`, label:`eddi (solar diverter)`, next:'escalate_contact', tag:`Yellow Triangle - eddi` },
+      { emoji:`▸`, label:`harvi or hub`, next:'escalate_contact', tag:`Yellow Triangle - harvi/hub` },
+      { emoji:`▸`, label:`Multiple devices`, next:'escalate_contact', tag:`Yellow Triangle - Multiple` },
+    ],
+  },
+
+  app_crashing: {
+    type:'info',
+    eyebrow:'App — Crashing or Freezing',
+    heading:`The myenergi app keeps crashing or becomes unresponsive.`,
+    sub:`Most app crashes are caused by outdated software, device compatibility, or conflicting permissions.`,
+    progress:40,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/25871561935249-App-Crashing-Losing-Location-Multiple-Products`,
+    content:`<div class="info-box">
+<h3>Steps to try</h3>
+<ol>
+<li><strong>Update the app</strong> — open the App Store (iPhone) or Google Play (Android) and check for a pending myenergi app update. Crashes are often fixed in the latest release.</li>
+<li><strong>Restart your phone</strong> — a full phone restart clears memory issues that can cause app instability.</li>
+<li><strong>Check Android compatibility</strong> — if you have an older Android device, check that it supports 64-bit apps. Some older phones running 32-bit Android are no longer compatible with the current myenergi app version.</li>
+<li><strong>Check location permissions</strong> — the myenergi app requires location permissions to function. Go to your phone\'s Settings → Apps → myenergi → Permissions and ensure Location is set to Allow.</li>
+<li><strong>Reinstall the app</strong> — if the above doesn\'t help, delete the app and reinstall it from the app store. Your account data is stored in the cloud and will not be lost.</li>
+</ol>
+</div>`,
+    next:'app_crashing_result',
+    nextLabel:`I\'ve tried these steps`,
+  },
+
+  app_crashing_result: {
+    type:'choice',
+    eyebrow:'App — Crashing',
+    heading:`Is the app now stable?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, it\'s working now`, next:'fixed_success', tag:`App Crash - Fixed` },
+      { emoji:`▸`, label:`Still crashing or freezing`, next:'escalate_contact', tag:`App Crash - Persists` },
+    ],
+  },
+
+  app_not_responding: {
+    type:'info',
+    eyebrow:'App — Commands Not Working',
+    heading:`The app isn\'t sending commands to your device.`,
+    sub:`When the app can\'t control your device, it\'s usually a connection issue between the app and the hub.`,
+    progress:40,
+    content:`<div class="info-box">
+<h3>Steps to check</h3>
+<ol>
+<li><strong>Check the hub is online</strong> — your hub must have a solid green LED. If it\'s offline, the app cannot communicate with your device. Restart the hub if needed.</li>
+<li><strong>Check your phone\'s internet connection</strong> — the app sends commands through the internet to the hub. If your phone is on a weak Wi-Fi signal or offline, commands won\'t reach the device.</li>
+<li><strong>Try closing and reopening the app</strong> — the app connection may have timed out. Close it fully (swipe away from recent apps) and reopen.</li>
+<li><strong>Check the device is responsive locally</strong> — try pressing the buttons on the device itself. If the device responds to manual input but not the app, the issue is the app-to-hub connection specifically.</li>
+<li><strong>Check firmware is up to date</strong> — an outdated firmware version can cause command failures. Check for firmware updates in the app under your device settings.</li>
+</ol>
+</div>`,
+    next:'app_command_result',
+    nextLabel:`I\'ve checked these`,
+  },
+
+  app_command_result: {
+    type:'choice',
+    eyebrow:'App — Commands Not Working',
+    heading:`Is the app now controlling your device correctly?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, working now`, next:'fixed_success', tag:`App Commands - Fixed` },
+      { emoji:`▸`, label:`Still not responding to commands`, next:'escalate_contact', tag:`App Commands - Persists` },
+    ],
+  },
+
+  app_no_history: {
+    type:'info',
+    eyebrow:'App — History Not Showing',
+    heading:`Your history or usage data isn\'t appearing in the app.`,
+    sub:`Usage data is logged by the hub and synced to the app — if the hub has been offline, data from that period may be missing.`,
+    progress:40,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/5002669380113-History-not-logging-within-app-or-myaccount`,
+    content:`<div class="info-box">
+<h3>Why history might be missing</h3>
+<ol>
+<li><strong>Hub was offline</strong> — the hub logs data locally, but if it was disconnected from the internet during that period, that data cannot sync to the app. It may appear once connectivity is restored, or it may be lost.</li>
+<li><strong>New installation</strong> — history only begins logging from when the device was first commissioned and connected. There is no data for periods before connection.</li>
+<li><strong>Data takes time to appear</strong> — usage graphs and history can take up to 24 hours to populate after a new connection or after resolving a connectivity issue.</li>
+<li><strong>App cache</strong> — try pulling down on the history screen to force a refresh, or log out and back in to reload your data from the cloud.</li>
+</ol>
+</div>`,
+    next:'app_history_result',
+    nextLabel:`I\'ve checked these`,
+  },
+
+  app_history_result: {
+    type:'choice',
+    eyebrow:'App — History Not Showing',
+    heading:`Is your history now appearing?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, data is showing now`, next:'fixed_success', tag:`App History - Fixed` },
+      { emoji:`▸`, label:`Still no history or data`, next:'escalate_contact', tag:`App History - Persists` },
+    ],
+  },
+
+  // ══ INTERNET CONNECTIVITY ════════════════════════════════════════════════
+
+  internet_connectivity: {
+    type:'choice',
+    eyebrow:'Internet Connectivity',
+    heading:`What kind of connection problem are you experiencing?`,
+    sub:`Pick the option that best describes your situation.`,
+    progress:25,
+    options:[
+      { emoji:`▸`, label:`My device won\'t connect to Wi-Fi at all`, hint:`never connected, or I\'ve changed my router`, next:'wifi_issue', tag:`Wi-Fi - Won\'t Connect` },
+      { emoji:`▸`, label:`My device keeps losing its Wi-Fi connection`, hint:`connects fine but drops off regularly`, next:'wifi_dropping', tag:`Wi-Fi - Keeps Dropping` },
+      { emoji:`▸`, label:`My device won\'t reconnect after a factory reset`, hint:`I\'ve reset the device and can\'t get it back online`, next:'wifi_after_reset', tag:`Wi-Fi - After Factory Reset` },
+      { emoji:`▸`, label:`The hub or device shows as offline in the app`, hint:`the app says my device is offline even though it\'s powered on`, next:'hub_offline', tag:`Hub - Offline` },
+    ],
+  },
+
+  wifi_dropping: {
+    type:'info',
+    eyebrow:'Wi-Fi — Keeps Dropping',
+    heading:`Your device keeps losing its Wi-Fi connection.`,
+    sub:`A dropping connection is almost always caused by a weak Wi-Fi signal reaching the device.`,
+    progress:40,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/22936786119057-Why-does-my-device-keep-losing-Wi-Fi-connection-Wi-Fi-Strength-Check`,
+    content:`<div class="info-box">
+<h3>How to check signal strength</h3>
+<ol>
+<li>Go into the device menu on your zappi or eddi — navigate to Settings → Network.</li>
+<li>Look for the RSSI (signal strength) reading. A value <strong>higher than -75 dBm</strong> (e.g. -65 dBm) is acceptable. A value lower than -75 dBm (e.g. -82 dBm) indicates the signal is too weak.</li>
+<li>If the signal is weak, consider adding a <strong>Wi-Fi extender or mesh network node</strong> closer to the device location.</li>
+</ol>
+</div>
+<div class="info-box">
+<h3>Other things to check</h3>
+<ol>
+<li><strong>Router placement</strong> — thick walls, metal, and electrical interference from other appliances can all reduce range.</li>
+<li><strong>2.4 GHz vs 5 GHz</strong> — myenergi devices use the 2.4 GHz band. Make sure your router\'s 2.4 GHz network is active and broadcasting.</li>
+<li><strong>Router reboot</strong> — reboot your router and allow the device to reconnect. If the connection is more stable after this, the router may need a firmware update.</li>
+</ol>
+</div>`,
+    next:'wifi_dropping_result',
+    nextLabel:`I\'ve checked the signal`,
+  },
+
+  wifi_dropping_result: {
+    type:'choice',
+    eyebrow:'Wi-Fi — Keeps Dropping',
+    heading:`Has improving the signal strength resolved the drops?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, connection is now stable`, next:'fixed_success', tag:`Wi-Fi Dropping - Fixed` },
+      { emoji:`▸`, label:`Still losing connection`, next:'escalate_contact', tag:`Wi-Fi Dropping - Persists` },
+    ],
+  },
+
+  wifi_after_reset: {
+    type:'info',
+    eyebrow:'Wi-Fi — After Factory Reset',
+    heading:`Reconnecting your device to Wi-Fi after a factory reset.`,
+    sub:`A factory reset clears all stored Wi-Fi credentials — you\'ll need to reconnect from scratch.`,
+    progress:40,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/26347741204753-Troubleshooting-Wi-Fi-Connectivity-After-a-Factory-Reset`,
+    content:`<div class="info-box">
+<h3>Steps to reconnect after a factory reset</h3>
+<ol>
+<li>Make sure your phone is connected to the <strong>same Wi-Fi network</strong> you want the device to join.</li>
+<li>Open the myenergi app and go to your device settings — select <strong>Add Device</strong> or <strong>Connect to Wi-Fi</strong>.</li>
+<li>Follow the on-screen steps. The device will broadcast a temporary network for setup — your phone will connect to this briefly during the process.</li>
+<li>Enter your Wi-Fi password carefully. Wi-Fi passwords are case-sensitive.</li>
+<li>If the device doesn\'t appear in setup mode, try holding the reset button for 10 seconds to confirm the factory reset completed fully.</li>
+</ol>
+</div>`,
+    next:'wifi_after_reset_result',
+    nextLabel:`I\'ve followed these steps`,
+  },
+
+  wifi_after_reset_result: {
+    type:'choice',
+    eyebrow:'Wi-Fi — After Factory Reset',
+    heading:`Is the device now connected to Wi-Fi?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, it\'s back online`, next:'fixed_success', tag:`Wi-Fi Reset - Fixed` },
+      { emoji:`▸`, label:`Still can\'t connect`, next:'escalate_contact', tag:`Wi-Fi Reset - Persists` },
+    ],
+  },
+
+  hub_offline: {
+    type:'info',
+    eyebrow:'Hub — Device Offline',
+    heading:`Your hub or device is showing as offline in the app.`,
+    sub:`An offline device means communication between the hub and the myenergi cloud has been interrupted.`,
+    progress:40,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45487246960913-myenergi-Wi-Fi-Setup-Troubleshooting`,
+    content:`<div class="info-box">
+<h3>Check the hub LED status</h3>
+<ol>
+<li><strong>Solid green</strong> — hub is online and working correctly.</li>
+<li><strong>Flashing green</strong> — hub is trying to connect. Wait 2 minutes. If still flashing, reboot.</li>
+<li><strong>Red or amber</strong> — hub has lost internet connection. Check your broadband router is working and restart the hub.</li>
+<li><strong>No light</strong> — hub has no power. Check the power supply and USB connection.</li>
+</ol>
+</div>
+<div class="info-box">
+<h3>Steps to bring the hub back online</h3>
+<ol>
+<li>Reboot your broadband router — turn off, wait 30 seconds, turn on.</li>
+<li>Once your router is fully back online, reboot the hub — unplug it from power, wait 30 seconds, plug back in.</li>
+<li>Allow 2 minutes for the hub to reconnect. The LED should turn solid green.</li>
+<li>Refresh the myenergi app — pull down to refresh or log out and back in.</li>
+</ol>
+</div>`,
+    next:'hub_offline_result',
+    nextLabel:`I\'ve rebooted the hub and router`,
+  },
+
+  hub_offline_result: {
+    type:'choice',
+    eyebrow:'Hub — Device Offline',
+    heading:`Is the hub now showing as online in the app?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, it\'s back online`, next:'fixed_success', tag:`Hub - Back Online` },
+      { emoji:`▸`, label:`Still showing offline`, next:'escalate_contact', tag:`Hub - Still Offline` },
+    ],
   },
 
   escalate_contact: {
