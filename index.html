@@ -754,7 +754,7 @@ const STEPS = {
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that fixed it! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still having issues`,
   },
 
@@ -801,8 +801,8 @@ const STEPS = {
     progress:65,
     options:[
       { emoji:`▸`, label:`Yes — different cable and it now works`, next:'zappi_ev_cable_faulty', tag:`` },
-      { emoji:`▸`, label:`Different cable — still EV Disconnected`, next:'myenergi_escalate_upload', tag:`` },
-      { emoji:`▸`, label:`No spare cable available`, next:'myenergi_escalate_upload', tag:`` },
+      { emoji:`▸`, label:`Different cable — still EV Disconnected`, next:'escalate_contact', tag:`` },
+      { emoji:`▸`, label:`No spare cable available`, next:'escalate_contact', tag:`` },
     ],
   },
 
@@ -816,7 +816,7 @@ const STEPS = {
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that fixed it! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still having issues`,
   },
 
@@ -830,7 +830,7 @@ const STEPS = {
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that fixed it! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still having issues`,
   },
 
@@ -840,8 +840,8 @@ const STEPS = {
     heading:`Did this start happening suddenly, or has it never worked?`,
     progress:60,
     options:[
-      { emoji:`▸`, label:`It suddenly stopped working`, next:'myenergi_escalate_upload', tag:`` },
-      { emoji:`▸`, label:`It has never worked since install`, next:'myenergi_escalate_upload', tag:`` },
+      { emoji:`▸`, label:`It suddenly stopped working`, next:'escalate_contact', tag:`` },
+      { emoji:`▸`, label:`It has never worked since install`, next:'escalate_contact', tag:`` },
     ],
   },
 
@@ -870,7 +870,7 @@ const STEPS = {
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that fixed it! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still showing Charge Delayed`,
   },
 
@@ -885,7 +885,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, it's now charging!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still showing Charge Delayed`,
   },
 
@@ -912,7 +912,7 @@ const STEPS = {
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that fixed it! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still having issues`,
   },
 
@@ -926,7 +926,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, charging fine now!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still saying Charge Complete`,
   },
 
@@ -953,8 +953,8 @@ const STEPS = {
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/21535429815313-Pilot-Problem`,
     options:[
       { emoji:`▸`, label:`Yes — tried another car, error went away`, next:'zappi_pilot_car_issue', tag:`` },
-      { emoji:`▸`, label:`Yes — tried another car, still get error`, next:'myenergi_escalate_upload', tag:`` },
-      { emoji:`▸`, label:`No access to another car`, next:'myenergi_escalate_upload', tag:`` },
+      { emoji:`▸`, label:`Yes — tried another car, still get error`, next:'escalate_contact', tag:`` },
+      { emoji:`▸`, label:`No access to another car`, next:'escalate_contact', tag:`` },
     ],
   },
 
@@ -994,7 +994,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, it's working now!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still showing Unknown Cable`,
   },
 
@@ -1008,7 +1008,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, it's working now!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still showing Unknown Cable`,
   },
 
@@ -1022,7 +1022,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, Output Fault is gone!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still showing Output Fault`,
   },
 
@@ -1035,8 +1035,8 @@ const STEPS = {
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/20752396233745-Contactor-Fault-Voltage-Related`,
     options:[
       { emoji:`▸`, label:`The numbers I can see are outside the 203–257 range`, next:'zappi_contactor_voltage', tag:`` },
-      { emoji:`▸`, label:`The numbers are somewhere between 203 and 257`, next:'myenergi_escalate_upload', tag:`` },
-      { emoji:`▸`, label:`I'm not sure how to check`, next:'myenergi_escalate_upload', tag:`` },
+      { emoji:`▸`, label:`The numbers are somewhere between 203 and 257`, next:'escalate_contact', tag:`` },
+      { emoji:`▸`, label:`I'm not sure how to check`, next:'escalate_contact', tag:`` },
     ],
   },
 
@@ -1077,7 +1077,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, screen is back!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still no display at all`,
   },
 
@@ -1091,7 +1091,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Found it, screen is back!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still not sure / still no display`,
   },
 
@@ -1102,7 +1102,7 @@ const STEPS = {
     progress:45,
     options:[
       { emoji:`▸`, label:`Yes — trips when car is plugged in`, next:'zappi_tripping_unplug', tag:`` },
-      { emoji:`▸`, label:`No — trips even without car plugged in`, next:'myenergi_escalate_upload', tag:`` },
+      { emoji:`▸`, label:`No — trips even without car plugged in`, next:'escalate_contact', tag:`` },
     ],
   },
 
@@ -1116,7 +1116,7 @@ const STEPS = {
 </div>`,
     next:'zappi_tripping_car',
     nextLabel:`Yes, stays on without car plugged in`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`No, still trips without car plugged in`,
   },
 
@@ -1130,7 +1130,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, that fixed it!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still tripping — car charges elsewhere fine`,
   },
 
@@ -1158,7 +1158,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, lock fault resolved!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still getting lock fault`,
   },
 
@@ -1173,7 +1173,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, it's cleared!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still showing Comms Fault`,
   },
 
@@ -1213,7 +1213,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, charging in Fast mode!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still not charging`,
   },
 
@@ -1280,7 +1280,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, it's now diverting!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still not diverting`,
   },
 
@@ -1294,7 +1294,7 @@ const STEPS = {
 </div>`,
     next:'fixed_check',
     nextLabel:`I'll contact my installer`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Please raise a support ticket for me`,
   },
 
@@ -1336,7 +1336,7 @@ const STEPS = {
 </div>`,
     next:'fixed_check',
     nextLabel:`I'll contact my installer`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Please raise a support ticket`,
   },
 
@@ -1350,7 +1350,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, screen is back!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still no display`,
   },
 
@@ -1364,7 +1364,7 @@ const STEPS = {
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, heating now!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still not heating`,
   },
 
@@ -1415,7 +1415,7 @@ Firmware`,
     content:`<div class="info-box">
 <p>Persistent rebooting may indicate a loose wiring connection or a hardware fault inside the device. This needs to be looked at by our technical team.</p>
 </div>`,
-    next:'myenergi_escalate_upload',
+    next:'escalate_contact',
     nextLabel:`Please raise a support ticket`,
   },
 
@@ -1454,7 +1454,7 @@ Firmware`,
 </div>`,
     next:'fixed_success',
     nextLabel:`Screen is back to normal!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still scrambled / missing parts`,
   },
 
@@ -1468,7 +1468,7 @@ Firmware`,
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, LEDs are fine now!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`LEDs still faulty`,
   },
 
@@ -1482,7 +1482,7 @@ Firmware`,
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, buttons work now!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still not responding`,
   },
 
@@ -1523,7 +1523,7 @@ Firmware`,
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, connected!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still not connecting`,
   },
 
@@ -1538,7 +1538,7 @@ Firmware`,
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, connected!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still not connecting`,
   },
 
@@ -1553,7 +1553,7 @@ Firmware`,
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, paired successfully!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still won't pair`,
   },
 
@@ -1567,7 +1567,7 @@ Firmware`,
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, pairing is stable now!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still losing pairing`,
   },
 
@@ -1581,7 +1581,7 @@ Firmware`,
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, updated!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still failing to update`,
   },
 
@@ -1649,7 +1649,7 @@ Firmware`,
 <h3>What needs to happen</h3>
 <p>Your <strong>original installer</strong> needs to move the CT clamp to the correct position — it should be fitted to the <strong>meter tail</strong>, which is the cable running directly from your electricity meter to your consumer unit (fuse board). This is an electrical job and must only be done by a qualified electrician.</p>
 </div>`,
-    next:'myenergi_escalate_upload',
+    next:'escalate_contact',
     nextLabel:`Raise a support ticket`,
   },
 
@@ -1668,7 +1668,7 @@ Firmware`,
 <h3>What needs to happen</h3>
 <p>A <strong>qualified electrician</strong> needs to check that the CT clamp is physically fitted to the meter tail, that the signal cable is securely connected to the myenergi hub, and that the CT is assigned correctly in Hub Settings → CT Configuration.</p>
 </div>`,
-    next:'myenergi_escalate_upload',
+    next:'escalate_contact',
     nextLabel:`Raise a support ticket`,
   },
 
@@ -1686,7 +1686,7 @@ Firmware`,
 <li><strong>Your home battery is supplying all the power</strong> — if you have a battery (such as a libbi or third-party battery), it may be discharging to cover all demand, meaning zero power is being drawn from the grid. In this case the CT is working correctly — check your battery charge level and output in the app.</li>
 </ol>
 </div>`,
-    next:'myenergi_escalate_upload',
+    next:'escalate_contact',
     nextLabel:`Raise a support ticket`,
     next2:'fixed_check',
     nextLabel2:`It was the battery — all makes sense`,
@@ -1707,7 +1707,7 @@ Firmware`,
 <h3>The fix</h3>
 <p>Your <strong>original installer</strong> needs to physically rotate the CT clamp 180° on the cable. This takes seconds once the correct cable is located and is a simple fix. Please note this involves accessing live electrical cables and must only be done by a qualified electrician.</p>
 </div>`,
-    next:'myenergi_escalate_upload',
+    next:'escalate_contact',
     nextLabel:`Raise a support ticket for my installer`,
   },
 
@@ -1744,7 +1744,7 @@ Firmware`,
 <h3>What needs to happen</h3>
 <p>Your <strong>original installer</strong> needs to check the phase sequence and CT placement. This involves confirming which phase each CT is fitted to and ensuring the rotation direction matches the system configuration. This is an electrical job that must only be carried out by a qualified electrician.</p>
 </div>`,
-    next:'myenergi_escalate_upload',
+    next:'escalate_contact',
     nextLabel:`Raise a support ticket`,
   },
 
@@ -1763,7 +1763,7 @@ Firmware`,
 <h3>What needs to happen</h3>
 <p>Your <strong>original installer</strong> needs to identify the correct cable (the meter tail — the cable between your electricity meter and consumer unit) and move the CT clamp to it. The link below includes a CT clamp positioning calculator which may help your installer confirm the correct placement.</p>
 </div>`,
-    next:'myenergi_escalate_upload',
+    next:'escalate_contact',
     nextLabel:`Raise a support ticket`,
   },
 
@@ -1784,7 +1784,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`I'll contact my installer`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Please raise a support ticket`,
   },
 
@@ -1799,7 +1799,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`I'll contact my installer`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Please raise a support ticket`,
   },
 
@@ -1824,7 +1824,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, overheating resolved! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still overheating after changes`,
   },
 
@@ -1839,7 +1839,7 @@ Firmware`,
 </div>`,
     next:'fixed_success',
     nextLabel:`Yes, overheating resolved!`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still overheating`,
   },
 
@@ -1864,7 +1864,7 @@ Firmware`,
     content:`<div class="info-box">
 <p>Our support team will look into this for you. Use the button below to log your issue — include as much detail as you can so we can help quickly.</p>
 </div>`,
-    next:'myenergi_escalate_upload',
+    next:'escalate_contact',
     nextLabel:`Log a support ticket`,
   },
 
@@ -1875,7 +1875,7 @@ Firmware`,
     progress:90,
     options:[
       { emoji:`▸`, label:`Yes, it's all working! ✅`, next:'fixed_success', tag:`` },
-      { emoji:`▸`, label:`No, still having issues`, next:'myenergi_escalate_upload', tag:`` },
+      { emoji:`▸`, label:`No, still having issues`, next:'escalate_contact', tag:`` },
       { emoji:`▸`, label:`New problem appeared`, next:'main_issue', tag:`` },
     ],
   },
@@ -1931,7 +1931,7 @@ Firmware`,
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
     next:'ct_readings_result',
     nextLabel:`I've checked this / I'll ask my installer`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`I need support`,
   },
 
@@ -1945,7 +1945,7 @@ Firmware`,
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
     next:'ct_readings_result',
     nextLabel:`I've checked this / I'll ask my installer`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`I need support`,
   },
 
@@ -1959,7 +1959,7 @@ Firmware`,
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
     next:'grid_reading_test',
     nextLabel:`Run the Grid CT diagnostic test`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`I need support`,
   },
 
@@ -1973,7 +1973,7 @@ Firmware`,
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
     next:'ct_readings_result',
     nextLabel:`I've checked this / I'll ask my installer`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`I need support`,
   },
 
@@ -1984,7 +1984,7 @@ Firmware`,
     progress:75,
     options:[
       { emoji:`✅`, label:`Yes, readings are now accurate`, next:'fixed_success', tag:`CT - Fixed` },
-      { emoji:`▸`, label:`Still showing incorrect readings`, next:'myenergi_escalate_upload', tag:`CT - Persists` },
+      { emoji:`▸`, label:`Still showing incorrect readings`, next:'escalate_contact', tag:`CT - Persists` },
     ],
   },
 
@@ -2028,7 +2028,7 @@ Firmware`,
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/4716922623633-Hybrid-PV-Battery-Set-up-Avoid-Draining`,
     next:'battery_draining_result',
     nextLabel:`That makes sense`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`I still need help`,
   },
 
@@ -2052,7 +2052,7 @@ Firmware`,
 </div>`,
     next:'battery_integration_result',
     nextLabel:`I've checked this`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`I need support`,
   },
 
@@ -2080,7 +2080,7 @@ Firmware`,
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/15587880239249-What-is-the-Minimum-Green-Level-MGL`,
     next:'battery_integration_result',
     nextLabel:`I've checked this / I'll ask my installer`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`I need support`,
   },
 
@@ -2091,7 +2091,7 @@ Firmware`,
     progress:70,
     options:[
       { emoji:`✅`, label:`Yes, battery is now behaving correctly`, next:'fixed_success', tag:`Battery - Fixed` },
-      { emoji:`▸`, label:`Still draining unexpectedly`, next:'myenergi_escalate_upload', tag:`Battery - Draining Persists` },
+      { emoji:`▸`, label:`Still draining unexpectedly`, next:'escalate_contact', tag:`Battery - Draining Persists` },
     ],
   },
 
@@ -2102,7 +2102,7 @@ Firmware`,
     progress:70,
     options:[
       { emoji:`✅`, label:`Yes, working correctly now`, next:'fixed_success', tag:`Battery - Fixed` },
-      { emoji:`▸`, label:`Still not working as expected`, next:'myenergi_escalate_upload', tag:`Battery - Persists` },
+      { emoji:`▸`, label:`Still not working as expected`, next:'escalate_contact', tag:`Battery - Persists` },
     ],
   },
 
@@ -2128,7 +2128,7 @@ Firmware`,
 </div>`,
     next:'grid_reading_test',
     nextLabel:`Run a Grid CT diagnostic`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Raise a support ticket`,
   },
 
@@ -2143,7 +2143,7 @@ Firmware`,
 <p>A <strong>PE (Protective Earth) Fault</strong> means the zappi has detected an issue with the earth connection to the unit or charge cable. It stops charging as a safety measure.</p>
 </div>
 <div class="warning-box"><p><strong>⚠️ Do not use the charger</strong> until a qualified electrician has inspected the earth connection. This is a safety-critical fault.</p></div>`,
-    next:'myenergi_escalate_upload',
+    next:'escalate_contact',
     nextLabel:`Raise a support ticket`,
   },
 
@@ -2172,7 +2172,7 @@ Firmware`,
     progress:60,
     options:[
       { emoji:`▸`, label:`Yes, it\'s cleared and working now`, next:'fixed_success', tag:`SelfTest - Fixed` },
-      { emoji:`▸`, label:`No, still showing SelfTest Failed`, next:'myenergi_escalate_upload', tag:`SelfTest - Persists` },
+      { emoji:`▸`, label:`No, still showing SelfTest Failed`, next:'escalate_contact', tag:`SelfTest - Persists` },
     ],
   },
 
@@ -2205,7 +2205,7 @@ Firmware`,
     progress:60,
     options:[
       { emoji:`▸`, label:`Yes, charging normally now`, next:'fixed_success', tag:`RCD - Fixed` },
-      { emoji:`▸`, label:`It tripped again when I plugged in`, next:'myenergi_escalate_upload', tag:`RCD - Persists` },
+      { emoji:`▸`, label:`It tripped again when I plugged in`, next:'escalate_contact', tag:`RCD - Persists` },
     ],
   },
 
@@ -2234,7 +2234,7 @@ Firmware`,
     progress:60,
     options:[
       { emoji:`▸`, label:`Yes, charging normally now`, next:'fixed_success', tag:`Overload - Fixed` },
-      { emoji:`▸`, label:`Still showing overload`, next:'myenergi_escalate_upload', tag:`Overload - Persists` },
+      { emoji:`▸`, label:`Still showing overload`, next:'escalate_contact', tag:`Overload - Persists` },
     ],
   },
 
@@ -2253,7 +2253,7 @@ Firmware`,
 <li>A <strong>wiring or connection issue</strong> inside the zappi installation.</li>
 </ol>
 </div>`,
-    next:'myenergi_escalate_upload',
+    next:'escalate_contact',
     nextLabel:`Raise a support ticket`,
   },
 
@@ -2271,7 +2271,7 @@ Firmware`,
 <h3>What needs to happen</h3>
 <p>A qualified electrician needs to swap two of the phase connections to correct the rotation. This cannot be fixed through settings.</p>
 </div>`,
-    next:'myenergi_escalate_upload',
+    next:'escalate_contact',
     nextLabel:`Raise a support ticket`,
   },
 
@@ -2301,21 +2301,9 @@ Firmware`,
     progress:60,
     options:[
       { emoji:`▸`, label:`Yes, charging now`, next:'fixed_success', tag:`Charge Blocked - Fixed` },
-      { emoji:`▸`, label:`Still blocked`, next:'myenergi_escalate_upload', tag:`Charge Blocked - Persists` },
+      { emoji:`▸`, label:`Still blocked`, next:'escalate_contact', tag:`Charge Blocked - Persists` },
     ],
   },
-
-  myenergi_escalate_upload: {
-    type:'upload',
-    eyebrow:'Escalation',
-    heading:`Let's get our team on this.`,
-    sub:`Don't worry, this will be escalated to our support team who will sort this out for you. To help them resolve quicker, please upload a photo of your device and its screen if you can. This way you won't need to explain everything again when you speak with them.`,
-    progress:80,
-    uploadLabel:'Add photos of your device and any error messages',
-    uploadTypes:['JPG','PNG','PDF'],
-    next:'escalate_contact',
-  },
-
 
   // ══ ESCALATION TRIAGE ════════════════════════════════════════════════════
 
@@ -2469,7 +2457,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that fixed it! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`My boost still isn't working`,
   },
 
@@ -2501,7 +2489,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that helped! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`The buttons still aren't working`,
   },
 
@@ -2531,7 +2519,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that makes sense! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`It's still stopping unexpectedly`,
   },
 
@@ -2574,7 +2562,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that helped! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still only getting ~1.4kW`,
   },
 
@@ -2608,7 +2596,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that helped! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still not getting the speed I expect`,
   },
 
@@ -2685,7 +2673,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`That explains it, thanks! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`My electrician has checked this`,
   },
 
@@ -2699,7 +2687,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`That explains it, thanks! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`No, my cable is 32A/3 phase`,
   },
 
@@ -2737,7 +2725,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`That explains it, thanks! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`My car supports above 11kW — still not reaching it`,
   },
 
@@ -2769,7 +2757,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`That makes sense, thanks! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`The speed is still unstable in Fast mode`,
   },
 
@@ -2794,7 +2782,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`That makes sense, thanks! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`No large appliances are on — still varying`,
   },
 
@@ -2822,7 +2810,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`That makes sense, thanks! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`It shouldn't be doing this`,
   },
 
@@ -2849,7 +2837,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that helped! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Still varying unexpectedly`,
   },
 
@@ -2888,7 +2876,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that makes sense! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`I still think something is wrong`,
   },
 
@@ -2917,7 +2905,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that fixed it! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`My boost still isn't working`,
   },
 
@@ -2946,7 +2934,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`Yes, that makes sense! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`Something still seems wrong`,
   },
 
@@ -2981,7 +2969,7 @@ Firmware`,
 </div>`,
     next:'fixed_check',
     nextLabel:`That makes sense, thanks! ✅`,
-    next2:'myenergi_escalate_upload',
+    next2:'escalate_contact',
     nextLabel2:`I need more help with this`,
   },
 
@@ -2993,25 +2981,31 @@ Firmware`,
 function getEscalationTier(){
   const tags = state.tags.join(' ').toLowerCase();
 
-  // Tier 1 — Hardware fault: likely RMA / component replacement needed
+  // Tier 1 — Hardware/RMA: any fault code displayed on device screen
+  // These are unlikely to be resolved by an installer and need technical review
   const hwKeywords = [
-    'output fault','pe fault','rcd tripped','rcd - persists','selftest - persists',
-    'contactor fault','dead - persists','comms fault - persists','lock fault - persists',
-    'overload - persists','charge blocked - persists','rcd board',
-    'zappi fault','eddi - dead persists','screen - display fault','screen - led',
-    'controls unresponsive','dead - switch ok'
+    'fault code','output fault','pe fault','rcd tripped','rcd - persists',
+    'selftest - persists','contactor fault','comms fault - persists','lock fault - persists',
+    'overload - persists','charge blocked - persists','installation limit','voltage mismatch',
+    'phase rotation','bad voltage range','pilot error - zappi fault','pilot error - unknown',
+    'unknown cable - persists','ev disconnected - persists','charge complete - persists',
+    'tripping - zappi fault','dead - persists',
+    // Any tag from the fault code screens
+    'rcd board','dead unit'
   ];
   if(hwKeywords.some(k => tags.includes(k))) return 'hardware';
 
-  // Tier 2 — Installer issue: configuration or physical installation work needed
+  // Tier 2 — Installer: CT configuration issues OR device will not power up
   const installKeywords = [
     'ct - grid','ct - solar','ct - home','ct - battery',
-    'phase rotation','installation limit','bad voltage range',
     'grid - reversed','grid - nonsense','grid - zero','grid - ct lost','grid - matches output',
     'grid - single phase','grid - 3 phase',
-    'tethered','battery integration','battery - persists','installer',
-    'ct config','ct clamp','reads wrong','reading','eddi - ct clamp',
-    'readings - grid','readings - ct'
+    'readings - grid','readings - ct','ct config','ct clamp',
+    // Dead/no power — could be wiring/supply issue
+    'dead - switch ok','dead - unsure switch','eddi - dead','eddi - dead persists',
+    'blank screen',
+    // Never worked — likely installation issue
+    'tethered - never worked'
   ];
   if(installKeywords.some(k => tags.includes(k))) return 'installer';
 
@@ -3180,35 +3174,93 @@ function buildStep(step, stepId){
     `;
     html += `<div class="btn-row">
       <button class="btn btn-primary" data-next="${step.next}">Continue →</button>
-      <button class="btn btn-ghost" onclick="state.history.push('myenergi_escalate_upload');render('escalate_triage')">Skip — no photos available</button>
+      <button class="btn btn-ghost" onclick="state.history.push('escalate_contact');render('escalate_triage')">Skip — no photos available</button>
     </div>`;
   }
 
   else if(step.type === 'contact'){
+    const tier = getEscalationTier();
     const device = detectDevice();
     const deviceSVG = DEVICE_SVGS[device] || DEVICE_SVGS.zappi;
     const deviceNames = {zappi:'zappi',eddi:'eddi',eddi_plus:'eddi+',glo:'zappi GLO',harvi:'harvi',libbi:'libbi'};
     const deviceLabel = deviceNames[device] || 'your device';
+    const isHardware = tier === 'hardware';
 
+    // Triage card
+    const triageContent = isHardware
+      ? `<div class="triage-card triage-hardware" style="margin-bottom:28px">
+          <div class="triage-icon">⚠️</div>
+          <h3>This looks like a hardware fault</h3>
+          <p>We'll prioritise this. Photos of the fault code and serial sticker are <strong>required</strong> before we can process a replacement.</p>
+         </div>`
+      : tier === 'installer'
+      ? `<div class="triage-card triage-installer" style="margin-bottom:28px">
+          <div class="triage-icon">🔧</div>
+          <h3>This is typically an installer issue</h3>
+          <p>Your installer can often fix this faster. If you've already tried them, continue below.</p>
+         </div>`
+      : `<div class="triage-card triage-user" style="margin-bottom:28px">
+          <div class="triage-icon">💡</div>
+          <h3>Have you tried your installer first?</h3>
+          <p>Many settings issues are resolved quickly by your installer. If you haven't tried, it may save time — otherwise continue below.</p>
+         </div>`;
+    html += triageContent;
 
+    // Tier 1: fault code photo (required)
+    if(isHardware){
+      html += `
+        <div class="field-group">
+          <label class="field-label">Photo of the fault code on screen <span class="field-required">*</span></label>
+          <p style="font-size:.85rem;color:var(--grey-light);margin-bottom:10px">Take a clear photo of the error message shown on your device screen.</p>
+          <div class="upload-area" id="faultUploadArea" style="padding:20px">
+            <input type="file" id="faultFileInput" accept="image/*,video/*" capture="environment">
+            <div class="upload-icon" style="font-size:1.8rem">📸</div>
+            <h4 style="font-size:.95rem">Photograph the fault code on screen</h4>
+            <p style="font-size:.8rem">Or choose from your library</p>
+          </div>
+          <div id="faultPreview" style="margin-top:10px"></div>
+        </div>`;
+    }
+
+    // Serial sticker section
+    const serialReqLabel = isHardware
+      ? 'Serial number sticker photo <span class="field-required">*</span>'
+      : 'Serial number sticker photo (encouraged)';
     html += `
-      <div class="field-group" style="margin-bottom:24px">
-        <label class="field-label">Serial number photo <span class="field-required">*</span></label>
+      <div class="field-group">
+        <label class="field-label">${serialReqLabel}</label>
         <div class="serial-side-layout">
           <div class="serial-device-img">${deviceSVG}</div>
           <div class="serial-side-caption">
             <strong>Where to find it</strong>
-            <p>The green highlighted area on the diagram shows exactly where the serial number sticker is on your ${deviceLabel}. Take a clear photo of the whole sticker — this helps us verify your warranty and identify your exact unit.</p>
+            <p>The green highlighted area shows where the serial sticker is on your ${deviceLabel}.</p>
           </div>
         </div>
-        <div class="upload-area" id="serialUploadArea" onclick="document.getElementById('serialFileInput').click()" style="padding:20px">
+        <div class="upload-area" id="serialUploadArea" style="padding:20px">
           <input type="file" id="serialFileInput" accept="image/*" capture="environment">
           <div class="upload-icon" style="font-size:1.8rem">📷</div>
           <h4 style="font-size:.95rem">Tap to photograph your serial sticker</h4>
-          <p style="font-size:.8rem">Or choose an existing photo from your library</p>
+          <p style="font-size:.8rem">Or choose from your photo library</p>
         </div>
         <div id="serialPreview" style="margin-top:10px"></div>
-      </div>
+      </div>`;
+
+    // Additional photos / videos
+    html += `
+      <div class="field-group">
+        <label class="field-label">Additional photos or videos (optional)</label>
+        <div class="upload-area" id="uploadArea" style="padding:20px">
+          <input type="file" id="fileInput" accept="image/*,video/*,application/pdf" multiple>
+          <div class="upload-icon" style="font-size:1.8rem">🎞️</div>
+          <h4 style="font-size:.95rem">Add more photos or a short video</h4>
+          <p style="font-size:.8rem">Tap to select — you can add multiple files at once</p>
+          <div class="upload-types"><span>JPG</span><span>PNG</span><span>MP4</span><span>MOV</span><span>PDF</span></div>
+        </div>
+        <div class="upload-previews" id="uploadPreviews"></div>
+        <div id="uploadDocs"></div>
+      </div>`;
+
+    html += `
       <form id="contactForm" autocomplete="on">
         <div class="field-group">
           <label class="field-label">Your country <span class="field-required">*</span></label>
@@ -3233,6 +3285,7 @@ function buildStep(step, stepId){
 
             <span class="country-group-label">Other</span>
             <button type="button" class="country-pill" data-region="Other" data-code="+??" onclick="selectCountry(this)"><span class="cpflag">🌐</span>Not Listed</button>
+          </div>
           </div>
           <input type="hidden" id="custRegion" value="${state.customer.region}">
         </div>
@@ -3270,19 +3323,21 @@ function buildStep(step, stepId){
         </div>
         <div class="field-group">
           <label class="field-label" for="deviceSerial">Device serial number <span class="field-required">*</span></label>
-          <input class="field-input" id="deviceSerial" type="text" placeholder="e.g. 10012345 — found on the sticker above" value="${state.device.serial}" required
-            style="font-family:monospace;font-size:1.1rem;letter-spacing:.04em">
-          <p style="margin-top:6px;font-size:.8rem;color:#666;">Type the number shown after \"S/N:\" on the sticker.</p>
+          <input class="field-input" id="deviceSerial" type="text" inputmode="numeric"
+            placeholder="7 or 8 digits starting with 1, 2 or 3 — e.g. 10012345"
+            value="${state.device.serial}" required style="font-family:monospace;font-size:1.1rem;letter-spacing:.04em">
+          <p id="serialError" style="margin-top:5px;font-size:.8rem;color:#f91561;display:none">Serial numbers are 7–8 digits, no letters, and start with 1, 2 or 3 — check the sticker on your device</p>
+          <p style="margin-top:6px;font-size:.8rem;color:#666;">Type the number shown after "S/N:" on the sticker.</p>
         </div>
         <div class="field-group">
           <label class="field-label" for="extraInfo">Any extra details (optional)</label>
-          <textarea class="field-textarea" id="extraInfo" placeholder="Anything else we should know — how long has this been happening, any recent changes, etc.">${state.device.extraInfo}</textarea>
+          <textarea class="field-textarea" id="extraInfo" placeholder="Anything else we should know.">${state.device.extraInfo}</textarea>
         </div>
       </form>`;
     html += `<div class="btn-row"><button class="btn btn-primary" id="contactNext">Submit</button></div>`;
   }
 
-  else if(step.type === 'submit'){
+    else if(step.type === 'submit'){
     const issueDesc = state.tags.join(' → ');
     const regionLabel = state.customer.region || '—';
     const serialUploads = state.uploads.filter(u=>u.isSerial);
@@ -3375,7 +3430,7 @@ function bindEvents(card, step, stepId){
     uploadArea.addEventListener('dragover', e =>{ e.preventDefault(); uploadArea.classList.add('drag-over'); });
     uploadArea.addEventListener('dragleave', ()=> uploadArea.classList.remove('drag-over'));
     uploadArea.addEventListener('drop', e =>{ e.preventDefault(); uploadArea.classList.remove('drag-over'); handleFiles(e.dataTransfer.files, card); });
-    uploadArea.addEventListener('click', e =>{ if(e.target === fileInput) return; fileInput.click(); e.stopPropagation(); });
+    uploadArea.addEventListener('click', e =>{ if(e.target === fileInput) return; fileInput.click(); });
     renderUploadPreviews(card);
   }
 
@@ -3411,7 +3466,6 @@ function bindEvents(card, step, stepId){
       serialUploadArea.addEventListener('click', e => {
         if(e.target === serialFileInput) return;
         serialFileInput.click();
-        e.stopPropagation();
       });
     }
   }
