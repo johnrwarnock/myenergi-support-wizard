@@ -1540,8 +1540,147 @@ Firmware`,
     ],
   },
 
+
+  grid_reading_test: {
+    type:'info',
+    eyebrow:'Grid Reading — Diagnostic Test',
+    heading:`Let\'s run a quick test to understand what the grid reading is doing.`,
+    sub:`This will help narrow down exactly what\'s wrong with the CT clamp or its configuration.`,
+    progress:52,
+    content:`<div class="info-box">
+<h3>Set up the test</h3>
+<ol>
+<li>If you have an <strong>eddi</strong> — press the Boost button to start heating your water.</li>
+<li>If you have a <strong>zappi</strong> — plug in your car and set the zappi to <strong>Fast</strong> mode so it starts drawing power.</li>
+<li>On your device or in the myenergi app, find the <strong>Grid reading</strong> — this is shown next to the pylon icon (the electricity grid symbol).</li>
+<li>Wait 30 seconds for the readings to stabilise, then observe what the grid figure shows.</li>
+</ol>
+</div>`,
+    next:'grid_reading_what_do_you_see',
+    nextLabel:`I can see the readings — what next?`,
+  },
+
+  grid_reading_what_do_you_see: {
+    type:'choice',
+    eyebrow:'Grid Reading — What Do You See?',
+    heading:`What does the grid reading show while your device is running?`,
+    sub:`Look at the pylon icon reading on your zappi, eddi, or in the myenergi app.`,
+    progress:58,
+    options:[
+      { emoji:`▸`, label:`The grid reading matches what my zappi or eddi is using`, hint:`e.g. zappi drawing 7kW, grid shows ~7kW import`, next:'grid_reading_matches', tag:`Grid - Matches Output` },
+      { emoji:`▸`, label:`It shows "Grid CT Lost"`, hint:`error message on screen or in app`, next:'grid_ct_lost', tag:`Grid - CT Lost` },
+      { emoji:`▸`, label:`It shows zero — no reading at all`, hint:`reads 0 even when devices are running`, next:'grid_reading_zero', tag:`Grid - Zero Reading` },
+      { emoji:`▸`, label:`It shows power exporting to the grid when there isn\'t enough solar`, hint:`shows negative / export when it should be importing`, next:'grid_reading_reversed', tag:`Grid - Reversed` },
+      { emoji:`▸`, label:`It shows a reading, but it doesn\'t make sense`, hint:`random numbers, fluctuating wildly, or just seems wrong`, next:'grid_reading_nonsense', tag:`Grid - Nonsense Reading` },
+    ],
+  },
+
+
+  grid_reading_matches: {
+    type:'info',
+    eyebrow:'Grid Reading — CT Position Issue',
+    heading:`The Grid CT clamp appears to be on the wrong cable.`,
+    sub:`This is a common installation issue that needs an electrician to fix — it's not something you can adjust yourself.`,
+    progress:65,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45462795649169-CT-Clamp-and-harvi-Calculator-for-myenergi-Installations-System-Builder`,
+    content:`<div class="info-box">
+<h3>What this means</h3>
+<p>When the grid reading matches exactly what your zappi or eddi is drawing, it usually means the <strong>CT clamp has been fitted to the supply cable of the device itself</strong>, rather than the <strong>incoming mains supply</strong> (the meter tail). This means the system is measuring what the device uses, not your total grid import and export.</p>
+</div>
+<div class="info-box">
+<h3>What needs to happen</h3>
+<p>Your <strong>original installer</strong> needs to move the CT clamp to the correct position — it should be fitted to the <strong>meter tail</strong>, which is the cable running directly from your electricity meter to your consumer unit (fuse board). This is an electrical job and must only be done by a qualified electrician.</p>
+</div>`,
+    next:'myenergi_escalate_upload',
+    nextLabel:`Raise a support ticket`,
+  },
+
+  grid_ct_lost: {
+    type:'info',
+    eyebrow:'Grid Reading — CT Not Detected',
+    heading:`The Grid CT clamp has not been detected.`,
+    sub:`This means the CT clamp either hasn't been installed yet, or has become disconnected.`,
+    progress:65,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45462795649169-CT-Clamp-and-harvi-Calculator-for-myenergi-Installations-System-Builder`,
+    content:`<div class="info-box">
+<h3>What this means</h3>
+<p>"Grid CT Lost" means your myenergi hub cannot see the CT clamp that should be measuring your grid connection. This happens when the CT clamp <strong>hasn't been fitted</strong>, or the cable connecting it to the hub has become <strong>loose or disconnected</strong>.</p>
+</div>
+<div class="info-box">
+<h3>What needs to happen</h3>
+<p>A <strong>qualified electrician</strong> needs to check that the CT clamp is physically fitted to the meter tail, that the signal cable is securely connected to the myenergi hub, and that the CT is assigned correctly in Hub Settings → CT Configuration.</p>
+</div>`,
+    next:'myenergi_escalate_upload',
+    nextLabel:`Raise a support ticket`,
+  },
+
+  grid_reading_zero: {
+    type:'info',
+    eyebrow:'Grid Reading — Zero Reading',
+    heading:`The Grid CT clamp may be disabled or your home battery is covering all demand.`,
+    sub:`A zero grid reading while your device is running points to one of two things.`,
+    progress:65,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45462795649169-CT-Clamp-and-harvi-Calculator-for-myenergi-Installations-System-Builder`,
+    content:`<div class="info-box">
+<h3>Possible causes</h3>
+<ol>
+<li><strong>Grid CT is disabled in settings</strong> — open the myenergi app, go to Hub → CT Configuration and check whether the Grid CT is enabled. If it shows as disabled or unassigned, it needs to be configured by your installer.</li>
+<li><strong>Your home battery is supplying all the power</strong> — if you have a battery (such as a libbi or third-party battery), it may be discharging to cover all demand, meaning zero power is being drawn from the grid. In this case the CT is working correctly — check your battery charge level and output in the app.</li>
+</ol>
+</div>`,
+    next:'myenergi_escalate_upload',
+    nextLabel:`Raise a support ticket`,
+    next2:'fixed_check',
+    nextLabel2:`It was the battery — all makes sense`,
+  },
+
+  grid_reading_reversed: {
+    type:'info',
+    eyebrow:'Grid Reading — CT Reversed',
+    heading:`The Grid CT clamp is likely fitted the wrong way round.`,
+    sub:`This is an easy fix for your installer — the clamp just needs to be flipped 180°.`,
+    progress:65,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45462795649169-CT-Clamp-and-harvi-Calculator-for-myenergi-Installations-System-Builder`,
+    content:`<div class="info-box">
+<h3>What this means</h3>
+<p>CT clamps are directional — they measure current flowing in one direction. If the clamp has been fitted the wrong way round, <strong>import and export readings are swapped</strong>. So when you're importing power from the grid (which is what happens when there's no solar and a device is running), the system shows it as export.</p>
+</div>
+<div class="info-box">
+<h3>The fix</h3>
+<p>Your <strong>original installer</strong> needs to physically rotate the CT clamp 180° on the cable. This takes seconds once the correct cable is located and is a simple fix. Please note this involves accessing live electrical cables and must only be done by a qualified electrician.</p>
+</div>`,
+    next:'myenergi_escalate_upload',
+    nextLabel:`Raise a support ticket for my installer`,
+  },
+
+  grid_reading_nonsense: {
+    type:'info',
+    eyebrow:'Grid Reading — CT on Wrong Cable',
+    heading:`The Grid CT clamp is likely fitted to the wrong cable.`,
+    sub:`Fluctuating or inconsistent readings usually mean the clamp is measuring the wrong thing.`,
+    progress:65,
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45462795649169-CT-Clamp-and-harvi-Calculator-for-myenergi-Installations-System-Builder`,
+    content:`<div class="info-box">
+<h3>What this means</h3>
+<p>When grid readings look random, fluctuate unexpectedly, or show values that don't correspond to anything you're doing in the home, the CT clamp is usually fitted to the wrong cable — for example, a lighting circuit, a generation cable, or a battery output, rather than the <strong>meter tail</strong>.</p>
+</div>
+<div class="info-box">
+<h3>What needs to happen</h3>
+<p>Your <strong>original installer</strong> needs to identify the correct cable (the meter tail — the cable between your electricity meter and consumer unit) and move the CT clamp to it. The link below includes a CT clamp positioning calculator which may help your installer confirm the correct placement.</p>
+</div>`,
+    next:'myenergi_escalate_upload',
+    nextLabel:`Raise a support ticket`,
+  },
+
+
+
+
+
+
+
   grid_ct_check: {
     type:'info',
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45462795649169-CT-Clamp-and-harvi-Calculator-for-myenergi-Installations-System-Builder`,
     eyebrow:'Power Readings',
     heading:`The CT clamp sensor may need repositioning.`,
     progress:50,
@@ -1556,6 +1695,7 @@ Firmware`,
 
   other_ct_check: {
     type:'info',
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45462795649169-CT-Clamp-and-harvi-Calculator-for-myenergi-Installations-System-Builder`,
     eyebrow:'Power Readings',
     heading:`A CT clamp may be fitted to the wrong cable.`,
     progress:50,
@@ -1664,7 +1804,7 @@ Firmware`,
     progress:40,
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
     options:[
-      { emoji:`⚡`, label:`Grid reading — import or export from the street`, next:'ct_grid_fix', tag:`CT - Grid Wrong` },
+      { emoji:`⚡`, label:`Grid reading — import or export from the street`, next:'grid_reading_test', tag:`CT - Grid Wrong` },
       { emoji:`☀️`, label:`Solar or generation reading — power from my panels`, next:'ct_solar_fix', tag:`CT - Solar Wrong` },
       { emoji:`🏠`, label:`Home consumption — power being used in my home`, next:'ct_home_fix', tag:`CT - Home Wrong` },
       { emoji:`🔋`, label:`Battery reading — charge or discharge of my battery`, next:'ct_battery_fix', tag:`CT - Battery Wrong` },
@@ -1679,7 +1819,7 @@ Firmware`,
     progress:40,
     learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/360020558578-Understanding-Readings-in-the-myenergi-App`,
     options:[
-      { emoji:`⚡`, label:`Grid reading — import or export from the street`, next:'ct_grid_fix', tag:`CT - Grid Wrong` },
+      { emoji:`⚡`, label:`Grid reading — import or export from the street`, next:'grid_reading_test', tag:`CT - Grid Wrong` },
       { emoji:`☀️`, label:`Solar or generation reading — power from my panels`, next:'ct_solar_fix', tag:`CT - Solar Wrong` },
       { emoji:`🏠`, label:`Home consumption — power being used in my home`, next:'ct_home_fix', tag:`CT - Home Wrong` },
       { emoji:`🔋`, label:`Battery reading — charge or discharge of my battery`, next:'ct_battery_fix', tag:`CT - Battery Wrong` },
@@ -1688,6 +1828,7 @@ Firmware`,
 
   ct_grid_fix: {
     type:'info',
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45462795649169-CT-Clamp-and-harvi-Calculator-for-myenergi-Installations-System-Builder`,
     eyebrow:'CT Configuration — Grid',
     heading:`The Grid CT clamp tells your system how much power you're importing or exporting.`,
     sub:`This is an installer-level check. Use the link below for the full technical guide, or raise a support ticket and we'll help you through it.`,
@@ -1701,6 +1842,7 @@ Firmware`,
 
   ct_solar_fix: {
     type:'info',
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45462795649169-CT-Clamp-and-harvi-Calculator-for-myenergi-Installations-System-Builder`,
     eyebrow:'CT Configuration — Solar',
     heading:`The Solar CT clamp measures power coming from your panels.`,
     sub:`This is an installer-level check. Use the link below for the full technical guide, or raise a support ticket and we'll help you through it.`,
@@ -1714,6 +1856,7 @@ Firmware`,
 
   ct_home_fix: {
     type:'info',
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45462795649169-CT-Clamp-and-harvi-Calculator-for-myenergi-Installations-System-Builder`,
     eyebrow:'CT Configuration — Home Consumption',
     heading:`Home consumption is calculated from your other readings — it isn't measured directly.`,
     sub:`If grid and solar readings are both accurate but home consumption still looks wrong, it may be worth checking your battery CT configuration too. Use the link below or raise a support ticket.`,
@@ -1727,6 +1870,7 @@ Firmware`,
 
   ct_battery_fix: {
     type:'info',
+    learnMoreUrl:`https://support.myenergi.com/hc/en-gb/articles/45462795649169-CT-Clamp-and-harvi-Calculator-for-myenergi-Installations-System-Builder`,
     eyebrow:'CT Configuration — Battery',
     heading:`For accurate battery readings, your installer may need to add a Battery CT clamp.`,
     sub:`This is an installer-level check. Use the link below for the full technical guide, or raise a support ticket and we'll help you through it.`,
