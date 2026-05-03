@@ -677,6 +677,15 @@ const STEPS = {
       { emoji:`▸`, label:`"EV Disconnected"`, next:'zappi_ev_disconnected', tag:`More options on screen: Pilot Error→zappi_pilot_error | Unknown Cable→zappi_unknown_cable | Output Fault→zappi_output_fault | Contactor Fault→zappi_contactor_fault | Blank screen→zappi_dead | Lock Fault→zappi_lock | Comms Fault→zappi_comms_fault | Normal screen, no charge→zappi_no_error` },
       { emoji:`▸`, label:`"Charge Delayed"`, next:'zappi_charge_delayed', tag:`More options on screen: Pilot Error→zappi_pilot_error | Unknown Cable→zappi_unknown_cable | Output Fault→zappi_output_fault | Contactor Fault→zappi_contactor_fault | Blank screen→zappi_dead | Lock Fault→zappi_lock | Comms Fault→zappi_comms_fault | Normal screen, no charge→zappi_no_error` },
       { emoji:`▸`, label:`"Charge Complete"`, next:'zappi_charge_complete', tag:`More options on screen: Pilot Error→zappi_pilot_error | Unknown Cable→zappi_unknown_cable | Output Fault→zappi_output_fault | Contactor Fault→zappi_contactor_fault | Blank screen→zappi_dead | Lock Fault→zappi_lock | Comms Fault→zappi_comms_fault | Normal screen, no charge→zappi_no_error`, hint:`car not full` },
+      { emoji:`▸`, label:`"Installation Limit"`, hint:`grid or installation limit warning`, next:'zappi_installation_limit', tag:`Installation Limit` },
+      { emoji:`▸`, label:`"PE Fault"`, hint:`earth / protective earth fault`, next:'zappi_pe_fault', tag:`PE Fault` },
+      { emoji:`▸`, label:`"SelfTest Failed"`, hint:`startup self-test error`, next:'zappi_selftest_failed', tag:`SelfTest Failed` },
+      { emoji:`▸`, label:`"RCD Tripped"`, hint:`internal RCD has tripped`, next:'zappi_rcd_tripped', tag:`RCD Tripped` },
+      { emoji:`▸`, label:`"Overload"`, hint:`too much current drawn`, next:'zappi_overload', tag:`Overload` },
+      { emoji:`▸`, label:`"Bad Voltage Range"`, hint:`voltage outside normal limits`, next:'zappi_contactor_fault', tag:`Bad Voltage Range` },
+      { emoji:`▸`, label:`"Voltage Mismatch"`, hint:`voltage reading inconsistency`, next:'zappi_voltage_mismatch', tag:`Voltage Mismatch` },
+      { emoji:`▸`, label:`"Phase Rotation"`, hint:`3-phase rotation issue`, next:'zappi_phase_rotation', tag:`Phase Rotation` },
+      { emoji:`▸`, label:`"Charge Blocked"`, hint:`charging blocked by external signal`, next:'zappi_charge_blocked', tag:`Charge Blocked` },
     ],
   },
 
@@ -2045,6 +2054,205 @@ Firmware`,
     options:[
       { emoji:`✅`, label:`Yes, working correctly now`, next:'fixed_success', tag:`Battery - Fixed` },
       { emoji:`▸`, label:`Still not working as expected`, next:'myenergi_escalate_upload', tag:`Battery - Persists` },
+    ],
+  },
+
+  // ══ FAULT CODE STEPS ═══════════════════════════════════════════════════
+
+  zappi_installation_limit: {
+    type:'info',
+    eyebrow:'Fault — Installation Limit',
+    heading:`Your zappi has reached its Installation Limit.`,
+    sub:`The amount of power available is being restricted by a limit set during installation.`,
+    progress:45,
+    content:`<div class="info-box">
+<h3>What this means</h3>
+<p>The <strong>Installation Limit</strong> message appears when the zappi is operating at the maximum power allowed by the grid or supply limit configured by your installer. It doesn't mean something is broken — the zappi is deliberately capping its output to stay within the agreed supply limit.</p>
+</div>
+<div class="info-box">
+<h3>Common causes</h3>
+<ol>
+<li>Your supply limit is set lower than your car's charge rate.</li>
+<li>Other high-demand appliances are running and consuming the available headroom.</li>
+<li>The Grid CT clamp may not be reading correctly, causing the system to miscalculate available capacity.</li>
+</ol>
+</div>`,
+    next:'grid_reading_test',
+    nextLabel:`Run a Grid CT diagnostic`,
+    next2:'myenergi_escalate_upload',
+    nextLabel2:`Raise a support ticket`,
+  },
+
+  zappi_pe_fault: {
+    type:'info',
+    eyebrow:'Fault — PE Fault (Earth)',
+    heading:`Your zappi has detected a problem with the earth connection.`,
+    sub:`This is a safety fault. Stop charging immediately and contact a qualified electrician.`,
+    progress:45,
+    content:`<div class="info-box">
+<h3>What this means</h3>
+<p>A <strong>PE (Protective Earth) Fault</strong> means the zappi has detected an issue with the earth connection to the unit or charge cable. It stops charging as a safety measure.</p>
+</div>
+<div class="warning-box"><p><strong>⚠️ Do not use the charger</strong> until a qualified electrician has inspected the earth connection. This is a safety-critical fault.</p></div>`,
+    next:'myenergi_escalate_upload',
+    nextLabel:`Raise a support ticket`,
+  },
+
+  zappi_selftest_failed: {
+    type:'info',
+    eyebrow:'Fault — SelfTest Failed',
+    heading:`The zappi failed its startup self-test.`,
+    sub:`Try rebooting first — this often clears it.`,
+    progress:45,
+    content:`<div class="info-box">
+<h3>Try this first</h3>
+<ol>
+<li>Turn the zappi off at the fuse board.</li>
+<li>Wait <strong>30 seconds</strong>.</li>
+<li>Turn it back on and wait for it to fully restart.</li>
+</ol>
+</div>`,
+    next:'zappi_selftest_result',
+    nextLabel:`I\'ve rebooted — what next?`,
+  },
+
+  zappi_selftest_result: {
+    type:'choice',
+    eyebrow:'Fault — SelfTest Failed',
+    heading:`Did the reboot clear the SelfTest Failed message?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, it\'s cleared and working now`, next:'fixed_success', tag:`SelfTest - Fixed` },
+      { emoji:`▸`, label:`No, still showing SelfTest Failed`, next:'myenergi_escalate_upload', tag:`SelfTest - Persists` },
+    ],
+  },
+
+  zappi_rcd_tripped: {
+    type:'info',
+    eyebrow:'Fault — RCD Tripped',
+    heading:`The zappi\'s internal RCD has tripped.`,
+    sub:`Try a reboot first. If it trips again the cause needs to be identified by an electrician.`,
+    progress:45,
+    content:`<div class="info-box">
+<h3>What this means</h3>
+<p>The zappi has a built-in <strong>Residual Current Device (RCD)</strong> that trips when it detects an imbalance in current — usually from a small earth leakage fault in the charger, cable, or car.</p>
+</div>
+<div class="info-box">
+<h3>Try this first</h3>
+<ol>
+<li>Unplug the charge cable from your car.</li>
+<li>Reboot the zappi — off at fuse board, wait 30 seconds, back on.</li>
+<li>Try plugging in again. If it trips immediately, try a different charge cable.</li>
+</ol>
+</div>`,
+    next:'zappi_rcd_result',
+    nextLabel:`I\'ve rebooted — check result`,
+  },
+
+  zappi_rcd_result: {
+    type:'choice',
+    eyebrow:'Fault — RCD Tripped',
+    heading:`After rebooting, has the fault cleared?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, charging normally now`, next:'fixed_success', tag:`RCD - Fixed` },
+      { emoji:`▸`, label:`It tripped again when I plugged in`, next:'myenergi_escalate_upload', tag:`RCD - Persists` },
+    ],
+  },
+
+  zappi_overload: {
+    type:'info',
+    eyebrow:'Fault — Overload',
+    heading:`The zappi has detected an overload condition.`,
+    sub:`The device is trying to draw more current than the supply allows.`,
+    progress:45,
+    content:`<div class="info-box">
+<h3>What to try</h3>
+<ol>
+<li><strong>Reduce the charge rate</strong> — go to zappi Settings → Charge Rates and lower the maximum.</li>
+<li><strong>Switch off other high-power appliances</strong> — ovens, heat pumps and kettles leave less headroom for the zappi.</li>
+<li><strong>Reboot and retry</strong> at the lower charge rate.</li>
+</ol>
+</div>`,
+    next:'zappi_overload_result',
+    nextLabel:`I\'ve tried reducing the charge rate`,
+  },
+
+  zappi_overload_result: {
+    type:'choice',
+    eyebrow:'Fault — Overload',
+    heading:`Has reducing the charge rate resolved the overload?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, charging normally now`, next:'fixed_success', tag:`Overload - Fixed` },
+      { emoji:`▸`, label:`Still showing overload`, next:'myenergi_escalate_upload', tag:`Overload - Persists` },
+    ],
+  },
+
+  zappi_voltage_mismatch: {
+    type:'info',
+    eyebrow:'Fault — Voltage Mismatch',
+    heading:`The zappi has detected a mismatch in voltage readings.`,
+    sub:`Common on three-phase installations where voltage differs between phases.`,
+    progress:45,
+    content:`<div class="info-box">
+<h3>What this means</h3>
+<p>A <strong>Voltage Mismatch</strong> means the zappi is seeing a significant difference in voltage between what it expects and what it measures. Common causes:</p>
+<ol>
+<li>On a <strong>three-phase installation</strong> — one phase has a significantly different voltage to the others.</li>
+<li>A <strong>supply issue</strong> at the property — voltage from the grid is outside the expected range.</li>
+<li>A <strong>wiring or connection issue</strong> inside the zappi installation.</li>
+</ol>
+</div>`,
+    next:'myenergi_escalate_upload',
+    nextLabel:`Raise a support ticket`,
+  },
+
+  zappi_phase_rotation: {
+    type:'info',
+    eyebrow:'Fault — Phase Rotation',
+    heading:`The zappi has detected incorrect phase rotation.`,
+    sub:`Three-phase installations only — requires an electrician to correct.`,
+    progress:45,
+    content:`<div class="info-box">
+<h3>What this means</h3>
+<p>On a <strong>three-phase supply</strong>, the phases must be connected in the correct rotational sequence (L1, L2, L3). Phase Rotation means they are connected in the wrong order.</p>
+</div>
+<div class="info-box">
+<h3>What needs to happen</h3>
+<p>A qualified electrician needs to swap two of the phase connections to correct the rotation. This cannot be fixed through settings.</p>
+</div>`,
+    next:'myenergi_escalate_upload',
+    nextLabel:`Raise a support ticket`,
+  },
+
+  zappi_charge_blocked: {
+    type:'info',
+    eyebrow:'Fault — Charge Blocked',
+    heading:`Charging is being blocked by an external signal or setting.`,
+    sub:`This is different from Charge Delayed — the block is coming from outside the zappi itself.`,
+    progress:45,
+    content:`<div class="info-box">
+<h3>Common causes</h3>
+<ol>
+<li><strong>zappi in Stop mode</strong> — press the middle button to switch to Fast, Eco or Eco+ mode.</li>
+<li><strong>eSense port signal</strong> — if anything is connected to the zappi\'s eSense input, it may be actively stopping charging.</li>
+<li><strong>Smart tariff or third-party app</strong> — an energy app (Octopus, Tesla, home energy management) may be sending a stop signal.</li>
+<li><strong>Grid demand response</strong> — in some markets the grid can pause EV charging temporarily. This clears automatically.</li>
+</ol>
+</div>`,
+    next:'zappi_charge_blocked_result',
+    nextLabel:`I\'ve checked these`,
+  },
+
+  zappi_charge_blocked_result: {
+    type:'choice',
+    eyebrow:'Fault — Charge Blocked',
+    heading:`Is charging now unblocked?`,
+    progress:60,
+    options:[
+      { emoji:`▸`, label:`Yes, charging now`, next:'fixed_success', tag:`Charge Blocked - Fixed` },
+      { emoji:`▸`, label:`Still blocked`, next:'myenergi_escalate_upload', tag:`Charge Blocked - Persists` },
     ],
   },
 
